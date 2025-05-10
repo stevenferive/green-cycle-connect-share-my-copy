@@ -50,7 +50,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <div className="flex items-center gap-2">
               <div className="flex items-center font-heading font-semibold text-green">
                 <CircleDollarSign className="mr-1 h-4 w-4" />
-                {product.price.toFixed(2)} €
+                S/ {product.price.toFixed(2)}
               </div>
               {product.exchange && (
                 <Badge variant="outline" className="flex items-center gap-1 text-xs border-green text-green">
