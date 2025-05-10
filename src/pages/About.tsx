@@ -3,6 +3,7 @@ import React from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Recycle, Heart, Users, ShieldCheck, Leaf, BarChart } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const About = () => {
   return (
@@ -139,24 +140,24 @@ const About = () => {
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
                 {
-                  name: "Ana Martínez",
-                  role: "Fundadora & CEO",
-                  image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=687&q=80"
+                  name: "Bruss Antonio Silva Riofrio",
+                  role: "Fundador & CEO",
+                  image: "/lovable-uploads/117c21d0-7e1c-4db0-9d91-dafa39c4f63e.png"
                 },
                 {
-                  name: "Carlos Ramos",
+                  name: "Aarón Leonardo Palacios Cabredo",
                   role: "CTO",
-                  image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=687&q=80"
+                  image: "/lovable-uploads/3763f33a-0698-4904-89db-fd16ba50b297.png"
                 },
                 {
-                  name: "Lucía Flores",
-                  role: "Dir. de Sostenibilidad",
-                  image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=687&q=80"
-                },
-                {
-                  name: "Diego Salas",
+                  name: "Steven Modesto Febre Rivera",
                   role: "Dir. de Operaciones",
-                  image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80"
+                  image: "/lovable-uploads/d613a947-c6dd-452f-8e85-6f6680c68cdd.png"
+                },
+                {
+                  name: "García Valdiviezo Dalessandro",
+                  role: "Dir. de Sostenibilidad",
+                  image: "/lovable-uploads/2afc4aac-da4d-48b8-8aec-4b8241e62c0c.png"
                 }
               ].map((member, index) => (
                 <div key={index} className="text-center">
