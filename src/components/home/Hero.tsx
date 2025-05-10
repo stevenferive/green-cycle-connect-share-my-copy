@@ -8,8 +8,8 @@ const Hero = () => {
   const isMobile = useIsMobile();
 
   return (
-    <section className="bg-gradient-to-b from-green-light/10 to-transparent py-10 md:py-20">
-      <div className="container">
+    <section className="bg-gradient-to-b from-green-light/10 to-transparent py-10 md:py-20 overflow-hidden">
+      <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           <div className="flex flex-col justify-center space-y-6">
             <div className="space-y-2">
@@ -51,13 +51,13 @@ const Hero = () => {
 
           {!isMobile && (
             <div className="flex items-center justify-center">
-              <div className="relative">
+              <div className="relative max-w-full">
                 <div className="absolute -top-6 -left-6 h-64 w-64 rounded-full bg-green/10 animate-pulse-light"></div>
                 <div className="absolute -bottom-6 -right-6 h-48 w-48 rounded-full bg-water/10 animate-pulse-light"></div>
                 <img
                   src="https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80"
                   alt="Economía circular"
-                  className="rounded-2xl object-cover shadow-lg h-[460px] w-[460px] z-10 relative animate-float"
+                  className="rounded-2xl object-cover shadow-lg h-[460px] w-full max-w-[460px] z-10 relative animate-float"
                 />
               </div>
             </div>

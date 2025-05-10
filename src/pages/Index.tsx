@@ -10,7 +10,7 @@ import HowItWorks from '@/components/home/HowItWorks';
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col overflow-x-hidden">
       <Navbar />
       <main className="flex-1">
         <Hero />
