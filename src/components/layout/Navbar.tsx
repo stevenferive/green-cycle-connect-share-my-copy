@@ -2,7 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Recycle, Search, User, Menu } from "lucide-react";
+import { Recycle, Search, Menu } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Navbar = () => {
@@ -24,7 +24,7 @@ const Navbar = () => {
         {!isMobile ? (
           <>
             <div className="hidden md:flex md:gap-6">
-              <Link to="/products" className="text-foreground/80 hover:text-foreground">
+              <Link to="/explore" className="text-foreground/80 hover:text-foreground">
                 Explorar
               </Link>
               <Link to="/categories" className="text-foreground/80 hover:text-foreground">
@@ -42,8 +42,12 @@ const Navbar = () => {
               <Button variant="ghost" size="icon">
                 <Search className="h-5 w-5" />
               </Button>
-              <Button variant="outline">Iniciar Sesión</Button>
-              <Button className="bg-green hover:bg-green-dark">Registrarse</Button>
+              <Link to="/login">
+                <Button variant="outline">Iniciar Sesión</Button>
+              </Link>
+              <Link to="/register">
+                <Button className="bg-green hover:bg-green-dark">Registrarse</Button>
+              </Link>
             </div>
           </>
         ) : (
@@ -62,7 +66,7 @@ const Navbar = () => {
       {isMobile && isMenuOpen && (
         <div className="container border-t py-3">
           <div className="flex flex-col space-y-3">
-            <Link to="/products" className="py-2 text-foreground/80 hover:text-foreground">
+            <Link to="/explore" className="py-2 text-foreground/80 hover:text-foreground">
               Explorar
             </Link>
             <Link to="/categories" className="py-2 text-foreground/80 hover:text-foreground">
@@ -75,8 +79,12 @@ const Navbar = () => {
               Ecotips
             </Link>
             <div className="flex gap-2 pt-2">
-              <Button variant="outline" className="flex-1">Iniciar Sesión</Button>
-              <Button className="flex-1 bg-green hover:bg-green-dark">Registrarse</Button>
+              <Link to="/login" className="flex-1">
+                <Button variant="outline" className="w-full">Iniciar Sesión</Button>
+              </Link>
+              <Link to="/register" className="flex-1">
+                <Button className="w-full bg-green hover:bg-green-dark">Registrarse</Button>
+              </Link>
             </div>
           </div>
         </div>
