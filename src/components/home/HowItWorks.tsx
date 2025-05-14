@@ -33,9 +33,7 @@ const HowItWorks = () => {
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-light/10 mb-6">
               <Search className="h-8 w-8 text-green" />
             </div>
-            <div className="relative mb-8 h-0.5 w-24 bg-muted md:absolute md:right-0 md:top-8 md:w-full md:translate-x-1/2">
-              
-            </div>
+            
             <h3 className="font-heading text-xl font-semibold mb-2">
               Conecta con Compradores
             </h3>
