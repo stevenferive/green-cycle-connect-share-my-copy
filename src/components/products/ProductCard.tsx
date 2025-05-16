@@ -3,7 +3,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MapPin, CircleDollarSign, Repeat } from "lucide-react";
+import { Heart, MapPin, CircleDollarSign, Repeat, ShoppingCart, MessageCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 
 export interface Product {
   id: string;
@@ -22,6 +25,20 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const { toast } = useToast();
+  
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigation to product detail
+    toast({
+      title: "Producto agregado",
+      description: `${product.title} añadido al carrito`,
+    });
+  };
+  
+  const handleChatClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigation to product detail
+  };
+  
   return (
     <Link to={`/product/${product.id}`}>
       <Card className="overflow-hidden transition-all hover:shadow-md hover:-translate-y-1">
@@ -71,6 +88,56 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <div className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
             <Recycle className="h-3 w-3 text-green" />
             <span>Eco-impacto: {product.ecoSaving}kg CO2 ahorrados</span>
+          </div>
+          
+          {/* Add to Cart and Chat Buttons */}
+          <div className="mt-3 flex items-center justify-between gap-2">
+            <Button 
+              size="sm" 
+              className="flex-1 bg-green hover:bg-green-dark"
+              onClick={handleAddToCart}
+            >
+              <ShoppingCart className="mr-1 h-4 w-4" />
+              Agregar
+            </Button>
+            
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="flex-1 border-green text-green hover:bg-green-light/10"
+                  onClick={handleChatClick}
+                >
+                  <MessageCircle className="mr-1 h-4 w-4" />
+                  Chatear
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 p-4" onClick={(e) => e.preventDefault()}>
+                <div className="space-y-4">
+                  <h4 className="font-medium">Contacta al vendedor</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Envía un mensaje al vendedor para consultar sobre este producto.
+                  </p>
+                  <textarea 
+                    className="w-full min-h-[100px] rounded-md border border-input bg-transparent px-3 py-2 text-sm"
+                    placeholder="Escribe tu mensaje aquí..."
+                  />
+                  <Button 
+                    className="w-full bg-green hover:bg-green-dark"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toast({
+                        title: "Mensaje enviado",
+                        description: "Tu mensaje ha sido enviado al vendedor",
+                      });
+                    }}
+                  >
+                    Enviar mensaje
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </CardContent>
       </Card>
