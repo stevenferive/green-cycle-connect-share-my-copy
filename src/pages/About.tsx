@@ -145,18 +145,18 @@ const About = () => {
                   image: "/lovable-uploads/117c21d0-7e1c-4db0-9d91-dafa39c4f63e.png"
                 },
                 {
+                  name: "García Valdiviezo Dalessandro",
+                  role: "Dir. de Sostenibilidad",
+                  image: "/lovable-uploads/3763f33a-0698-4904-89db-fd16ba50b297.png"
+                },
+                {
                   name: "Aarón Leonardo Palacios Cabredo",
                   role: "CTO",
-                  image: "/lovable-uploads/3763f33a-0698-4904-89db-fd16ba50b297.png"
+                  image: "/lovable-uploads/d613a947-c6dd-452f-8e85-6f6680c68cdd.png"
                 },
                 {
                   name: "Steven Modesto Febre Rivera",
                   role: "Dir. de Operaciones",
-                  image: "/lovable-uploads/d613a947-c6dd-452f-8e85-6f6680c68cdd.png"
-                },
-                {
-                  name: "García Valdiviezo Dalessandro",
-                  role: "Dir. de Sostenibilidad",
                   image: "/lovable-uploads/2afc4aac-da4d-48b8-8aec-4b8241e62c0c.png"
                 }
               ].map((member, index) => (

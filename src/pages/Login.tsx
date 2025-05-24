@@ -1,24 +1,57 @@
-
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Recycle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/lib/auth-context";
 
 const Login = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const [credentials, setCredentials] = useState({
+    email: "",
+    password: ""
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setCredentials(prev => ({ ...prev, [id]: value }));
+  };
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
     
-    // En una implementación real, esto se conectaría con un backend para autenticación
-    toast({
-      title: "Función en desarrollo",
-      description: "La funcionalidad de inicio de sesión estará disponible pronto.",
-    });
+    try {
+      const result = login(credentials);
+      
+      if (result.success) {
+        toast({
+          title: "Inicio de sesión exitoso",
+          description: `¡Bienvenido/a de nuevo!`,
+        });
+        navigate("/"); // Redirigir al inicio después del login
+      } else {
+        toast({
+          title: "Error",
+          description: result.message || "Credenciales inválidas",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Ha ocurrido un error al iniciar sesión",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   return (
@@ -39,7 +72,14 @@ const Login = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Correo electrónico</Label>
-              <Input id="email" type="email" placeholder="tu@email.com" required />
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="tu@email.com" 
+                value={credentials.email}
+                onChange={handleChange}
+                required 
+              />
             </div>
             <div className="space-y-2">
               <div className="flex justify-between">
@@ -48,10 +88,20 @@ const Login = () => {
                   ¿Olvidaste tu contraseña?
                 </Link>
               </div>
-              <Input id="password" type="password" required />
+              <Input 
+                id="password" 
+                type="password" 
+                value={credentials.password}
+                onChange={handleChange}
+                required 
+              />
             </div>
-            <Button type="submit" className="w-full bg-green hover:bg-green-dark">
-              Iniciar sesión
+            <Button 
+              type="submit" 
+              className="w-full bg-green hover:bg-green-dark"
+              disabled={isLoading}
+            >
+              {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
             </Button>
           </form>
         </CardContent>

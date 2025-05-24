@@ -1,6 +1,5 @@
-
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Recycle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,18 +7,75 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
+import { UserCredentials } from "@/lib/auth-service";
+import { useAuth } from "@/lib/auth-context";
 
 const Register = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { register } = useAuth();
+  
+  const [formData, setFormData] = useState<UserCredentials>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: ""
+  });
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    if (id === "confirm-password") {
+      setConfirmPassword(value);
+    } else if (id === "first-name") {
+      setFormData(prev => ({ ...prev, firstName: value }));
+    } else if (id === "last-name") {
+      setFormData(prev => ({ ...prev, lastName: value }));
+    } else {
+      setFormData(prev => ({ ...prev, [id]: value }));
+    }
+  };
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    // En una implementación real, esto se conectaría con un backend para registro
-    toast({
-      title: "Función en desarrollo",
-      description: "La funcionalidad de registro estará disponible pronto.",
-    });
+    if (formData.password !== confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Las contraseñas no coinciden",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      const result = register(formData);
+      
+      if (result.success) {
+        toast({
+          title: "Registro exitoso",
+          description: "Tu cuenta ha sido creada correctamente",
+        });
+        navigate("/login");
+      } else {
+        toast({
+          title: "Error",
+          description: result.message || "Ha ocurrido un error al registrarte",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Ha ocurrido un error al registrarte",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   return (
@@ -41,24 +97,53 @@ const Register = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="first-name">Nombre</Label>
-                <Input id="first-name" required />
+                <Input 
+                  id="first-name" 
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  required 
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="last-name">Apellido</Label>
-                <Input id="last-name" required />
+                <Input 
+                  id="last-name" 
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required 
+                />
               </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Correo electrónico</Label>
-              <Input id="email" type="email" placeholder="tu@email.com" required />
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="tu@email.com" 
+                value={formData.email}
+                onChange={handleChange}
+                required 
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Contraseña</Label>
-              <Input id="password" type="password" required />
+              <Input 
+                id="password" 
+                type="password" 
+                value={formData.password}
+                onChange={handleChange}
+                required 
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirm-password">Confirmar contraseña</Label>
-              <Input id="confirm-password" type="password" required />
+              <Input 
+                id="confirm-password" 
+                type="password" 
+                value={confirmPassword}
+                onChange={handleChange}
+                required 
+              />
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox id="terms" required />
@@ -69,8 +154,12 @@ const Register = () => {
                 </Link>
               </label>
             </div>
-            <Button type="submit" className="w-full bg-green hover:bg-green-dark">
-              Registrarme
+            <Button 
+              type="submit" 
+              className="w-full bg-green hover:bg-green-dark"
+              disabled={isLoading}
+            >
+              {isLoading ? "Procesando..." : "Registrarme"}
             </Button>
           </form>
         </CardContent>
