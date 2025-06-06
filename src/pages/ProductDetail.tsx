@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -99,9 +99,11 @@ const ProductDetail = () => {
             <p className="text-muted-foreground mb-6">
               Lo sentimos, el producto que buscas no está disponible.
             </p>
-            <Button href="/explore" className="bg-green hover:bg-green-dark">
-              Explorar otros productos
-            </Button>
+            <Link to="/explore">
+              <Button className="bg-green hover:bg-green-dark">
+                Explorar otros productos
+              </Button>
+            </Link>
           </div>
         </main>
         <Footer />
