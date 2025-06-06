@@ -1,5 +1,7 @@
+
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, getCurrentUser, login, logout, register, UserCredentials } from './auth-service';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
   user: User | null;
@@ -35,6 +37,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const handleRegister = (userData: UserCredentials) => {
     const result = register(userData);
+    if (result.success && result.user) {
+      setUser(result.user);
+    }
     return { success: result.success, message: result.message };
   };
 
