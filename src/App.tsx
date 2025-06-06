@@ -46,7 +46,7 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   }
   
   if (isAuthenticated) {
-    return <Navigate to="/feed" replace />;
+    return <Navigate to="/explore" replace />;
   }
   
   return <>{children}</>;
@@ -57,7 +57,6 @@ const AppRoutes = () => {
     <Routes>
       {/* Rutas públicas */}
       <Route path="/" element={<Index />} />
-      <Route path="/explore" element={<Explore />} />
       <Route path="/products" element={<Explore />} />
       <Route path="/categories" element={<Categories />} />
       <Route path="/about" element={<About />} />
@@ -77,9 +76,9 @@ const AppRoutes = () => {
       } />
       
       {/* Rutas protegidas (requieren autenticación) */}
-      <Route path="/feed" element={
+      <Route path="/explore" element={
         <ProtectedRoute>
-          <Feed />
+          <Explore />
         </ProtectedRoute>
       } />
       <Route path="/search" element={
@@ -95,6 +94,11 @@ const AppRoutes = () => {
       <Route path="/menu" element={
         <ProtectedRoute>
           <Menu />
+        </ProtectedRoute>
+      } />
+      <Route path="/feed" element={
+        <ProtectedRoute>
+          <Feed />
         </ProtectedRoute>
       } />
       

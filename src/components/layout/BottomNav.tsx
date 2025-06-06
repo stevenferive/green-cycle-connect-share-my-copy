@@ -7,7 +7,7 @@ const BottomNav = () => {
   const location = useLocation();
   
   const navItems = [
-    { icon: Home, label: 'Inicio', path: '/feed' },
+    { icon: Home, label: 'Inicio', path: '/explore' },
     { icon: Search, label: 'Búsqueda', path: '/search' },
     { icon: MessageCircle, label: 'Chats', path: '/chats' },
     { icon: Menu, label: 'Menú', path: '/menu' },

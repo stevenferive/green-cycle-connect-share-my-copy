@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -11,6 +10,7 @@ import { Search, SlidersHorizontal } from "lucide-react";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/lib/auth-context";
 
 // Datos de ejemplo para productos
 const sampleProducts: Product[] = [
@@ -90,6 +90,7 @@ const categories = [
 const Explore = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const { isAuthenticated } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -205,7 +206,7 @@ const Explore = () => {
   
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar />
+      {!isAuthenticated && <Navbar />}
       <main className="flex-1 container py-8">
         <h1 className="text-3xl font-heading font-bold mb-6">Explorar Productos</h1>
         
@@ -270,7 +271,7 @@ const Explore = () => {
           </div>
         </div>
       </main>
-      <Footer />
+      {!isAuthenticated && <Footer />}
     </div>
   );
 };
