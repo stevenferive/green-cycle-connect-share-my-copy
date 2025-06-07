@@ -1,45 +1,42 @@
-
 import React, { useState } from 'react';
 import { Send, MoreVertical, Phone, Video } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Chat, Message } from '@/data/mockDataChats';
-
 interface ChatWindowProps {
   chat: Chat;
   onBack: () => void;
 }
-
-const ChatWindow: React.FC<ChatWindowProps> = ({ chat }) => {
+const ChatWindow: React.FC<ChatWindowProps> = ({
+  chat
+}) => {
   const [newMessage, setNewMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>(chat.messages);
-
   const handleSendMessage = () => {
     if (newMessage.trim()) {
       const message: Message = {
         id: messages.length + 1,
         text: newMessage,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        }),
         isOwn: true,
         status: 'sent'
       };
-      
       setMessages([...messages, message]);
       setNewMessage('');
     }
   };
-
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSendMessage();
     }
   };
-
-  return (
-    <div className="flex flex-col h-full">
+  return <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 border-b bg-primary/5 sticky top-0 z-10">
+      <div className="flex items-center gap-3 p-4 border-b sticky top-0 z-10 bg-gray-50">
         <div className="flex items-center gap-3 flex-1">
           <div className="relative">
             <Avatar className="h-10 w-10">
@@ -47,9 +44,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat }) => {
                 {chat.initials}
               </AvatarFallback>
             </Avatar>
-            {chat.online && (
-              <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 border-2 border-background rounded-full"></div>
-            )}
+            {chat.online && <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 border-2 border-background rounded-full"></div>}
           </div>
           
           <div className="flex-1 min-w-0">
@@ -75,58 +70,30 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat }) => {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-muted/10">
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex ${message.isOwn ? 'justify-end' : 'justify-start'}`}
-          >
-            <div
-              className={`max-w-[70%] rounded-lg p-3 ${
-                message.isOwn
-                  ? 'bg-primary text-primary-foreground rounded-br-sm'
-                  : 'bg-background text-foreground border rounded-bl-sm'
-              }`}
-            >
+        {messages.map(message => <div key={message.id} className={`flex ${message.isOwn ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[70%] rounded-lg p-3 ${message.isOwn ? 'bg-primary text-primary-foreground rounded-br-sm' : 'bg-background text-foreground border rounded-bl-sm'}`}>
               <p className="text-sm">{message.text}</p>
-              <div className={`flex items-center gap-1 mt-1 text-xs ${
-                message.isOwn ? 'text-primary-foreground/70' : 'text-muted-foreground'
-              }`}>
+              <div className={`flex items-center gap-1 mt-1 text-xs ${message.isOwn ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
                 <span>{message.timestamp}</span>
-                {message.isOwn && message.status && (
-                  <span className="ml-1">
+                {message.isOwn && message.status && <span className="ml-1">
                     {message.status === 'sent' && '✓'}
                     {message.status === 'delivered' && '✓✓'}
                     {message.status === 'read' && '✓✓'}
-                  </span>
-                )}
+                  </span>}
               </div>
             </div>
-          </div>
-        ))}
+          </div>)}
       </div>
 
       {/* Message Input */}
       <div className="p-4 bg-background border-t">
         <div className="flex gap-2">
-          <Input
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Escribe un mensaje..."
-            className="flex-1"
-          />
-          <Button 
-            onClick={handleSendMessage}
-            disabled={!newMessage.trim()}
-            size="icon"
-            className="shrink-0"
-          >
+          <Input value={newMessage} onChange={e => setNewMessage(e.target.value)} onKeyPress={handleKeyPress} placeholder="Escribe un mensaje..." className="flex-1" />
+          <Button onClick={handleSendMessage} disabled={!newMessage.trim()} size="icon" className="shrink-0">
             <Send className="h-4 w-4" />
           </Button>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ChatWindow;
