@@ -1,5 +1,5 @@
-
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import BottomNav from './BottomNav';
 
 interface AuthenticatedLayoutProps {
@@ -7,6 +7,7 @@ interface AuthenticatedLayoutProps {
 }
 
 const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) => {
+
   return (
     <div className="min-h-screen bg-background pb-20">
       {children}

@@ -35,7 +35,7 @@ const Login = () => {
           title: "Inicio de sesión exitoso",
           description: `¡Bienvenido/a de nuevo!`,
         });
-        navigate("/"); // Redirigir al inicio después del login
+        navigate("/explore"); // Redirigir a explore después del login
       } else {
         toast({
           title: "Error",

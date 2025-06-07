@@ -1,6 +1,4 @@
-
 import React from 'react';
-import Navbar from '@/components/layout/Navbar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -33,7 +31,6 @@ const Menu = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
       <main className="container mx-auto px-4 py-6">
         <div className="max-w-2xl mx-auto">
           <h1 className="text-2xl font-bold mb-6">Menú</h1>

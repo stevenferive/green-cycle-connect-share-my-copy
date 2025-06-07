@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -57,13 +56,12 @@ const AppRoutes = () => {
     <Routes>
       {/* Rutas públicas */}
       <Route path="/" element={<Index />} />
-      <Route path="/products" element={<Explore />} />
       <Route path="/categories" element={<Categories />} />
       <Route path="/about" element={<About />} />
       <Route path="/education" element={<EcoTips />} />
-      <Route path="/product/:id" element={<ProductDetail />} />
       
       {/* Rutas de autenticación */}
+
       <Route path="/login" element={
         <PublicRoute>
           <Login />
@@ -96,14 +94,13 @@ const AppRoutes = () => {
           <Menu />
         </ProtectedRoute>
       } />
-      <Route path="/feed" element={
+      
+      {/* Redirigir cualquier otra ruta a /explore si está autenticado, o a /login si no lo está */}
+      <Route path="*" element={
         <ProtectedRoute>
-          <Feed />
+          <Navigate to="/explore" replace />
         </ProtectedRoute>
       } />
-      
-      {/* Ruta catch-all */}
-      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
