@@ -1,46 +1,31 @@
 
-import React from 'react';
-
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { MessageCircle } from 'lucide-react';
+import { mockChats, Chat } from '@/data/mockDataChats';
+import ChatWindow from '@/components/chat/ChatWindow';
 
 const Chats = () => {
-  // Mock data para los chats
-  const chats = [
-    {
-      id: 1,
-      user: 'María González',
-      initials: 'MG',
-      lastMessage: '¿Sigue disponible la lámpara vintage?',
-      time: '10:30 AM',
-      unread: 2,
-      online: true
-    },
-    {
-      id: 2,
-      user: 'Carlos Ruiz',
-      initials: 'CR',
-      lastMessage: 'Perfecto, nos vemos mañana para la entrega',
-      time: 'Ayer',
-      unread: 0,
-      online: false
-    },
-    {
-      id: 3,
-      user: 'Ana Torres',
-      initials: 'AT',
-      lastMessage: 'Muchas gracias por la información',
-      time: '2 días',
-      unread: 0,
-      online: true
-    }
-  ];
+  const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
 
+  const handleChatClick = (chat: Chat) => {
+    setSelectedChat(chat);
+  };
+
+  const handleBackToList = () => {
+    setSelectedChat(null);
+  };
+
+  // Si hay un chat seleccionado, mostrar la ventana de chat individual
+  if (selectedChat) {
+    return <ChatWindow chat={selectedChat} onBack={handleBackToList} />;
+  }
+
+  // Mostrar la lista de chats
   return (
     <div className="min-h-screen bg-background">
-
       <main className="container mx-auto px-4 py-6">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center gap-3 mb-6">
@@ -48,7 +33,7 @@ const Chats = () => {
             <h1 className="text-2xl font-bold">Chats</h1>
           </div>
           
-          {chats.length === 0 ? (
+          {mockChats.length === 0 ? (
             <Card>
               <CardContent className="p-8 text-center">
                 <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
@@ -60,8 +45,12 @@ const Chats = () => {
             </Card>
           ) : (
             <div className="space-y-2">
-              {chats.map((chat) => (
-                <Card key={chat.id} className="hover:bg-muted/50 cursor-pointer transition-colors">
+              {mockChats.map((chat) => (
+                <Card 
+                  key={chat.id} 
+                  className="hover:bg-muted/50 cursor-pointer transition-colors"
+                  onClick={() => handleChatClick(chat)}
+                >
                   <CardContent className="p-4">
                     <div className="flex items-center gap-4">
                       <div className="relative">
