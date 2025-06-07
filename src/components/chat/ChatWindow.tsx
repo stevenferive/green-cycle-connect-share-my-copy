@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, Send, MoreVertical } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -37,7 +36,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat, onBack }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-background">
+    <div className="flex flex-col h-screen ">
       {/* Header */}
       <div className="flex items-center gap-3 p-4 border-b bg-background sticky top-0 z-10">
         <Button 
@@ -75,7 +74,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat, onBack }) => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-20">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => (
           <div
             key={message.id}
@@ -107,7 +106,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chat, onBack }) => {
       </div>
 
       {/* Message Input */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t">
+      <div className="p-4 bg-background border-t">
         <div className="flex gap-2 max-w-2xl mx-auto">
           <Input
             value={newMessage}
