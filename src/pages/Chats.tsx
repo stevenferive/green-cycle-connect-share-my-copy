@@ -27,7 +27,7 @@ const Chats = () => {
       {/* Panel izquierdo - Lista de chats */}
       <div className="w-96 border-r border-border flex flex-col bg-background">
         {/* Header del panel izquierdo */}
-        <div className="p-4 border-b border-border bg-primary/5">
+        <div className="p-4 border-b border-border bg-primary/5 sticky top-0 z-10">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl font-semibold text-foreground">Chats</h1>
             <MessageCircle className="h-6 w-6 text-primary" />
