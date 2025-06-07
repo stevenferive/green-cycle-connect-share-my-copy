@@ -34,9 +34,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
   }, [priceRange]);
 
   const handleSliderChange = (value: number[]) => {
-    const newRange: [number, number] = [value[0], value[1]];
-    setLocalPriceRange(newRange);
-    onPriceRangeChange(newRange);
+    // Reverse the slider values so dragging right to left works (high to low)
+    const reversedRange: [number, number] = [1000 - value[1], 1000 - value[0]];
+    setLocalPriceRange(reversedRange);
+    onPriceRangeChange(reversedRange);
   };
 
   const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,16 +95,21 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
       <div>
         <h3 className="font-heading font-medium mb-3">Rango de precio</h3>
         
-        {/* Botón para productos gratis */}
+        {/* Checkbox para productos gratis */}
         <div className="mb-4">
-          <Button
-            variant={showFreeOnly ? "default" : "outline"}
-            size="sm"
-            onClick={handleFreeOnlyToggle}
-            className={showFreeOnly ? "bg-green hover:bg-green-dark" : ""}
-          >
-            Solo productos gratis
-          </Button>
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="free-only" 
+              checked={showFreeOnly}
+              onCheckedChange={handleFreeOnlyToggle}
+            />
+            <label 
+              htmlFor="free-only"
+              className="text-sm cursor-pointer"
+            >
+              Solo productos gratis
+            </label>
+          </div>
         </div>
 
         {!showFreeOnly && (
@@ -150,10 +156,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
               </div>
             </div>
 
-            {/* Slider */}
+            {/* Slider con valores invertidos para arrastrar de derecha a izquierda */}
             <div className="px-1">
               <Slider
-                value={[localPriceRange[0], localPriceRange[1]]}
+                value={[1000 - localPriceRange[1], 1000 - localPriceRange[0]]}
                 min={0}
                 max={1000}
                 step={5}
@@ -161,8 +167,8 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                 className="w-full"
               />
               <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-                <span>S/ 0</span>
                 <span>S/ 1000</span>
+                <span>S/ 0</span>
               </div>
             </div>
           </>
