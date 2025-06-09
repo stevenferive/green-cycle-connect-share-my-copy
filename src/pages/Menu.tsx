@@ -14,7 +14,8 @@ import {
   Bell,
   Shield,
   CreditCard,
-  ChevronRight
+  ChevronRight,
+  MapPin
 } from 'lucide-react';
 
 const Menu = () => {
@@ -44,6 +45,12 @@ const Menu = () => {
       label: 'Notificaciones', 
       description: 'Configurar alertas y ver notificaciones',
       href: '/notifications'
+    },
+    { 
+      icon: MapPin, 
+      label: 'Tus ubicaciones', 
+      description: 'Gestionar ubicaciones',
+      href: '/locations'
     },
     { 
       icon: CreditCard, 
