@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -46,7 +45,12 @@ const Menu = () => {
       description: 'Configurar alertas y ver notificaciones',
       href: '/notifications'
     },
-    { icon: CreditCard, label: 'Métodos de Pago', description: 'Gestionar pagos y cobros' },
+    { 
+      icon: CreditCard, 
+      label: 'Métodos de Pago', 
+      description: 'Gestionar pagos y cobros',
+      href: '/payment-methods'
+    },
     { icon: Shield, label: 'Privacidad y Seguridad', description: 'Configuración de seguridad' },
     { icon: Settings, label: 'Configuración', description: 'Ajustes de la aplicación' },
     { icon: HelpCircle, label: 'Ayuda y Soporte', description: 'Obtener ayuda' },

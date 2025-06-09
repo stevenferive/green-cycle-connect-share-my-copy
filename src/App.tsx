@@ -24,6 +24,7 @@ import Profile from "@/pages/Profile";
 import MyProducts from "@/pages/MyProducts";
 import Favorites from "@/pages/Favorites";
 import Notifications from "@/pages/Notifications";
+import PaymentMethods from "@/pages/PaymentMethods";
 
 const queryClient = new QueryClient();
 
@@ -123,6 +124,11 @@ const AppRoutes = () => {
       <Route path="/favorites" element={
         <ProtectedRoute>
           <Favorites />
+        </ProtectedRoute>
+      } />
+      <Route path="/payment-methods" element={
+        <ProtectedRoute>
+          <PaymentMethods />
         </ProtectedRoute>
       } />
       
