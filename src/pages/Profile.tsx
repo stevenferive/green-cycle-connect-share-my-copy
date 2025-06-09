@@ -61,13 +61,15 @@ const Profile = () => {
   const handleInputChange = (field: string, value: string) => {
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
-      setFormData(prev => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent as keyof typeof prev],
-          [child]: value
-        }
-      }));
+      if (parent === 'socialLinks') {
+        setFormData(prev => ({
+          ...prev,
+          socialLinks: {
+            ...prev.socialLinks,
+            [child]: value
+          }
+        }));
+      }
     } else {
       setFormData(prev => ({
         ...prev,
