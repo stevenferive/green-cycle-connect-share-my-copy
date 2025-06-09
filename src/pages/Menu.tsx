@@ -34,7 +34,12 @@ const Menu = () => {
       description: 'Gestionar mis publicaciones',
       href: '/my-products'
     },
-    { icon: Heart, label: 'Favoritos', description: 'Productos que me gustan' },
+    { 
+      icon: Heart, 
+      label: 'Favoritos', 
+      description: 'Productos que me gustan',
+      href: '/favorites'
+    },
     { icon: Bell, label: 'Notificaciones', description: 'Configurar alertas' },
     { icon: CreditCard, label: 'Métodos de Pago', description: 'Gestionar pagos y cobros' },
     { icon: Shield, label: 'Privacidad y Seguridad', description: 'Configuración de seguridad' },
