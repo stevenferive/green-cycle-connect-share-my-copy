@@ -20,7 +20,7 @@ const myProducts = [
     price: 25.00,
     forBarter: false,
     image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400',
-    status: 'active',
+    status: 'active' as const,
     publishedAt: '2024-01-15',
     views: 45,
     favorites: 8
@@ -34,7 +34,7 @@ const myProducts = [
     price: 0,
     forBarter: true,
     image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400',
-    status: 'out_of_stock',
+    status: 'out_of_stock' as const,
     publishedAt: '2024-01-10',
     views: 32,
     favorites: 12
@@ -48,7 +48,7 @@ const myProducts = [
     price: 15.00,
     forBarter: false,
     image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400',
-    status: 'paused',
+    status: 'paused' as const,
     publishedAt: '2024-01-08',
     views: 28,
     favorites: 5
@@ -84,7 +84,7 @@ const MyProducts = () => {
       publishedAt: new Date().toISOString().split('T')[0],
       views: 0,
       favorites: 0,
-      status: 'active'
+      status: 'active' as const
     };
     setProducts(prev => [product, ...prev]);
     setIsUploadModalOpen(false);
