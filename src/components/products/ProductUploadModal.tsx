@@ -37,7 +37,16 @@ const ecoCategories = [
   'Comercio Justo',
   'Energía Renovable',
   'Reutilizable',
-  'Eco-amigable'
+  'Eco-amigable',
+  'Hogar',
+  'Moda',
+  'Electrónica',
+  'Muebles',
+  'Transporte',
+  'Niños',
+  'Jardín',
+  'Libros',
+  'Deportes',
 ];
 
 const ProductUploadModal: React.FC<ProductUploadModalProps> = ({ isOpen, onClose, onSave }) => {
