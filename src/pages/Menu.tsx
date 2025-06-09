@@ -40,7 +40,12 @@ const Menu = () => {
       description: 'Productos que me gustan',
       href: '/favorites'
     },
-    { icon: Bell, label: 'Notificaciones', description: 'Configurar alertas' },
+    { 
+      icon: Bell, 
+      label: 'Notificaciones', 
+      description: 'Configurar alertas y ver notificaciones',
+      href: '/notifications'
+    },
     { icon: CreditCard, label: 'Métodos de Pago', description: 'Gestionar pagos y cobros' },
     { icon: Shield, label: 'Privacidad y Seguridad', description: 'Configuración de seguridad' },
     { icon: Settings, label: 'Configuración', description: 'Ajustes de la aplicación' },
