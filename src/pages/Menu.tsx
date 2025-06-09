@@ -28,7 +28,12 @@ const Menu = () => {
       description: 'Editar información personal',
       href: '/profile'
     },
-    { icon: Package, label: 'Mis Productos', description: 'Gestionar mis publicaciones' },
+    { 
+      icon: Package, 
+      label: 'Mis Productos', 
+      description: 'Gestionar mis publicaciones',
+      href: '/my-products'
+    },
     { icon: Heart, label: 'Favoritos', description: 'Productos que me gustan' },
     { icon: Bell, label: 'Notificaciones', description: 'Configurar alertas' },
     { icon: CreditCard, label: 'Métodos de Pago', description: 'Gestionar pagos y cobros' },

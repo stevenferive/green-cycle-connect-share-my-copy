@@ -20,6 +20,7 @@ import Chats from "@/pages/Chats";
 import Menu from "@/pages/Menu";
 import Cart from "@/pages/Cart";
 import Profile from "@/pages/Profile";
+import MyProducts from "@/pages/MyProducts";
 
 const queryClient = new QueryClient();
 
@@ -104,6 +105,11 @@ const AppRoutes = () => {
       <Route path="/profile" element={
         <ProtectedRoute>
           <Profile />
+        </ProtectedRoute>
+      } />
+      <Route path="/my-products" element={
+        <ProtectedRoute>
+          <MyProducts />
         </ProtectedRoute>
       } />
       
