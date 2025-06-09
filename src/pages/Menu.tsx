@@ -1,8 +1,10 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/lib/auth-context';
+import { Link } from 'react-router-dom';
 import { 
   User, 
   Settings, 
@@ -12,14 +14,20 @@ import {
   LogOut,
   Bell,
   Shield,
-  CreditCard
+  CreditCard,
+  ChevronRight
 } from 'lucide-react';
 
 const Menu = () => {
   const { user, logout } = useAuth();
 
   const menuItems = [
-    { icon: User, label: 'Mi Perfil', description: 'Editar información personal' },
+    { 
+      icon: User, 
+      label: 'Mi Perfil', 
+      description: 'Editar información personal',
+      href: '/profile'
+    },
     { icon: Package, label: 'Mis Productos', description: 'Gestionar mis publicaciones' },
     { icon: Heart, label: 'Favoritos', description: 'Productos que me gustan' },
     { icon: Bell, label: 'Notificaciones', description: 'Configurar alertas' },
@@ -57,21 +65,33 @@ const Menu = () => {
 
           {/* Opciones del menú */}
           <div className="space-y-2">
-            {menuItems.map((item, index) => (
-              <Card key={index} className="hover:bg-muted/50 cursor-pointer transition-colors">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-4">
-                    <div className="p-2 bg-muted rounded-lg">
-                      <item.icon className="h-5 w-5 text-green" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-medium">{item.label}</h3>
-                      <p className="text-sm text-muted-foreground">{item.description}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {menuItems.map((item, index) => {
+              const MenuCard = item.href ? Link : 'div';
+              return (
+                <MenuCard 
+                  key={index} 
+                  to={item.href} 
+                  className="block"
+                >
+                  <Card className="hover:bg-muted/50 cursor-pointer transition-colors">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-4">
+                        <div className="p-2 bg-muted rounded-lg">
+                          <item.icon className="h-5 w-5 text-green" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-medium">{item.label}</h3>
+                          <p className="text-sm text-muted-foreground">{item.description}</p>
+                        </div>
+                        {item.href && (
+                          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </MenuCard>
+              );
+            })}
           </div>
 
           {/* Botón de cerrar sesión */}
