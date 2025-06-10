@@ -1,6 +1,16 @@
-
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, getCurrentUser, login, logout, register, UserCredentials } from './auth-service';
+import { 
+  User, 
+  getCurrentUser, 
+  login, 
+  logout, 
+  register, 
+  UserCredentials,
+  getUserProfile,
+  updateUserProfile,
+  deleteUserAccount,
+  UpdateProfileData
+} from './auth-service';
 
 interface AuthContextType {
   user: User | null;
@@ -8,6 +18,9 @@ interface AuthContextType {
   isLoading: boolean;
   login: (credentials: { email: string; password: string }) => Promise<{ success: boolean; message?: string }>;
   register: (userData: UserCredentials) => Promise<{ success: boolean; message?: string }>;
+  updateProfile: (profileData: UpdateProfileData) => Promise<{ success: boolean; message?: string; user?: User }>;
+  deleteAccount: () => Promise<{ success: boolean; message?: string }>;
+  refreshProfile: () => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
 }
 
@@ -64,6 +77,63 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const handleUpdateProfile = async (profileData: UpdateProfileData) => {
+    setIsLoading(true);
+    try {
+      const result = await updateUserProfile(profileData);
+      if (result.success && result.user) {
+        setUser(result.user);
+      }
+      return { success: result.success, message: result.message };
+    } catch (error) {
+      console.error('Error en handleUpdateProfile:', error);
+      return { 
+        success: false, 
+        message: error instanceof Error ? error.message : 'Error al actualizar perfil' 
+      };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setIsLoading(true);
+    try {
+      const result = await deleteUserAccount();
+      if (result.success) {
+        setUser(null);
+      }
+      return { success: result.success, message: result.message };
+    } catch (error) {
+      console.error('Error en handleDeleteAccount:', error);
+      return { 
+        success: false, 
+        message: error instanceof Error ? error.message : 'Error al eliminar cuenta' 
+      };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRefreshProfile = async () => {
+    setIsLoading(true);
+    try {
+      const result = await getUserProfile();
+      if (result.success && result.user) {
+        setUser(result.user);
+      }
+      return { success: result.success, message: result.message };
+    } catch (error) {
+      console.error('Error en handleRefreshProfile:', error);
+      return { 
+        success: false, 
+        message: error instanceof Error ? error.message : 'Error al actualizar perfil' 
+      };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleLogout = () => {
     logout();
     setUser(null);
@@ -75,6 +145,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     isLoading,
     login: handleLogin,
     register: handleRegister,
+    updateProfile: handleUpdateProfile,
+    deleteAccount: handleDeleteAccount,
+    refreshProfile: handleRefreshProfile,
     logout: handleLogout,
   };
 
