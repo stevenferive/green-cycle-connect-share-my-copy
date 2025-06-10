@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Recycle } from "lucide-react";
@@ -23,19 +24,19 @@ const Login = () => {
     setCredentials(prev => ({ ...prev, [id]: value }));
   };
   
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     
     try {
-      const result = login(credentials);
+      const result = await login(credentials);
       
       if (result.success) {
         toast({
           title: "Inicio de sesión exitoso",
           description: `¡Bienvenido/a de nuevo!`,
         });
-        navigate("/explore"); // Redirigir a explore después del login
+        navigate("/explore");
       } else {
         toast({
           title: "Error",
@@ -44,6 +45,7 @@ const Login = () => {
         });
       }
     } catch (error) {
+      console.error('Error en login:', error);
       toast({
         title: "Error",
         description: "Ha ocurrido un error al iniciar sesión",
