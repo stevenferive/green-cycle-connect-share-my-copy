@@ -37,7 +37,7 @@ const Register = () => {
     }
   };
   
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     if (formData.password !== confirmPassword) {
@@ -52,14 +52,14 @@ const Register = () => {
     setIsLoading(true);
     
     try {
-      const result = register(formData);
+      const result = await register(formData);
       
       if (result.success) {
         toast({
           title: "Registro exitoso",
           description: "Tu cuenta ha sido creada correctamente",
         });
-        navigate("/login");
+        navigate("/explore");
       } else {
         toast({
           title: "Error",
@@ -68,6 +68,7 @@ const Register = () => {
         });
       }
     } catch (error) {
+      console.error('Error en registro:', error);
       toast({
         title: "Error",
         description: "Ha ocurrido un error al registrarte",
