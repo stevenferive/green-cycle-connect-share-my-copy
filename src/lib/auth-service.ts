@@ -1,4 +1,3 @@
-
 // Interfaces para tipado
 export interface User {
   id: string;
@@ -32,11 +31,34 @@ const handleApiResponse = async (response: Response) => {
   return response.json();
 };
 
+// Función para validar datos de registro
+const validateRegistrationData = (credentials: UserCredentials): { isValid: boolean; message?: string } => {
+  if (!credentials.firstName || credentials.firstName.length < 2) {
+    return { isValid: false, message: 'El nombre debe tener al menos 2 caracteres' };
+  }
+  
+  if (!credentials.lastName || credentials.lastName.length < 2) {
+    return { isValid: false, message: 'El apellido debe tener al menos 2 caracteres' };
+  }
+  
+  if (!credentials.email || !credentials.email.includes('@')) {
+    return { isValid: false, message: 'Ingresa un email válido' };
+  }
+  
+  if (!credentials.password || credentials.password.length < 8) {
+    return { isValid: false, message: 'La contraseña debe tener al menos 8 caracteres' };
+  }
+  
+  return { isValid: true };
+};
+
 // Función para registrar un nuevo usuario
 export const register = async (credentials: UserCredentials): Promise<{ success: boolean; message?: string; user?: User }> => {
   try {
-    if (!credentials.firstName || !credentials.lastName || !credentials.email || !credentials.password) {
-      return { success: false, message: 'Todos los campos son obligatorios' };
+    // Validar datos antes de enviar
+    const validation = validateRegistrationData(credentials);
+    if (!validation.isValid) {
+      return { success: false, message: validation.message };
     }
 
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
@@ -44,7 +66,12 @@ export const register = async (credentials: UserCredentials): Promise<{ success:
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(credentials),
+      body: JSON.stringify({
+        firstName: credentials.firstName,
+        lastName: credentials.lastName,
+        email: credentials.email,
+        password: credentials.password
+      }),
     });
 
     const data: LoginResponse = await handleApiResponse(response);
@@ -56,10 +83,20 @@ export const register = async (credentials: UserCredentials): Promise<{ success:
     return { success: true, user: data.user };
   } catch (error) {
     console.error('Error en registro:', error);
-    return { 
-      success: false, 
-      message: error instanceof Error ? error.message : 'Error al registrar usuario' 
-    };
+    
+    // Manejar errores específicos del backend
+    let errorMessage = 'Error al registrar usuario';
+    if (error instanceof Error) {
+      if (error.message.includes('409') || error.message.toLowerCase().includes('conflict')) {
+        errorMessage = 'Este email ya está registrado';
+      } else if (error.message.includes('400') || error.message.toLowerCase().includes('bad request')) {
+        errorMessage = 'Datos inválidos. Verifica la información ingresada';
+      } else {
+        errorMessage = error.message;
+      }
+    }
+    
+    return { success: false, message: errorMessage };
   }
 };
 
