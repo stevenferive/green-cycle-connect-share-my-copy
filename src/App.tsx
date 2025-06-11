@@ -67,8 +67,10 @@ const AppRoutes = () => {
       <Route path="/about" element={<About />} />
       <Route path="/education" element={<EcoTips />} />
       
+      {/* Producto individual - disponible para todos */}
+      <Route path="/product/:id" element={<ProductDetail />} />
+      
       {/* Rutas de autenticación */}
-
       <Route path="/login" element={
         <PublicRoute>
           <Login />
