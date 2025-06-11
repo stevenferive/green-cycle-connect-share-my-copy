@@ -10,6 +10,7 @@ import ProductActions from "@/components/product-detail/ProductActions";
 import ProductDescription from "@/components/product-detail/ProductDescription";
 import MessageForm from "@/components/product-detail/MessageForm";
 import { useAuth } from "@/lib/auth-context";
+import AuthenticatedLayout from "@/components/layout/AuthenticatedLayout";
 
 // Import sample products data to show product details
 import { Product } from "@/components/products/ProductCard";
@@ -94,22 +95,30 @@ const ProductDetail = () => {
   
   // Handle case where product is not found
   if (!product) {
+    const content = (
+      <main className="flex-1 container py-16 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-3xl font-heading font-bold mb-4">Producto no encontrado</h1>
+          <p className="text-muted-foreground mb-6">
+            Lo sentimos, el producto que buscas no está disponible.
+          </p>
+          <Link to="/explore">
+            <Button className="bg-green hover:bg-green-dark">
+              Explorar otros productos
+            </Button>
+          </Link>
+        </div>
+      </main>
+    );
+
+    if (isAuthenticated) {
+      return <AuthenticatedLayout>{content}</AuthenticatedLayout>;
+    }
+
     return (
       <div className="flex min-h-screen flex-col">
-        <main className="flex-1 container py-16 flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-3xl font-heading font-bold mb-4">Producto no encontrado</h1>
-            <p className="text-muted-foreground mb-6">
-              Lo sentimos, el producto que buscas no está disponible.
-            </p>
-            <Link to="/explore">
-              <Button className="bg-green hover:bg-green-dark">
-                Explorar otros productos
-              </Button>
-            </Link>
-          </div>
-        </main>
-        {!isAuthenticated && <Footer />}
+        {content}
+        <Footer />
       </div>
     );
   }
@@ -135,36 +144,44 @@ const ProductDetail = () => {
     document.getElementById('messageArea')?.focus();
   };
   
+  const content = (
+    <main className="flex-1 container py-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Product Image */}
+        <ProductImage image={product.image} title={product.title} />
+        
+        {/* Product Details */}
+        <div className="space-y-6">
+          <ProductInfo 
+            title={product.title}
+            location={product.location}
+            price={product.price}
+            exchange={product.exchange}
+            ecoBadges={product.ecoBadges}
+            ecoSaving={product.ecoSaving}
+          />
+          
+          <ProductDescription />
+          
+          <ProductActions 
+            onAddToCart={handleAddToCart}
+            onContactSeller={handleContactSeller}
+          />
+          
+          <MessageForm onSendMessage={handleSendMessage} />
+        </div>
+      </div>
+    </main>
+  );
+
+  if (isAuthenticated) {
+    return <AuthenticatedLayout>{content}</AuthenticatedLayout>;
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
-      <main className="flex-1 container py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Product Image */}
-          <ProductImage image={product.image} title={product.title} />
-          
-          {/* Product Details */}
-          <div className="space-y-6">
-            <ProductInfo 
-              title={product.title}
-              location={product.location}
-              price={product.price}
-              exchange={product.exchange}
-              ecoBadges={product.ecoBadges}
-              ecoSaving={product.ecoSaving}
-            />
-            
-            <ProductDescription />
-            
-            <ProductActions 
-              onAddToCart={handleAddToCart}
-              onContactSeller={handleContactSeller}
-            />
-            
-            <MessageForm onSendMessage={handleSendMessage} />
-          </div>
-        </div>
-      </main>
-      {!isAuthenticated && <Footer />}
+      {content}
+      <Footer />
     </div>
   );
 };
