@@ -18,7 +18,7 @@ const fetchWithAuth = async (url: string, options: RequestOptions = {}) => {
   
   const headers = {
     'Content-Type': 'application/json',
-    ...(token && { 'Authorization': `${token}` }),
+    ...(token && { 'Authorization': `Bearer ${token}` }),
     ...options.headers,
   };
 
@@ -93,7 +93,7 @@ export const api = {
       const response = await fetch(`${BASE_URL}${url}`, {
         method: 'POST',
         headers: {
-          ...(token && { 'Authorization': `${token}` }),
+          ...(token && { 'Authorization': `Bearer ${token}` }),
           // No establecemos Content-Type aquí porque fetch lo establece automáticamente con el boundary correcto para FormData
         },
         body: formData,
