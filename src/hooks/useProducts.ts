@@ -7,7 +7,7 @@ export const useProducts = () => {
     queryKey: ['products'],
     queryFn: productService.getAllProducts,
     staleTime: 5 * 60 * 1000, // 5 minutos
-    cacheTime: 10 * 60 * 1000, // 10 minutos
+    gcTime: 10 * 60 * 1000, // 10 minutos
   });
 };
 
@@ -17,6 +17,6 @@ export const useProduct = (id: string) => {
     queryFn: () => productService.getProductById(id),
     enabled: !!id,
     staleTime: 5 * 60 * 1000,
-    cacheTime: 10 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   });
 };
