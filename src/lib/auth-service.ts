@@ -73,6 +73,36 @@ export const register = async (credentials: UserCredentials): Promise<{ success:
 // Función para iniciar sesión
 export const login = async (credentials: { email: string; password: string }): Promise<{ success: boolean; message?: string; user?: User }> => {
   try {
+    // Usuario de prueba
+    if (credentials.email === 'prueba02@gmail.com' && credentials.password === 'Prueba02') {
+      const mockUser: User = {
+        id: '1',
+        firstName: 'Ares',
+        lastName: 'Prueba',
+        email: 'prueba02@gmail.com',
+        role: 'user',
+        city: 'Ciudad de Prueba',
+        country: 'País de Prueba',
+        description: 'Usuario de prueba',
+        ecoInterests: ['reciclaje', 'sostenibilidad'],
+        socialLinks: {
+          instagram: 'https://instagram.com/prueba',
+          facebook: 'https://facebook.com/prueba',
+          twitter: 'https://twitter.com/prueba',
+          website: 'https://prueba.com'
+        }
+      };
+      
+      // Crear un token mock
+      const mockToken = 'mock_token_' + Math.random().toString(36).substring(7);
+      
+      // Guardar token y usuario en localStorage
+      localStorage.setItem('auth_token', mockToken);
+      localStorage.setItem('current_user', JSON.stringify(mockUser));
+      
+      return { success: true, user: mockUser };
+    }
+
     const data = await api.post('/auth/login', credentials);
     
     // Guardar token y usuario en localStorage
