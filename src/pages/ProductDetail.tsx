@@ -4,9 +4,12 @@ import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ShoppingCart, MessageCircle, Heart, MapPin, CircleDollarSign, Repeat } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import ProductImage from "@/components/product-detail/ProductImage";
+import ProductInfo from "@/components/product-detail/ProductInfo";
+import ProductActions from "@/components/product-detail/ProductActions";
+import ProductDescription from "@/components/product-detail/ProductDescription";
+import MessageForm from "@/components/product-detail/MessageForm";
 
 // Import sample products data to show product details
 import { Product } from "@/components/products/ProductCard";
@@ -126,6 +129,11 @@ const ProductDetail = () => {
       description: "Tu mensaje ha sido enviado al vendedor",
     });
   };
+
+  // Handle contact seller button click
+  const handleContactSeller = () => {
+    document.getElementById('messageArea')?.focus();
+  };
   
   return (
     <div className="flex min-h-screen flex-col">
@@ -133,113 +141,27 @@ const ProductDetail = () => {
       <main className="flex-1 container py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image */}
-          <div className="rounded-lg overflow-hidden">
-            <img 
-              src={product.image} 
-              alt={product.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <ProductImage image={product.image} title={product.title} />
           
           {/* Product Details */}
           <div className="space-y-6">
-            <div>
-              <div className="flex items-start justify-between">
-                <h1 className="text-2xl md:text-3xl font-heading font-bold">{product.title}</h1>
-                <button className="rounded-full p-2 text-muted-foreground hover:bg-secondary hover:text-foreground">
-                  <Heart className="h-6 w-6" />
-                </button>
-              </div>
-              
-              <div className="mt-2 flex items-center gap-1 text-muted-foreground">
-                <MapPin className="h-4 w-4" />
-                <span>{product.location}</span>
-              </div>
-            </div>
+            <ProductInfo 
+              title={product.title}
+              location={product.location}
+              price={product.price}
+              exchange={product.exchange}
+              ecoBadges={product.ecoBadges}
+              ecoSaving={product.ecoSaving}
+            />
             
-            <div className="flex items-center gap-2">
-              <div className="flex items-center font-heading text-xl font-semibold text-green">
-                <CircleDollarSign className="mr-1 h-5 w-5" />
-                S/ {product.price.toFixed(2)}
-              </div>
-              {product.exchange && (
-                <Badge variant="outline" className="flex items-center gap-1 border-green text-green">
-                  <Repeat className="h-3 w-3" /> Intercambio disponible
-                </Badge>
-              )}
-            </div>
+            <ProductDescription />
             
-            <div className="flex flex-wrap gap-2">
-              {product.ecoBadges.map((badge, index) => (
-                <Badge key={index} className="bg-green-light text-white">
-                  {badge}
-                </Badge>
-              ))}
-            </div>
+            <ProductActions 
+              onAddToCart={handleAddToCart}
+              onContactSeller={handleContactSeller}
+            />
             
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <svg
-                className="h-4 w-4 text-green"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5" />
-                <path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12" />
-                <path d="m14 16-3 3 3 3" />
-                <path d="M8.293 13.596 4.5 9.828a1.83 1.83 0 0 1-.083-2.576l.117-.129A1.824 1.824 0 0 1 6.044 6.5H9" />
-                <path d="M10.5 6.5h6.043a1.83 1.83 0 0 1 1.536.894l.035.061a1.784 1.784 0 0 1-.028 1.768l-4.287 7.5" />
-                <path d="m17.5 6.5-3-3-3 3" />
-              </svg>
-              <span>Impacto ecológico: {product.ecoSaving}kg CO2 ahorrados</span>
-            </div>
-            
-            <div className="pt-4 border-t">
-              <h3 className="font-heading font-semibold mb-2">Descripción</h3>
-              <p className="text-muted-foreground">
-                Este es un producto de segunda mano en excelente estado. 
-                Al comprarlo contribuyes a reducir los residuos y el impacto ambiental.
-              </p>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                className="flex-1 bg-green hover:bg-green-dark"
-                onClick={handleAddToCart}
-              >
-                <ShoppingCart className="mr-2 h-4 w-4" />
-                Agregar al carrito
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                className="flex-1 border-green text-green hover:bg-green-light/10"
-                onClick={() => document.getElementById('messageArea')?.focus()}
-              >
-                <MessageCircle className="mr-2 h-4 w-4" />
-                Contactar vendedor
-              </Button>
-            </div>
-            
-            <div className="pt-4 border-t space-y-3">
-              <h3 className="font-heading font-semibold">Enviar mensaje al vendedor</h3>
-              <textarea 
-                id="messageArea"
-                className="w-full min-h-[100px] rounded-md border border-input bg-transparent px-3 py-2 text-sm"
-                placeholder="Hola, estoy interesado en este producto. ¿Está disponible?"
-              />
-              <Button 
-                className="w-full sm:w-auto bg-green hover:bg-green-dark"
-                onClick={handleSendMessage}
-              >
-                Enviar mensaje
-              </Button>
-            </div>
+            <MessageForm onSendMessage={handleSendMessage} />
           </div>
         </div>
       </main>
