@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -24,6 +23,9 @@ const Explore = () => {
   // Mapear los productos de la API al formato esperado por el frontend
   const products = productsData ? productsData.map(mapProductResponseToProduct) : [];
   
+  console.log('Datos de la API:', productsData);
+  console.log('Productos mapeados:', products);
+  
   const {
     searchTerm,
     setSearchTerm,
@@ -36,6 +38,8 @@ const Explore = () => {
     handleSearch,
     toggleCategory,
   } = useProductFilters(products);
+  
+  console.log('Productos filtrados:', filteredProducts);
   
   if (isLoading) {
     return (
