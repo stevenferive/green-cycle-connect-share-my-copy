@@ -1,7 +1,6 @@
 
 import React from "react";
 import { useParams, Link } from "react-router-dom";
-import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -10,6 +9,7 @@ import ProductInfo from "@/components/product-detail/ProductInfo";
 import ProductActions from "@/components/product-detail/ProductActions";
 import ProductDescription from "@/components/product-detail/ProductDescription";
 import MessageForm from "@/components/product-detail/MessageForm";
+import { useAuth } from "@/lib/auth-context";
 
 // Import sample products data to show product details
 import { Product } from "@/components/products/ProductCard";
@@ -87,6 +87,7 @@ const sampleProducts: Product[] = [
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
+  const { isAuthenticated } = useAuth();
   
   // Find the product with the matching ID
   const product = sampleProducts.find((p) => p.id === id);
@@ -95,7 +96,6 @@ const ProductDetail = () => {
   if (!product) {
     return (
       <div className="flex min-h-screen flex-col">
-        <Navbar />
         <main className="flex-1 container py-16 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-3xl font-heading font-bold mb-4">Producto no encontrado</h1>
@@ -109,7 +109,7 @@ const ProductDetail = () => {
             </Link>
           </div>
         </main>
-        <Footer />
+        {!isAuthenticated && <Footer />}
       </div>
     );
   }
@@ -137,7 +137,6 @@ const ProductDetail = () => {
   
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar />
       <main className="flex-1 container py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image */}
@@ -165,7 +164,7 @@ const ProductDetail = () => {
           </div>
         </div>
       </main>
-      <Footer />
+      {!isAuthenticated && <Footer />}
     </div>
   );
 };
