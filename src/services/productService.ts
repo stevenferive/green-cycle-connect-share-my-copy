@@ -1,4 +1,6 @@
+
 import { api } from '@/api';
+import { CreateProductDto } from '@/types/product';
 
 export interface ProductResponse {
   _id: string;
@@ -105,6 +107,30 @@ export const productService = {
     } catch (error) {
       console.error('Error al obtener producto:', error);
       return null;
+    }
+  },
+
+  async createProduct(productData: CreateProductDto): Promise<ProductResponse> {
+    try {
+      console.log('Creando producto:', productData);
+      const response = await api.post('/products', productData);
+      console.log('Producto creado exitosamente:', response);
+      return response;
+    } catch (error) {
+      console.error('Error al crear producto:', error);
+      throw error;
+    }
+  },
+
+  async uploadProductImage(file: File): Promise<{ url: string }> {
+    try {
+      console.log('Subiendo imagen del producto:', file.name);
+      const response = await api.uploadFile('/products/upload-image', file, 'image');
+      console.log('Imagen subida exitosamente:', response);
+      return response;
+    } catch (error) {
+      console.error('Error al subir imagen:', error);
+      throw error;
     }
   }
 };
