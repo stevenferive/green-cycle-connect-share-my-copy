@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Search, MessageCircle, Menu, ShoppingCart } from 'lucide-react';
 
-const BottomNav = () => {
+const BottomNav = React.memo(() => {
   const location = useLocation();
   
   const navItems = [
@@ -39,6 +38,8 @@ const BottomNav = () => {
       </div>
     </nav>
   );
-};
+});
+
+BottomNav.displayName = 'BottomNav';
 
 export default BottomNav;

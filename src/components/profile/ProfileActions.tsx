@@ -1,11 +1,11 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Save, X, Trash2 } from 'lucide-react';
+import { Save, X, Trash2, Loader2 } from 'lucide-react';
 
 interface ProfileActionsProps {
   isEditing: boolean;
+  isLoading: boolean;
   onEdit: () => void;
   onSave: () => void;
   onCancel: () => void;
@@ -14,6 +14,7 @@ interface ProfileActionsProps {
 
 const ProfileActions: React.FC<ProfileActionsProps> = ({
   isEditing,
+  isLoading,
   onEdit,
   onSave,
   onCancel,
@@ -36,13 +37,19 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
                 <Button 
                   onClick={onSave}
                   className="bg-green hover:bg-green/90"
+                  disabled={isLoading}
                 >
-                  <Save className="mr-2 h-4 w-4" />
-                  Guardar Cambios
+                  {isLoading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="mr-2 h-4 w-4" />
+                  )}
+                  {isLoading ? 'Guardando...' : 'Guardar Cambios'}
                 </Button>
                 <Button 
                   variant="outline" 
                   onClick={onCancel}
+                  disabled={isLoading}
                 >
                   <X className="mr-2 h-4 w-4" />
                   Cancelar
@@ -55,9 +62,14 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
             variant="destructive" 
             onClick={onDelete}
             className="ml-auto"
+            disabled={isLoading}
           >
-            <Trash2 className="mr-2 h-4 w-4" />
-            Eliminar Cuenta
+            {isLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Trash2 className="mr-2 h-4 w-4" />
+            )}
+            {isLoading ? 'Eliminando...' : 'Eliminar Cuenta'}
           </Button>
         </div>
       </CardContent>

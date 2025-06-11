@@ -6,14 +6,17 @@ interface AuthenticatedLayoutProps {
   children: React.ReactNode;
 }
 
-const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) => {
-
+const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = React.memo(({ children }) => {
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {children}
+    <div className="min-h-screen bg-background">
+      <div className="pb-20">
+        {children}
+      </div>
       <BottomNav />
     </div>
   );
-};
+});
+
+AuthenticatedLayout.displayName = 'AuthenticatedLayout';
 
 export default AuthenticatedLayout;

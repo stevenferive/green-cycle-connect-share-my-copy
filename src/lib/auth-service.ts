@@ -1,3 +1,5 @@
+import { api } from '../../api';
+
 // Interfaces para tipado
 export interface User {
   id: string;
@@ -5,6 +7,17 @@ export interface User {
   lastName: string;
   email: string;
   role: string;
+  city?: string;
+  country?: string;
+  description?: string;
+  avatar?: string;
+  ecoInterests?: string[];
+  socialLinks?: {
+    instagram?: string;
+    facebook?: string;
+    twitter?: string;
+    website?: string;
+  };
 }
 
 export interface UserCredentials {
@@ -38,110 +51,40 @@ export interface UpdateProfileData {
   };
 }
 
-// Configuración de la API
-const API_BASE_URL = 'http://localhost:3000';
-
-// Función auxiliar para manejar respuestas de la API
-const handleApiResponse = async (response: Response) => {
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
-  }
-  return response.json();
-};
-
-// Función para validar datos de registro
-const validateRegistrationData = (credentials: UserCredentials): { isValid: boolean; message?: string } => {
-  if (!credentials.firstName || credentials.firstName.length < 2) {
-    return { isValid: false, message: 'El nombre debe tener al menos 2 caracteres' };
-  }
-  
-  if (!credentials.lastName || credentials.lastName.length < 2) {
-    return { isValid: false, message: 'El apellido debe tener al menos 2 caracteres' };
-  }
-  
-  if (!credentials.email || !credentials.email.includes('@')) {
-    return { isValid: false, message: 'Ingresa un email válido' };
-  }
-  
-  if (!credentials.password || credentials.password.length < 8) {
-    return { isValid: false, message: 'La contraseña debe tener al menos 8 caracteres' };
-  }
-  
-  return { isValid: true };
-};
-
 // Función para registrar un nuevo usuario
 export const register = async (credentials: UserCredentials): Promise<{ success: boolean; message?: string; user?: User }> => {
   try {
-    // Validar datos antes de enviar
-    const validation = validateRegistrationData(credentials);
-    if (!validation.isValid) {
-      return { success: false, message: validation.message };
-    }
-
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        firstName: credentials.firstName,
-        lastName: credentials.lastName,
-        email: credentials.email,
-        password: credentials.password
-      }),
-    });
-
-    const data: LoginResponse = await handleApiResponse(response);
+    const data = await api.post('/auth/register', credentials);
     
     // Guardar token en localStorage
-    localStorage.setItem('greencycle_token', data.token);
-    localStorage.setItem('greencycle_current_user', JSON.stringify(data.user));
+    localStorage.setItem('auth_token', data.token);
+    localStorage.setItem('current_user', JSON.stringify(data.user));
     
     return { success: true, user: data.user };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error en registro:', error);
-    
-    // Manejar errores específicos del backend
-    let errorMessage = 'Error al registrar usuario';
-    if (error instanceof Error) {
-      if (error.message.includes('409') || error.message.toLowerCase().includes('conflict')) {
-        errorMessage = 'Este email ya está registrado';
-      } else if (error.message.includes('400') || error.message.toLowerCase().includes('bad request')) {
-        errorMessage = 'Datos inválidos. Verifica la información ingresada';
-      } else {
-        errorMessage = error.message;
-      }
-    }
-    
-    return { success: false, message: errorMessage };
+    return { 
+      success: false, 
+      message: error.message || 'Error al registrar usuario'
+    };
   }
 };
 
 // Función para iniciar sesión
 export const login = async (credentials: { email: string; password: string }): Promise<{ success: boolean; message?: string; user?: User }> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials),
-    });
-
-    const data: LoginResponse = await handleApiResponse(response);
+    const data = await api.post('/auth/login', credentials);
     
     // Guardar token y usuario en localStorage
-    localStorage.setItem('greencycle_token', data.token);
-    localStorage.setItem('greencycle_current_user', JSON.stringify(data.user));
+    localStorage.setItem('auth_token', data.token);
+    localStorage.setItem('current_user', JSON.stringify(data.user));
     
     return { success: true, user: data.user };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error en login:', error);
     return { 
       success: false, 
-      message: error instanceof Error ? error.message : 'Credenciales inválidas' 
+      message: error.message || 'Credenciales inválidas'
     };
   }
 };
@@ -149,26 +92,17 @@ export const login = async (credentials: { email: string; password: string }): P
 // Función para obtener el perfil del usuario actual
 export const getUserProfile = async (): Promise<{ success: boolean; message?: string; user?: User }> => {
   try {
-    const response = await authenticatedFetch(`${API_BASE_URL}/user/profile/me`, {
-      method: 'GET',
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
-    }
-
-    const user: User = await response.json();
+    const user = await api.get('/user/profile/me');
     
     // Actualizar usuario en localStorage
-    localStorage.setItem('greencycle_current_user', JSON.stringify(user));
+    localStorage.setItem('current_user', JSON.stringify(user));
     
     return { success: true, user };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error al obtener perfil:', error);
     return { 
       success: false, 
-      message: error instanceof Error ? error.message : 'Error al obtener perfil del usuario' 
+      message: error.message || 'Error al obtener perfil del usuario'
     };
   }
 };
@@ -193,82 +127,44 @@ export const updateUserProfile = async (profileData: UpdateProfileData): Promise
       return { success: false, message: 'La contraseña debe tener al menos 8 caracteres' };
     }
 
-    const response = await authenticatedFetch(`${API_BASE_URL}/user/profile/me`, {
-      method: 'PATCH',
-      body: JSON.stringify(profileData),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
-    }
-
-    const updatedUser: User = await response.json();
+    const updatedUser = await api.patch('/user/profile/me', profileData);
     
     // Actualizar usuario en localStorage
-    localStorage.setItem('greencycle_current_user', JSON.stringify(updatedUser));
+    localStorage.setItem('current_user', JSON.stringify(updatedUser));
     
     return { success: true, user: updatedUser };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error al actualizar perfil:', error);
-    
-    // Manejar errores específicos del backend
-    let errorMessage = 'Error al actualizar perfil';
-    if (error instanceof Error) {
-      if (error.message.includes('409') || error.message.toLowerCase().includes('conflict')) {
-        errorMessage = 'Este email ya está en uso por otro usuario';
-      } else if (error.message.includes('400') || error.message.toLowerCase().includes('bad request')) {
-        errorMessage = 'Datos inválidos. Verifica la información ingresada';
-      } else if (error.message.includes('401') || error.message.toLowerCase().includes('unauthorized')) {
-        errorMessage = 'No tienes autorización para realizar esta acción';
-      } else {
-        errorMessage = error.message;
-      }
-    }
-    
-    return { success: false, message: errorMessage };
+    return { 
+      success: false, 
+      message: error.message || 'Error al actualizar perfil'
+    };
   }
 };
 
 // Función para eliminar la cuenta del usuario
 export const deleteUserAccount = async (): Promise<{ success: boolean; message?: string }> => {
   try {
-    const response = await authenticatedFetch(`${API_BASE_URL}/user/profile/me`, {
-      method: 'DELETE',
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
-    }
-
+    await api.delete('/user/profile/me');
+    
     // Limpiar datos del usuario después de eliminar la cuenta
     logout();
     
     return { success: true };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error al eliminar cuenta:', error);
-    
-    let errorMessage = 'Error al eliminar la cuenta';
-    if (error instanceof Error) {
-      if (error.message.includes('401') || error.message.toLowerCase().includes('unauthorized')) {
-        errorMessage = 'No tienes autorización para realizar esta acción';
-      } else if (error.message.includes('404') || error.message.toLowerCase().includes('not found')) {
-        errorMessage = 'Usuario no encontrado';
-      } else {
-        errorMessage = error.message;
-      }
-    }
-    
-    return { success: false, message: errorMessage };
+    return { 
+      success: false, 
+      message: error.message || 'Error al eliminar la cuenta'
+    };
   }
 };
 
 // Función para verificar si hay una sesión activa
 export const getCurrentUser = (): User | null => {
   try {
-    const token = localStorage.getItem('greencycle_token');
-    const currentUserJson = localStorage.getItem('greencycle_current_user');
+    const token = localStorage.getItem('auth_token');
+    const currentUserJson = localStorage.getItem('current_user');
     
     if (!token || !currentUserJson) {
       return null;
@@ -294,27 +190,13 @@ export const getCurrentUser = (): User | null => {
 
 // Función para obtener el token
 export const getToken = (): string | null => {
-  return localStorage.getItem('greencycle_token');
+  return localStorage.getItem('auth_token');
 };
 
 // Función para cerrar sesión
 export const logout = (): void => {
-  localStorage.removeItem('greencycle_token');
-  localStorage.removeItem('greencycle_current_user');
+  localStorage.removeItem('auth_token');
+  localStorage.removeItem('current_user');
 };
 
-// Función para hacer peticiones autenticadas
-export const authenticatedFetch = async (url: string, options: RequestInit = {}): Promise<Response> => {
-  const token = getToken();
-  
-  const headers = {
-    'Content-Type': 'application/json',
-    ...(token && { Authorization: `Bearer ${token}` }),
-    ...options.headers,
-  };
-
-  return fetch(url, {
-    ...options,
-    headers,
-  });
-};
+console.log('Token:', localStorage.getItem('auth_token'));

@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, Search, Filter } from 'lucide-react';
+import { MessageCircle, Search, Filter, Menu, Plus } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { mockChats, Chat } from '@/data/mockDataChats';
@@ -23,14 +22,26 @@ const Chats = () => {
   );
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="h-[calc(100vh-4rem)] flex bg-background">
       {/* Panel izquierdo - Lista de chats */}
-      <div className="w-96 border-r border-border flex flex-col bg-background">
+      <div className={`w-full md:w-96 border-r border-border flex flex-col bg-background ${selectedChat ? 'hidden md:flex' : 'flex'}`}>
         {/* Header del panel izquierdo */}
-        <div className="p-4 border-b border-border bg-primary/5 sticky top-0 z-10">
+        <div className="flex-none p-4 bg-green/10 border-b border-border">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-xl font-semibold text-foreground">Chats</h1>
-            <MessageCircle className="h-6 w-6 text-primary" />
+            <div className="flex items-center gap-2">
+              <Avatar className="h-10 w-10">
+                <AvatarFallback className="bg-green text-white">TU</AvatarFallback>
+              </Avatar>
+              <h1 className="text-xl font-semibold text-foreground">Chats</h1>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="icon" className="h-9 w-9">
+                <Menu className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" className="h-9 w-9">
+                <Plus className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
           
           {/* Barra de búsqueda */}
@@ -40,7 +51,7 @@ const Chats = () => {
               placeholder="Buscar o empezar un nuevo chat"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-10"
+              className="pl-10 pr-10 bg-white/50 backdrop-blur-sm"
             />
             <Button
               variant="ghost"
@@ -67,15 +78,15 @@ const Chats = () => {
               {filteredChats.map((chat) => (
                 <div
                   key={chat.id}
-                  className={`p-4 hover:bg-muted/50 cursor-pointer border-b border-border/50 transition-colors ${
-                    selectedChat?.id === chat.id ? 'bg-muted' : ''
+                  className={`p-4 hover:bg-green/5 cursor-pointer border-b border-border/50 transition-colors ${
+                    selectedChat?.id === chat.id ? 'bg-green/10' : ''
                   }`}
                   onClick={() => handleChatClick(chat)}
                 >
                   <div className="flex items-center gap-3">
                     <div className="relative">
                       <Avatar className="h-12 w-12">
-                        <AvatarFallback className="bg-primary text-primary-foreground text-sm font-medium">
+                        <AvatarFallback className="bg-green text-white text-sm font-medium">
                           {chat.initials}
                         </AvatarFallback>
                       </Avatar>
@@ -95,7 +106,7 @@ const Chats = () => {
                     </div>
                     
                     {chat.unread > 0 && (
-                      <Badge className="bg-primary text-primary-foreground">
+                      <Badge className="bg-green text-white">
                         {chat.unread}
                       </Badge>
                     )}
@@ -108,13 +119,13 @@ const Chats = () => {
       </div>
 
       {/* Panel derecho - Ventana de chat */}
-      <div className="flex-1 flex flex-col">
+      <div className={`flex-1 flex flex-col ${!selectedChat ? 'hidden md:flex' : 'flex'}`}>
         {selectedChat ? (
           <ChatWindow chat={selectedChat} onBack={() => setSelectedChat(null)} />
         ) : (
-          <div className="flex-1 flex items-center justify-center bg-muted/20">
+          <div className="flex-1 flex items-center justify-center bg-green/5">
             <div className="text-center">
-              <MessageCircle className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <MessageCircle className="h-16 w-16 text-green/50 mx-auto mb-4" />
               <h2 className="text-xl font-semibold mb-2">Selecciona un chat</h2>
               <p className="text-muted-foreground">
                 Elige una conversación de la lista para comenzar a chatear

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useProfileForm } from '@/hooks/useProfileForm';
 import ProfileHeader from '@/components/profile/ProfileHeader';
@@ -14,6 +13,7 @@ const Profile = () => {
     formData,
     selectedInterests,
     isEditing,
+    isLoading,
     setIsEditing,
     handleInputChange,
     handleInterestToggle,
@@ -69,6 +69,7 @@ const Profile = () => {
 
               <ProfileActions
                 isEditing={isEditing}
+                isLoading={isLoading}
                 onEdit={() => setIsEditing(true)}
                 onSave={handleSave}
                 onCancel={handleCancel}
