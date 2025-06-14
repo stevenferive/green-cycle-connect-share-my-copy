@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -26,6 +27,7 @@ import Favorites from "@/pages/Favorites";
 import Notifications from "@/pages/Notifications";
 import PaymentMethods from "@/pages/PaymentMethods";
 import PrivacySecurity from "@/pages/PrivacySecurity";
+import HelpSupport from "@/pages/HelpSupport";
 
 const queryClient = new QueryClient();
 
@@ -142,6 +144,11 @@ const AppRoutes = () => {
       <Route path="/privacy-security" element={
         <ProtectedRoute>
           <PrivacySecurity />
+        </ProtectedRoute>
+      } />
+      <Route path="/help-support" element={
+        <ProtectedRoute>
+          <HelpSupport />
         </ProtectedRoute>
       } />
       

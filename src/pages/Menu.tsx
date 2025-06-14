@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -70,7 +71,12 @@ const Menu = () => {
       description: 'Proteger cuenta y datos personales',
       href: '/privacy-security'
     },
-    { icon: HelpCircle, label: 'Ayuda y Soporte', description: 'Obtener ayuda' },
+    { 
+      icon: HelpCircle, 
+      label: 'Ayuda y Soporte', 
+      description: 'Obtener ayuda y contactar soporte',
+      href: '/help-support'
+    },
   ];
 
   return (
