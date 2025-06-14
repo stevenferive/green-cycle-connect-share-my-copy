@@ -28,6 +28,10 @@ import Notifications from "@/pages/Notifications";
 import PaymentMethods from "@/pages/PaymentMethods";
 import PrivacySecurity from "@/pages/PrivacySecurity";
 import HelpSupport from "@/pages/HelpSupport";
+import Locations from "@/pages/Locations";
+import Dashboard from "@/pages/Dashboard";
+import TransactionHistory from "@/pages/TransactionHistory";
+import Reviews from "@/pages/Reviews";
 
 const queryClient = new QueryClient();
 
@@ -91,6 +95,11 @@ const AppRoutes = () => {
           <Explore />
         </ProtectedRoute>
       } />
+      <Route path="/dashboard" element={
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
+      } />
       <Route path="/search" element={
         <ProtectedRoute>
           <Search />
@@ -134,6 +143,21 @@ const AppRoutes = () => {
       <Route path="/favorites" element={
         <ProtectedRoute>
           <Favorites />
+        </ProtectedRoute>
+      } />
+      <Route path="/locations" element={
+        <ProtectedRoute>
+          <Locations />
+        </ProtectedRoute>
+      } />
+      <Route path="/transaction-history" element={
+        <ProtectedRoute>
+          <TransactionHistory />
+        </ProtectedRoute>
+      } />
+      <Route path="/reviews" element={
+        <ProtectedRoute>
+          <Reviews />
         </ProtectedRoute>
       } />
       <Route path="/payment-methods" element={

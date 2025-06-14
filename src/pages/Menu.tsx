@@ -18,7 +18,10 @@ import {
   Shield,
   CreditCard,
   ChevronRight,
-  MapPin
+  MapPin,
+  BarChart3,
+  History,
+  Star
 } from 'lucide-react';
 
 const Menu = () => {
@@ -26,6 +29,12 @@ const Menu = () => {
   const { unreadCount, requestPermission, permission } = useNotifications();
 
   const menuItems = [
+    { 
+      icon: BarChart3, 
+      label: 'Dashboard', 
+      description: 'Estadísticas y resumen de actividad',
+      href: '/dashboard'
+    },
     { 
       icon: User, 
       label: 'Mi Perfil', 
@@ -45,6 +54,18 @@ const Menu = () => {
       href: '/favorites'
     },
     { 
+      icon: History, 
+      label: 'Historial de Transacciones', 
+      description: 'Ver compras y ventas realizadas',
+      href: '/transaction-history'
+    },
+    { 
+      icon: Star, 
+      label: 'Reseñas y Calificaciones', 
+      description: 'Gestionar reseñas recibidas y dadas',
+      href: '/reviews'
+    },
+    { 
       icon: Bell, 
       label: 'Notificaciones', 
       description: 'Configurar alertas y ver notificaciones',
@@ -53,8 +74,8 @@ const Menu = () => {
     },
     { 
       icon: MapPin, 
-      label: 'Tus ubicaciones', 
-      description: 'Gestionar ubicaciones',
+      label: 'Ubicaciones', 
+      description: 'Gestionar direcciones guardadas',
       href: '/locations'
     },
     { 
