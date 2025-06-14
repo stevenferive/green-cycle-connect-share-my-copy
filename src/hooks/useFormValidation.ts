@@ -100,7 +100,7 @@ export const useFormValidation = <T extends Record<string, any>>(
     }
   }, [validateField, touched]);
 
-  const setTouched = useCallback((name: string) => {
+  const markFieldAsTouched = useCallback((name: string) => {
     setTouched(prev => ({ ...prev, [name]: true }));
     
     // Validate field when touched
@@ -142,7 +142,7 @@ export const useFormValidation = <T extends Record<string, any>>(
     errors,
     touched,
     setValue,
-    setTouched,
+    setTouched: markFieldAsTouched,
     validateAll,
     reset,
     hasErrors,
