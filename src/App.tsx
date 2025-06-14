@@ -19,6 +19,7 @@ import Feed from "@/pages/Feed";
 import Search from "@/pages/Search";
 import Chats from "@/pages/Chats";
 import Menu from "@/pages/Menu";
+import Settings from "@/pages/Settings";
 import Cart from "@/pages/Cart";
 import Profile from "@/pages/Profile";
 import MyProducts from "@/pages/MyProducts";
@@ -106,6 +107,11 @@ const AppRoutes = () => {
       <Route path="/menu" element={
         <ProtectedRoute>
           <Menu />
+        </ProtectedRoute>
+      } />
+      <Route path="/settings" element={
+        <ProtectedRoute>
+          <Settings />
         </ProtectedRoute>
       } />
       <Route path="/notifications" element={
