@@ -86,7 +86,7 @@ const Reviews = () => {
       helpful: 0,
       reported: false
     }
-  ];
+  ]);
 
   const averageRating = reviews
     .filter(r => r.type === 'received')
