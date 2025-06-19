@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import Footer from "@/components/layout/Footer";
@@ -151,7 +150,13 @@ const ProductDetail = () => {
           <ProductDescription />
           
           <ProductActions 
-            onAddToCart={handleAddToCart}
+            product={{
+              id: product.id,
+              title: product.title,
+              price: product.price,
+              image: product.image,
+              category: product.category
+            }}
             onContactSeller={handleContactSeller}
           />
           

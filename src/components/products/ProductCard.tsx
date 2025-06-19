@@ -7,6 +7,7 @@ import { Heart, MapPin, CircleDollarSign, Repeat, ShoppingCart, MessageCircle } 
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { useCart } from "@/contexts/CartContext";
 
 export interface Product {
   id: string;
@@ -26,9 +27,22 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { toast } = useToast();
+  const { addItem } = useCart();
   
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent navigation to product detail
+    
+    // Agregar producto al carrito
+    addItem({
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      image: product.image,
+      category: product.category,
+      sellerId: 'seller-' + product.id, // Mock seller ID
+      sellerName: 'Vendedor EcoFriendly' // Mock seller name
+    });
+    
     toast({
       title: "Producto agregado",
       description: `${product.title} añadido al carrito`,

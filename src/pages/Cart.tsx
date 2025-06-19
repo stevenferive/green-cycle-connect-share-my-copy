@@ -4,67 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ShoppingCart, Plus, Minus, Trash2, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
-interface CartItem {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
-  image?: string;
-  category: string;
-}
+import { useCart } from '@/contexts/CartContext';
+import CheckoutForm from '@/components/cart/CheckoutForm';
 
 const Cart = () => {
   const navigate = useNavigate();
-  
-  // Mock data - en una aplicación real, esto vendría de un estado global o contexto
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      name: "Botella de Agua Reutilizable",
-      price: 25.99,
-      quantity: 1,
-      category: "Hogar"
-    },
-    {
-      id: 2,
-      name: "Cepillo de Dientes de Bambú",
-      price: 12.50,
-      quantity: 2,
-      category: "Cuidado Personal"
-    },
-    {
-      id: 3,
-      name: "Bolsa de Tela Orgánica",
-      price: 18.75,
-      quantity: 1,
-      category: "Accesorios"
-    }
-  ]);
-
-  const updateQuantity = (id: number, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      removeItem(id);
-      return;
-    }
-    setCartItems(cartItems.map(item => 
-      item.id === id ? { ...item, quantity: newQuantity } : item
-    ));
-  };
-
-  const removeItem = (id: number) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
-  };
-
-  const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-  };
-
-  const getTotalItems = () => {
-    return cartItems.reduce((total, item) => total + item.quantity, 0);
-  };
+  const { items, updateQuantity, removeItem, getTotalPrice, getTotalItems } = useCart();
+  const [showCheckout, setShowCheckout] = useState(false);
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -81,7 +30,7 @@ const Cart = () => {
         <div className="flex items-center gap-2">
           <ShoppingCart className="h-6 w-6 text-primary" />
           <h1 className="text-2xl font-semibold">Mi Carrito</h1>
-          {cartItems.length > 0 && (
+          {items.length > 0 && (
             <Badge variant="secondary" className="ml-2">
               {getTotalItems()} {getTotalItems() === 1 ? 'producto' : 'productos'}
             </Badge>
@@ -89,7 +38,7 @@ const Cart = () => {
         </div>
       </div>
 
-      {cartItems.length === 0 ? (
+      {items.length === 0 ? (
         // Carrito vacío
         <div className="flex flex-col items-center justify-center py-12">
           <ShoppingCart className="h-16 w-16 text-muted-foreground mb-4" />
@@ -106,7 +55,7 @@ const Cart = () => {
         <div className="space-y-4">
           {/* Lista de productos */}
           <div className="space-y-3">
-            {cartItems.map((item) => (
+            {items.map((item) => (
               <Card key={item.id} className="p-4">
                 <div className="flex items-start gap-4">
                   {/* Imagen del producto (placeholder) */}
@@ -116,11 +65,12 @@ const Cart = () => {
                   
                   {/* Información del producto */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-foreground mb-1">{item.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-2">{item.category}</p>
+                    <h3 className="font-medium text-foreground mb-1">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-1">{item.category}</p>
+                    <p className="text-xs text-muted-foreground mb-2">Vendedor: {item.sellerName}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-lg font-semibold text-primary">
-                        ${item.price.toFixed(2)}
+                        S/ {item.price.toFixed(2)}
                       </span>
                       
                       {/* Controls de cantidad */}
@@ -171,7 +121,7 @@ const Cart = () => {
             <CardContent className="space-y-4">
               <div className="flex justify-between text-sm">
                 <span>Subtotal ({getTotalItems()} productos)</span>
-                <span>${getTotalPrice().toFixed(2)}</span>
+                <span>S/ {getTotalPrice().toFixed(2)}</span>
               </div>
               
               <div className="flex justify-between text-sm">
@@ -183,10 +133,14 @@ const Cart = () => {
               
               <div className="flex justify-between text-lg font-semibold">
                 <span>Total</span>
-                <span className="text-primary">${getTotalPrice().toFixed(2)}</span>
+                <span className="text-primary">S/ {getTotalPrice().toFixed(2)}</span>
               </div>
               
-              <Button className="w-full mt-4" size="lg">
+              <Button 
+                className="w-full mt-4 bg-green hover:bg-green-dark" 
+                size="lg"
+                onClick={() => setShowCheckout(true)}
+              >
                 Proceder al Pago
               </Button>
               
@@ -201,6 +155,16 @@ const Cart = () => {
           </Card>
         </div>
       )}
+
+      {/* Modal de Checkout */}
+      <Dialog open={showCheckout} onOpenChange={setShowCheckout}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Finalizar Compra</DialogTitle>
+          </DialogHeader>
+          <CheckoutForm onClose={() => setShowCheckout(false)} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
