@@ -93,21 +93,35 @@ export const login = async (credentials: { email: string; password: string }): P
         }
       };
       
-      // Crear un token mock
-      const mockToken = 'mock_token_' + Math.random().toString(36).substring(7);
+      // Crear un token mock (formato JWT simulado)
+      const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+      const payload = btoa(JSON.stringify({ 
+        sub: mockUser.id, 
+        email: mockUser.email, 
+        exp: Math.floor(Date.now() / 1000) + 3600 // 1 hora
+      }));
+      const signature = btoa('mock_signature');
+      const mockToken = `${header}.${payload}.${signature}`;
       
       // Guardar token y usuario en localStorage
       localStorage.setItem('auth_token', mockToken);
       localStorage.setItem('current_user', JSON.stringify(mockUser));
       
+      console.log('Token mock guardado:', mockToken);
       return { success: true, user: mockUser };
     }
 
     const data = await api.post('/auth/login', credentials);
     
     // Guardar token y usuario en localStorage
+    if (!data.token) {
+      console.error('No se recibió token del servidor');
+      return { success: false, message: 'Error de autenticación: no se recibió token' };
+    }
+    
     localStorage.setItem('auth_token', data.token);
     localStorage.setItem('current_user', JSON.stringify(data.user));
+    console.log('Token real guardado:', data.token);
     
     return { success: true, user: data.user };
   } catch (error: any) {
@@ -140,6 +154,13 @@ export const getUserProfile = async (): Promise<{ success: boolean; message?: st
 // Función para actualizar el perfil del usuario
 export const updateUserProfile = async (profileData: UpdateProfileData): Promise<{ success: boolean; message?: string; user?: User }> => {
   try {
+    // Verificar token antes de hacer la petición
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      console.error('No hay token de autenticación para actualizar el perfil');
+      return { success: false, message: 'No hay sesión activa. Por favor, inicia sesión nuevamente.' };
+    }
+    
     // Validaciones básicas
     if (profileData.firstName && profileData.firstName.length < 2) {
       return { success: false, message: 'El nombre debe tener al menos 2 caracteres' };
@@ -157,6 +178,28 @@ export const updateUserProfile = async (profileData: UpdateProfileData): Promise
       return { success: false, message: 'La contraseña debe tener al menos 8 caracteres' };
     }
 
+    console.log('Enviando actualización de perfil con token:', token);
+    console.log('Datos a actualizar:', profileData);
+
+    // Si estamos usando el usuario de prueba, simulamos la actualización
+    const currentUser = JSON.parse(localStorage.getItem('current_user') || '{}');
+    if (currentUser.email === 'prueba02@gmail.com') {
+      // Simular actualización para usuario de prueba
+      const updatedUser = {
+        ...currentUser,
+        ...profileData,
+        // Mantener los campos anidados como socialLinks
+        socialLinks: {
+          ...currentUser.socialLinks,
+          ...profileData.socialLinks
+        }
+      };
+      
+      localStorage.setItem('current_user', JSON.stringify(updatedUser));
+      return { success: true, user: updatedUser };
+    }
+
+    // Para usuarios reales, hacemos la petición a la API
     const updatedUser = await api.patch('/user/profile/me', profileData);
     
     // Actualizar usuario en localStorage
