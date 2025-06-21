@@ -1,4 +1,3 @@
-
 import { io, Socket } from 'socket.io-client';
 import { SendMessageRequest, TypingEvent, NewMessageEvent, UserTypingEvent } from '@/types/chat';
 
@@ -102,7 +101,7 @@ class WebSocketService {
   }
 
   // Remover listeners
-  removeListener(event: string, callback?: Function): void {
+  removeListener(event: string, callback?: (...args: any[]) => void): void {
     if (this.socket) {
       if (callback) {
         this.socket.off(event, callback);
