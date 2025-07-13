@@ -8,13 +8,15 @@ import ImageUploadSection from './form-sections/ImageUploadSection';
 import LocationSection from './form-sections/LocationSection';
 import PricingSection from './form-sections/PricingSection';
 import EcoBadgesSection from './form-sections/EcoBadgesSection';
+import MyProducts from '@/pages/MyProducts';
 
 interface ProductFormProps {
+  loadProducts: () => void;
   onSuccess?: (product: any) => void;
   onCancel?: () => void;
 }
 
-const ProductForm: React.FC<ProductFormProps> = ({ onSuccess, onCancel }) => {
+const ProductForm: React.FC<ProductFormProps> = ({ loadProducts, onSuccess, onCancel }) => {
   const createProductMutation = useCreateProduct();
 
   const [formData, setFormData] = useState<Partial<CreateProductDto>>({
@@ -202,6 +204,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onSuccess, onCancel }) => {
         condition: formData.condition!,
         price: formData.price!,
         location: formData.location!,
+        seller: null
       };
 
       // Enviar producto con imágenes en una sola llamada
@@ -211,6 +214,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onSuccess, onCancel }) => {
       });
       
       if (onSuccess) {
+        loadProducts();
         onSuccess(result);
       }
     } catch (error) {

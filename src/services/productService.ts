@@ -77,9 +77,9 @@ interface PaginatedResponse {
 export const productService = {
   async getAllProducts(): Promise<ProductResponse[]> {
     try {
-      console.log('Obteniendo productos...');
+      // console.log('Obteniendo productos...');
       const response = await api.get('/products?limit=200');
-      console.log('Respuesta de la API:', response);
+      // console.log('Respuesta de la API:', response);
       
       if (!response) {
         console.warn('La respuesta de la API está vacía');

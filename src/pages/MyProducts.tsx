@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ProductUploadModal from '@/components/products/ProductUploadModal';
 import MyProductsHeader from '@/components/products/MyProductsHeader';
 import MyProductsStats from '@/components/products/MyProductsStats';
@@ -7,6 +7,8 @@ import MyProductsActions from '@/components/products/MyProductsActions';
 import MyProductsList from '@/components/products/MyProductsList';
 import { useToast } from '@/hooks/use-toast';
 import { mockProducts } from '@/data/mockProducts';
+import axios from 'axios';
+import { productService } from '@/services/productService';
 
 const MyProducts = () => {
   const { toast } = useToast();
@@ -51,6 +53,23 @@ const MyProducts = () => {
     setIsUploadModalOpen(true);
   };
 
+  const loadProducts = async () => {
+    // let token = localStorage.getItem("auth_token");
+    let req: any = await productService.getAllProducts();
+    req = req.map((j: any) => {
+      j.image = j.images && j.images.length > 0 ? j.images[0] :"https://www.nfctogo.com/images/empty-img.png";
+      return j;
+    })
+
+    setProducts(req);
+
+    return;
+  }
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto px-4 py-6">
@@ -73,6 +92,7 @@ const MyProducts = () => {
       </main>
 
       <ProductUploadModal
+        loadProducts={loadProducts}
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
         onSave={handleNewProduct}

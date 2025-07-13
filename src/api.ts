@@ -24,7 +24,7 @@ const fetchWithAuth = async (url: string, options: RequestOptions = {}) => {
   };
 
   // Agregar log para depuración
-  console.log('HEADERS ENVIADOS:', headers);
+  // console.log('HEADERS ENVIADOS:', headers);
 
   try {
     const response = await fetch(`${BASE_URL}${url}`, {

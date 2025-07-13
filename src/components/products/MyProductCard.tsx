@@ -100,7 +100,7 @@ const MyProductCard: React.FC<MyProductCardProps> = ({ product, onUpdate, onDele
 
   return (
     <>
-      <Card className="overflow-hidden hover:shadow-md transition-shadow">
+      <Card className="overflow-hidden hover:shadow-md transition-shadow" key={product.id}>
         <div className="relative">
           <div className="aspect-square overflow-hidden">
             <img

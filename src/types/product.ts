@@ -50,6 +50,7 @@ export interface CreateProductDto {
     shipping?: boolean;
     shippingCost?: number;
   };
+  seller: string,
   status?: 'draft' | 'active' | 'paused' | 'out_of_stock' | 'sold' | 'archived';
   tags?: string[];
   searchKeywords?: string[];

@@ -9,12 +9,14 @@ import {
 import ProductForm from './ProductForm';
 
 interface ProductUploadModalProps {
+  loadProducts: any;
   isOpen: boolean;
   onClose: () => void;
   onSave: (product: any) => void;
 }
 
 const ProductUploadModal: React.FC<ProductUploadModalProps> = ({ 
+  loadProducts,
   isOpen, 
   onClose, 
   onSave 
@@ -31,7 +33,7 @@ const ProductUploadModal: React.FC<ProductUploadModalProps> = ({
           <DialogTitle className="text-xl text-green">Subir Nuevo Producto</DialogTitle>
         </DialogHeader>
         
-        <ProductForm 
+        <ProductForm loadProducts={loadProducts}
           onSuccess={handleSuccess}
           onCancel={onClose}
         />
