@@ -76,6 +76,53 @@ export const api = {
   delete: (url: string, options?: RequestOptions) => 
     fetchWithAuth(url, { ...options, method: 'DELETE' }),
   
+  createProductWithImages: async (productData: any, images: File[]) => {
+    const token = localStorage.getItem('auth_token');
+    const formData = new FormData();
+    
+    // Agregar datos del producto
+    formData.append('productData', JSON.stringify(productData));
+    
+    // Agregar imágenes
+    images.forEach((image, index) => {
+      formData.append(`images`, image);
+    });
+    
+    try {
+      const response = await fetch(`${BASE_URL}/products/with-images`, {
+        method: 'POST',
+        headers: {
+          ...(token && { 'Authorization': `Bearer ${token}` }),
+        },
+        body: formData,
+      });
+      
+      const contentType = response.headers.get('content-type');
+      const responseData = contentType?.includes('application/json') 
+        ? await response.json()
+        : null;
+      
+      if (!response.ok) {
+        throw {
+          message: (responseData && responseData.message) || `Error del servidor: ${response.status}`,
+          type: responseData?.type,
+          statusCode: response.status,
+          data: responseData?.data
+        } as ApiError;
+      }
+      
+      return responseData;
+    } catch (error) {
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        throw {
+          message: 'Error de conexión. Por favor, verifica tu conexión a internet.',
+          statusCode: 0,
+        } as ApiError;
+      }
+      throw error;
+    }
+  },
+  
   uploadFile: async (url: string, file: File, fieldName: string = 'file', additionalData?: Record<string, any>) => {
     const token = localStorage.getItem('auth_token');
     const formData = new FormData();

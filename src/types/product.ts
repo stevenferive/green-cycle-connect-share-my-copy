@@ -1,4 +1,3 @@
-
 export interface Location {
   city: string;
   region: string;
@@ -21,18 +20,18 @@ export interface ProductMetadata {
 }
 
 export interface CreateProductDto {
-  // Campos obligatorios
   name: string;
   description: string;
   slug: string;
-  images: string[];
   category: string;
-  condition: 'new' | 'like_new' | 'good' | 'fair' | 'poor';
-  seller: string;
-  location: Location;
-  
-  // Campos opcionales
-  price?: number;
+  condition: 'new' | 'used' | 'refurbished';
+  price: number;
+  location: {
+    city: string;
+    region: string;
+  };
+  // Campos opcionales que pueden ser enviados
+  subcategory?: string;
   currency?: string;
   forBarter?: boolean;
   barterPreferences?: string[];
@@ -45,15 +44,25 @@ export interface CreateProductDto {
   materials?: string[];
   isHandmade?: boolean;
   isOrganic?: boolean;
-  shippingOptions?: ShippingOptions;
+  shippingOptions?: {
+    localPickup?: boolean;
+    homeDelivery?: boolean;
+    shipping?: boolean;
+    shippingCost?: number;
+  };
+  status?: 'draft' | 'active' | 'paused' | 'out_of_stock' | 'sold' | 'archived';
   tags?: string[];
   searchKeywords?: string[];
-  metadata?: ProductMetadata;
+  metadata?: {
+    seoTitle?: string;
+    seoDescription?: string;
+  };
 }
 
 export interface ProductValidationErrors {
   name?: string;
   description?: string;
+  slug?: string;
   category?: string;
   condition?: string;
   location?: string;
@@ -62,4 +71,8 @@ export interface ProductValidationErrors {
   stock?: string;
   sustainabilityScore?: string;
   ecoBadges?: string;
+  subcategory?: string;
+  status?: string;
+  currency?: string;
+  shippingCost?: string;
 }

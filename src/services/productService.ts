@@ -1,4 +1,3 @@
-
 import { api } from '@/api';
 import { CreateProductDto } from '@/types/product';
 
@@ -9,6 +8,11 @@ export interface ProductResponse {
   slug: string;
   images: string[];
   category: {
+    _id: string;
+    name: string;
+    slug: string;
+  };
+  subcategory?: {
     _id: string;
     name: string;
     slug: string;
@@ -42,7 +46,7 @@ export interface ProductResponse {
     shippingCost: number;
     _id: string;
   };
-  status: 'active' | 'paused' | 'out_of_stock';
+  status: 'draft' | 'active' | 'paused' | 'out_of_stock' | 'sold' | 'archived';
   condition: string;
   publishedAt: string;
   seller: string;
@@ -110,27 +114,149 @@ export const productService = {
     }
   },
 
-  async createProduct(productData: CreateProductDto): Promise<ProductResponse> {
+  async createProductWithImages(productData: CreateProductDto, images: File[]): Promise<ProductResponse> {
     try {
-      console.log('Creando producto:', productData);
-      const response = await api.post('/products', productData);
+      console.log('Creando producto con imágenes:', productData);
+      
+      // Validaciones básicas
+      if (!productData.name || productData.name.trim().length < 3) {
+        throw new Error('El nombre del producto debe tener al menos 3 caracteres');
+      }
+      
+      if (!productData.description || productData.description.trim().length < 10) {
+        throw new Error('La descripción debe tener al menos 10 caracteres');
+      }
+      
+      if (!productData.slug) {
+        throw new Error('El slug es obligatorio');
+      }
+      
+      if (!productData.category) {
+        throw new Error('La categoría es obligatoria');
+      }
+      
+      if (!productData.location?.city || !productData.location?.region) {
+        throw new Error('La ciudad y región son obligatorias');
+      }
+      
+      if (!images || images.length === 0) {
+        throw new Error('Debe agregar al menos una imagen');
+      }
+      
+      if (images.length > 10) {
+        throw new Error('Máximo 10 imágenes permitidas');
+      }
+      
+      // Validar cada imagen
+      for (const image of images) {
+        if (!image.type.startsWith('image/')) {
+          throw new Error(`El archivo ${image.name} no es una imagen válida`);
+        }
+        
+        if (image.size > 5 * 1024 * 1024) { // 5MB
+          throw new Error(`La imagen ${image.name} excede el tamaño máximo de 5MB`);
+        }
+      }
+      
+      // Establecer valores por defecto
+      const productWithDefaults = {
+        ...productData,
+        price: productData.price || 0,
+        currency: productData.currency || 'PEN',
+        condition: productData.condition || 'new',
+        status: productData.status || 'draft',
+      };
+      
+      const response = await api.createProductWithImages(productWithDefaults, images);
       console.log('Producto creado exitosamente:', response);
-      return response;
-    } catch (error) {
+      
+      if (response.success) {
+        return response.product;
+      } else {
+        throw new Error(response.message || 'Error al crear el producto');
+      }
+    } catch (error: any) {
       console.error('Error al crear producto:', error);
-      throw error;
+      
+      // Manejar errores específicos del servidor
+      if (error.statusCode === 400) {
+        if (error.message?.includes('slug')) {
+          throw new Error('Ya existe un producto con ese slug. Por favor, elige otro nombre.');
+        }
+        if (error.message?.includes('validation')) {
+          throw new Error('Datos del producto inválidos. Por favor, revisa la información.');
+        }
+      }
+      
+      if (error.statusCode === 401) {
+        throw new Error('No tienes permisos para crear productos. Por favor, inicia sesión.');
+      }
+      
+      if (error.statusCode === 413) {
+        throw new Error('Las imágenes son demasiado grandes. Por favor, reduce su tamaño.');
+      }
+      
+      throw new Error(error.message || 'Error al crear el producto');
     }
+  },
+
+  // Mantener el método anterior para compatibilidad pero marcarlo como deprecated
+  async createProduct(productData: CreateProductDto): Promise<ProductResponse> {
+    console.warn('createProduct está deprecated. Usar createProductWithImages en su lugar.');
+    throw new Error('Este método ya no es compatible. Usa createProductWithImages.');
   },
 
   async uploadProductImage(file: File): Promise<{ url: string }> {
     try {
       console.log('Subiendo imagen del producto:', file.name);
-      const response = await api.uploadFile('/products/upload-image', file, 'image');
+      
+      // Validar el archivo
+      if (!file.type.startsWith('image/')) {
+        throw new Error('El archivo debe ser una imagen');
+      }
+      
+      if (file.size > 5 * 1024 * 1024) { // 5MB
+        throw new Error('La imagen no puede ser mayor a 5MB');
+      }
+      
+      const response = await api.uploadFile('/products/with-images', file, 'image');
       console.log('Imagen subida exitosamente:', response);
       return response;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al subir imagen:', error);
+      throw new Error(error.message || 'Error al subir la imagen');
+    }
+  },
+
+  async checkSlugAvailability(slug: string): Promise<boolean> {
+    try {
+      await api.get(`/products/check-slug/${slug}`);
+      return true; // Si no hay error, el slug está disponible
+    } catch (error: any) {
+      if (error.statusCode === 409) {
+        return false; // Slug ya existe
+      }
       throw error;
+    }
+  },
+
+  async getCategories(): Promise<Array<{ _id: string; name: string; slug: string }>> {
+    try {
+      const response = await api.get('/categories');
+      return response || [];
+    } catch (error) {
+      console.error('Error al obtener categorías:', error);
+      return [];
+    }
+  },
+
+  async getSubcategories(categoryId: string): Promise<Array<{ _id: string; name: string; slug: string }>> {
+    try {
+      const response = await api.get(`/categories/${categoryId}/subcategories`);
+      return response || [];
+    } catch (error) {
+      console.error('Error al obtener subcategorías:', error);
+      return [];
     }
   }
 };

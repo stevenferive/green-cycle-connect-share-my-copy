@@ -1,4 +1,3 @@
-
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { productService } from '@/services/productService';
 import { CreateProductDto } from '@/types/product';
@@ -9,10 +8,12 @@ export const useCreateProduct = () => {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: (productData: CreateProductDto) => productService.createProduct(productData),
+    mutationFn: ({ productData, images }: { productData: CreateProductDto; images: File[] }) => 
+      productService.createProductWithImages(productData, images),
     onSuccess: (newProduct) => {
       // Invalidar la caché de productos para refrescar la lista
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['myProducts'] });
       
       toast({
         title: "¡Producto creado exitosamente!",
@@ -22,7 +23,20 @@ export const useCreateProduct = () => {
     onError: (error: any) => {
       console.error('Error al crear producto:', error);
       
-      const errorMessage = error?.message || 'Ocurrió un error al crear el producto';
+      let errorMessage = 'Ocurrió un error al crear el producto';
+      
+      // Manejar errores específicos
+      if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.statusCode === 400) {
+        errorMessage = 'Datos del producto inválidos. Por favor, revisa la información.';
+      } else if (error?.statusCode === 401) {
+        errorMessage = 'No tienes permisos para crear productos. Por favor, inicia sesión.';
+      } else if (error?.statusCode === 409) {
+        errorMessage = 'Ya existe un producto con ese slug. Por favor, elige otro nombre.';
+      } else if (error?.statusCode === 413) {
+        errorMessage = 'Las imágenes son demasiado grandes. Por favor, reduce su tamaño.';
+      }
       
       toast({
         title: "Error al crear producto",
@@ -33,27 +47,29 @@ export const useCreateProduct = () => {
   });
 };
 
-export const useUploadImage = () => {
-  const { toast } = useToast();
-
+export const useCheckSlugAvailability = () => {
   return useMutation({
-    mutationFn: (file: File) => productService.uploadProductImage(file),
-    onSuccess: () => {
-      toast({
-        title: "Imagen subida",
-        description: "La imagen se ha subido correctamente.",
-      });
-    },
+    mutationFn: (slug: string) => productService.checkSlugAvailability(slug),
     onError: (error: any) => {
-      console.error('Error al subir imagen:', error);
-      
-      const errorMessage = error?.message || 'Error al subir la imagen';
-      
-      toast({
-        title: "Error al subir imagen",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      console.error('Error al verificar disponibilidad del slug:', error);
+    },
+  });
+};
+
+export const useGetCategories = () => {
+  return useMutation({
+    mutationFn: () => productService.getCategories(),
+    onError: (error: any) => {
+      console.error('Error al obtener categorías:', error);
+    },
+  });
+};
+
+export const useGetSubcategories = () => {
+  return useMutation({
+    mutationFn: (categoryId: string) => productService.getSubcategories(categoryId),
+    onError: (error: any) => {
+      console.error('Error al obtener subcategorías:', error);
     },
   });
 };

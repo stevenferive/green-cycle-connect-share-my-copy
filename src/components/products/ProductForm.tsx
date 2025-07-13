@@ -1,9 +1,8 @@
-
 import React, { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { CreateProductDto, ProductValidationErrors } from '@/types/product';
-import { validateProduct, generateSlug, hasValidationErrors } from '@/utils/productValidation';
-import { useCreateProduct, useUploadImage } from '@/hooks/useCreateProduct';
+import { validateProduct, validateProductWithFiles, generateSlug, hasValidationErrors } from '@/utils/productValidation';
+import { useCreateProduct } from '@/hooks/useCreateProduct';
 import BasicInfoSection from './form-sections/BasicInfoSection';
 import ImageUploadSection from './form-sections/ImageUploadSection';
 import LocationSection from './form-sections/LocationSection';
@@ -17,16 +16,13 @@ interface ProductFormProps {
 
 const ProductForm: React.FC<ProductFormProps> = ({ onSuccess, onCancel }) => {
   const createProductMutation = useCreateProduct();
-  const uploadImageMutation = useUploadImage();
 
   const [formData, setFormData] = useState<Partial<CreateProductDto>>({
     name: '',
     description: '',
     slug: '',
-    images: [],
     category: '',
     condition: 'new',
-    seller: 'user-id-placeholder',
     location: {
       city: '',
       region: '',
@@ -116,15 +112,32 @@ const ProductForm: React.FC<ProductFormProps> = ({ onSuccess, onCancel }) => {
 
       setImageFiles(prev => [...prev, ...newFiles]);
       setImagePreviews(prev => [...prev, ...newPreviews]);
+      
+      // Limpiar error de imágenes si existe
+      if (validationErrors.images) {
+        setValidationErrors(prev => {
+          const newErrors = { ...prev };
+          delete newErrors.images;
+          return newErrors;
+        });
+      }
     } catch (error) {
       console.error('Error al procesar imágenes:', error);
     }
-  }, [imageFiles.length]);
+  }, [imageFiles.length, validationErrors.images]);
 
   const removeImage = useCallback((index: number) => {
     setImageFiles(prev => prev.filter((_, i) => i !== index));
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
-  }, []);
+    
+    // Si se eliminó la última imagen, agregar error de validación
+    if (imageFiles.length === 1) {
+      setValidationErrors(prev => ({
+        ...prev,
+        images: 'Debe agregar al menos una imagen'
+      }));
+    }
+  }, [imageFiles.length]);
 
   const addArrayItem = useCallback((field: 'barterPreferences' | 'materials' | 'tags', value: string) => {
     if (!value.trim()) return;
@@ -170,7 +183,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ onSuccess, onCancel }) => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    const errors = validateProduct(formData);
+    // Validar el producto con las imágenes como archivos
+    const errors = validateProductWithFiles(formData, imageFiles);
     
     if (hasValidationErrors(errors)) {
       setValidationErrors(errors);
@@ -178,18 +192,23 @@ const ProductForm: React.FC<ProductFormProps> = ({ onSuccess, onCancel }) => {
     }
 
     try {
-      const imageUrls: string[] = [];
-      for (const file of imageFiles) {
-        const result = await uploadImageMutation.mutateAsync(file);
-        imageUrls.push(result.url);
-      }
-
+      // Preparar los datos del producto
       const productData: CreateProductDto = {
         ...formData,
-        images: imageUrls,
-      } as CreateProductDto;
+        name: formData.name!,
+        description: formData.description!,
+        slug: formData.slug!,
+        category: formData.category!,
+        condition: formData.condition!,
+        price: formData.price!,
+        location: formData.location!,
+      };
 
-      const result = await createProductMutation.mutateAsync(productData);
+      // Enviar producto con imágenes en una sola llamada
+      const result = await createProductMutation.mutateAsync({
+        productData,
+        images: imageFiles
+      });
       
       if (onSuccess) {
         onSuccess(result);
@@ -199,7 +218,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ onSuccess, onCancel }) => {
     }
   };
 
-  const isLoading = createProductMutation.isPending || uploadImageMutation.isPending;
+  const isLoading = createProductMutation.isPending;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl mx-auto">
