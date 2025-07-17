@@ -104,6 +104,85 @@ export const productService = {
     }
   },
 
+  async getSellerProducts(params: {
+    sellerId: string;
+    page?: number;
+    limit?: number;
+    sort?: string;
+  }): Promise<PaginatedResponse> {
+    try {
+      const { sellerId, page = 1, limit = 10, sort = '-createdAt' } = params;
+      
+      if (!sellerId) {
+        throw new Error('El ID del vendedor es requerido');
+      }
+
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+        sort
+      });
+
+      console.log(`Obteniendo productos del vendedor ${sellerId}...`);
+      const response = await api.get(`/products/seller/${sellerId}?${queryParams}`);
+      
+      if (!response) {
+        console.warn('La respuesta de la API está vacía');
+        return {
+          products: [],
+          total: 0,
+          page: 1,
+          totalPages: 0
+        };
+      }
+
+      // Verificar estructura de respuesta paginada
+      if ('products' in response && 'total' in response) {
+        return {
+          products: response.products || [],
+          total: response.total || 0,
+          page: response.page || page,
+          totalPages: response.totalPages || 0
+        };
+      }
+
+      // Si la respuesta es un array directo, convertir a formato paginado
+      if (Array.isArray(response)) {
+        return {
+          products: response,
+          total: response.length,
+          page: 1,
+          totalPages: 1
+        };
+      }
+
+      console.warn('Formato de respuesta no reconocido:', response);
+      return {
+        products: [],
+        total: 0,
+        page: 1,
+        totalPages: 0
+      };
+    } catch (error: any) {
+      console.error('Error al obtener productos del vendedor:', error);
+      
+      // Manejar errores específicos
+      if (error.statusCode === 401) {
+        throw new Error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+      }
+      
+      if (error.statusCode === 403) {
+        throw new Error('No tienes permisos para ver los productos de otro usuario');
+      }
+      
+      if (error.statusCode === 404) {
+        throw new Error('Vendedor no encontrado');
+      }
+      
+      throw new Error(error.message || 'Error al obtener productos del vendedor');
+    }
+  },
+
   async getProductById(id: string): Promise<ProductResponse | null> {
     try {
       const response = await api.get(`/products/${id}`);
@@ -116,7 +195,7 @@ export const productService = {
 
   async createProductWithImages(productData: CreateProductDto, images: File[]): Promise<ProductResponse> {
     try {
-      console.log('Creando producto con imágenes:', productData);
+      // console.log('Creando producto con imágenes:', productData);
       
       // Validaciones básicas
       if (!productData.name || productData.name.trim().length < 3) {
@@ -168,7 +247,7 @@ export const productService = {
       };
       
       const response = await api.createProductWithImages(productWithDefaults, images);
-      console.log('Producto creado exitosamente:', response);
+      // console.log('Producto creado exitosamente:', response);
       
       if (response.success) {
         return response.product;
@@ -208,7 +287,7 @@ export const productService = {
 
   async uploadProductImage(file: File): Promise<{ url: string }> {
     try {
-      console.log('Subiendo imagen del producto:', file.name);
+      // console.log('Subiendo imagen del producto:', file.name);
       
       // Validar el archivo
       if (!file.type.startsWith('image/')) {
@@ -220,7 +299,7 @@ export const productService = {
       }
       
       const response = await api.uploadFile('/products/with-images', file, 'image');
-      console.log('Imagen subida exitosamente:', response);
+      // console.log('Imagen subida exitosamente:', response);
       return response;
     } catch (error: any) {
       console.error('Error al subir imagen:', error);
@@ -257,6 +336,89 @@ export const productService = {
     } catch (error) {
       console.error('Error al obtener subcategorías:', error);
       return [];
+    }
+  },
+
+  async updateProduct(productId: string, productData: Partial<ProductResponse>): Promise<ProductResponse> {
+    try {
+      // console.log('Actualizando producto:', productId, productData);
+      
+      // Validaciones básicas
+      if (!productId) {
+        throw new Error('El ID del producto es requerido');
+      }
+      
+      // Validar campos si están presentes
+      if (productData.name && productData.name.trim().length < 3) {
+        throw new Error('El nombre del producto debe tener al menos 3 caracteres');
+      }
+      
+      if (productData.description && productData.description.trim().length < 10) {
+        throw new Error('La descripción debe tener al menos 10 caracteres');
+      }
+      
+      if (productData.price && productData.price < 0) {
+        throw new Error('El precio no puede ser negativo');
+      }
+      
+      const response = await api.patch(`/products/${productId}`, productData);
+      // console.log('Producto actualizado exitosamente:', response);
+      
+      return response;
+    } catch (error: any) {
+      console.error('Error al actualizar producto:', error);
+      
+      // Manejar errores específicos del servidor
+      if (error.statusCode === 400) {
+        throw new Error(error.message || 'Datos del producto inválidos');
+      }
+      
+      if (error.statusCode === 401) {
+        throw new Error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente');
+      }
+      
+      if (error.statusCode === 403) {
+        throw new Error('No tienes permisos para modificar este producto. Solo puedes modificar tus propios productos');
+      }
+      
+      if (error.statusCode === 404) {
+        throw new Error('Producto no encontrado');
+      }
+      
+      throw new Error(error.message || 'Error al actualizar el producto');
+    }
+  },
+
+  async deleteProduct(productId: string): Promise<{ message: string }> {
+    try {
+      // console.log('Eliminando producto:', productId);
+      
+      // Validaciones básicas
+      if (!productId) {
+        throw new Error('El ID del producto es requerido');
+      }
+      
+      const response = await api.delete(`/products/${productId}`);
+      // console.log('Producto eliminado exitosamente:', response);
+      
+      return response || { message: 'Producto archivado exitosamente' };
+    } catch (error: any) {
+      console.error('Error al eliminar producto:', error);
+      
+      // Manejar errores específicos del servidor
+      if (error.statusCode === 401) {
+        throw new Error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente');
+      }
+      
+      if (error.statusCode === 403) {
+        throw new Error('No tienes permisos para eliminar este producto. Solo puedes eliminar tus propios productos');
+      }
+      
+      if (error.statusCode === 404) {
+        throw new Error('Producto no encontrado');
+      }
+      
+      throw new Error(error.message || 'Error al eliminar el producto');
     }
   }
 };
