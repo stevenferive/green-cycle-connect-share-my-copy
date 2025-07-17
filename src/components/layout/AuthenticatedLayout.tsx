@@ -8,8 +8,8 @@ interface AuthenticatedLayoutProps {
 
 const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = React.memo(({ children }) => {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="pb-20">
+    <div className="min-h-screen bg-background flex flex-col">
+      <div className="flex-1 pb-20">
         {children}
       </div>
       <BottomNav />
