@@ -1,8 +1,8 @@
-# 🌱 GreenCycle Connect & Share
+# 🌱 GreenCycle
 
 ## 📋 Resumen del Proyecto
 
-**GreenCycle Connect & Share** es una plataforma de comercio sostenible que conecta a personas interesadas en el reciclaje, la reutilización y el consumo responsable. La aplicación permite a los usuarios comprar, vender e intercambiar productos de segunda mano, promoviendo la economía circular y la sostenibilidad ambiental.
+**GreenCycle** es una plataforma de comercio sostenible que conecta a personas interesadas en el reciclaje, la reutilización y el consumo responsable. La aplicación permite a los usuarios comprar, vender e intercambiar productos de segunda mano, promoviendo la economía circular y la sostenibilidad ambiental.
 
 ### 🎯 Características Principales
 
@@ -87,18 +87,15 @@ cd green-cycle-connect-share
 
 ```bash
 npm install
-# o
-yarn install
-# o
-bun install
+
 ```
 
 ### 3. Configurar Variables de Entorno
 
-Crea un archivo `.env` en la raíz del proyecto:
+Crea un archivo `.env` en la raíz del proyecto o modifica api.ts:
 
 ```env
-VITE_API_URL=http://localhost:3000
+VITE_API_URL={ tu URL]
 VITE_DEBUG=false
 VITE_APP_VERSION=1.0.0
 ```
@@ -108,12 +105,6 @@ VITE_APP_VERSION=1.0.0
 ```bash
 # Desarrollo
 npm run dev
-
-# Construcción para producción
-npm run build
-
-# Vista previa de producción
-npm run preview
 ```
 
 ### 5. Acceder a la Aplicación
@@ -272,9 +263,6 @@ Para desarrollar una nueva funcionalidad siguiendo la arquitectura limpia:
 # Desarrollo
 npm run dev          # Iniciar servidor de desarrollo
 npm run build        # Construir para producción
-npm run build:dev    # Construir en modo desarrollo
-npm run preview      # Vista previa de producción
-npm run lint         # Ejecutar ESLint
 ```
 
 ## 📱 Características de la Aplicación
@@ -300,20 +288,17 @@ npm run lint         # Ejecutar ESLint
 ## 🤝 Contribuir
 
 1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
+2. Crea una rama para tu feature (`git checkout -b feature/tunombre`)
+3. Commit tus cambios (`git commit -m 'listo :V/'`)
+4. Push a la rama (`git push origin feature/tunombre`)
 5. Abre un Pull Request
 
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
 
 ## 📞 Contacto
 
-- **Desarrollador**: Ares
-- **Email**: prueba02@gmail.com
-- **Proyecto**: [GreenCycle Connect & Share](https://github.com/SZARES/green-cycle-connect-share)
+- **Desarrollador**: SZ ARES
+- **Email**: brusssilva904@gmail.com
+- **Proyecto**: [GreenCycle](https://github.com/SZARES/green-cycle-connect-share)
 
 ---
 
