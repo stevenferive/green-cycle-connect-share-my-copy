@@ -191,10 +191,7 @@ http://localhost:3000
 - **TypeScript** - Tipado estático
 - **Vite** - Build tool y dev server
 - **React Router** - Enrutamiento
-- **TanStack Query** - Gestión de estado del servidor
-- **Zustand** - Gestión de estado global
 - **React Hook Form** - Formularios
-- **Zod** - Validación de esquemas
 
 ### UI/UX
 - **Tailwind CSS** - Framework de CSS
@@ -208,8 +205,6 @@ http://localhost:3000
 - **Socket.io** - WebSockets para chat en tiempo real
 
 ### Desarrollo
-- **ESLint** - Linting
-- **Prettier** - Formateo de código
 - **TypeScript** - Compilador y tipado
 
 ## 🎯 Principios de la Arquitectura Limpia
