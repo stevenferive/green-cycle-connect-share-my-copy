@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -16,11 +17,29 @@ import { Skeleton } from '@/components/ui/skeleton';
 const Chats = () => {
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Hooks para gestión de chats y conexión
   const { chats, loading, error, createChat, markChatAsRead } = useChats();
   const { isConnected, reconnect } = useSocket();
   const currentUser = getCurrentUser();
+
+  // Efecto para manejar el chatId de la URL
+  useEffect(() => {
+    const chatId = searchParams.get('chatId');
+    if (chatId && chats.length > 0) {
+      const chat = chats.find(c => c._id === chatId);
+      if (chat) {
+        setSelectedChat(chat);
+        // Limpiar el parámetro de la URL una vez que se ha seleccionado el chat
+        setSearchParams(prev => {
+          const newParams = new URLSearchParams(prev);
+          newParams.delete('chatId');
+          return newParams;
+        });
+      }
+    }
+  }, [chats, searchParams, setSearchParams]);
 
   const handleChatClick = async (chat: Chat) => {
     setSelectedChat(chat);
