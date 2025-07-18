@@ -1,14 +1,5 @@
 import { CreateProductDto, ProductValidationErrors } from '@/types/product';
 
-export const generateSlug = (name: string): string => {
-  return name
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '') // Eliminar caracteres especiales
-    .replace(/[\s_-]+/g, '-') // Reemplazar espacios y guiones por un solo guión
-    .replace(/^-+|-+$/g, ''); // Eliminar guiones al inicio y final
-};
-
 export const validateProduct = (product: Partial<CreateProductDto>): ProductValidationErrors => {
   const errors: ProductValidationErrors = {};
 
@@ -24,15 +15,6 @@ export const validateProduct = (product: Partial<CreateProductDto>): ProductVali
     errors.description = 'La descripción es obligatoria';
   } else if (product.description.length < 10 || product.description.length > 1000) {
     errors.description = 'La descripción debe tener entre 10 y 1000 caracteres';
-  }
-
-  // Validar slug
-  if (!product.slug?.trim()) {
-    errors.slug = 'El slug es obligatorio';
-  } else if (product.slug.length < 3 || product.slug.length > 100) {
-    errors.slug = 'El slug debe tener entre 3 y 100 caracteres';
-  } else if (!/^[a-z0-9-]+$/.test(product.slug)) {
-    errors.slug = 'El slug solo puede contener letras minúsculas, números y guiones';
   }
 
   // Validar categoría
@@ -110,15 +92,6 @@ export const validateProductWithFiles = (
     errors.description = 'La descripción es obligatoria';
   } else if (product.description.length < 10 || product.description.length > 1000) {
     errors.description = 'La descripción debe tener entre 10 y 1000 caracteres';
-  }
-
-  // Validar slug
-  if (!product.slug?.trim()) {
-    errors.slug = 'El slug es obligatorio';
-  } else if (product.slug.length < 3 || product.slug.length > 100) {
-    errors.slug = 'El slug debe tener entre 3 y 100 caracteres';
-  } else if (!/^[a-z0-9-]+$/.test(product.slug)) {
-    errors.slug = 'El slug solo puede contener letras minúsculas, números y guiones';
   }
 
   // Validar categoría

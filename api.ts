@@ -179,3 +179,68 @@ export const api = {
     }
   }
 }; 
+
+export const cartApi = {
+  // Agregar producto al carrito
+  addToCart: async (productId: string, quantity: number = 1) => {
+    return api.post('/cart/add', { productId, quantity });
+  },
+
+  // Obtener carrito del usuario
+  getCart: async () => {
+    return api.get('/cart');
+  },
+
+  // Actualizar cantidad de un item
+  updateCartItem: async (productId: string, quantity: number) => {
+    return api.patch(`/cart/item/${productId}`, { quantity });
+  },
+
+  // Eliminar item del carrito
+  removeFromCart: async (productId: string) => {
+    return api.delete(`/cart/item/${productId}`);
+  },
+
+  // Procesar checkout
+  checkout: async (shippingAddress: {
+    address: string;
+    city: string;
+    postalCode: string;
+    phone: string;
+    notes?: string;
+  }) => {
+    return api.post('/cart/checkout', { shippingAddress });
+  }
+};
+
+export const orderApi = {
+  // Obtener órdenes pendientes del vendedor
+  getPendingOrders: async () => {
+    return api.get('/orders/seller/pending');
+  },
+
+  // Aprobar orden
+  approveOrder: async (orderId: string) => {
+    return api.patch(`/orders/${orderId}/approve`);
+  },
+
+  // Rechazar orden
+  rejectOrder: async (orderId: string, reason?: string) => {
+    return api.patch(`/orders/${orderId}/reject`, { reason });
+  },
+
+  // Obtener todas las órdenes del comprador
+  getBuyerOrders: async () => {
+    return api.get('/orders/buyer/all');
+  },
+
+  // Obtener una orden específica
+  getOrder: async (orderId: string) => {
+    return api.get(`/orders/${orderId}`);
+  },
+
+  // Confirmar recepción de la orden
+  confirmDelivery: async (orderId: string) => {
+    return api.patch(`/orders/${orderId}/delivered`);
+  }
+}; 

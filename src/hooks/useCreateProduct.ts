@@ -32,8 +32,6 @@ export const useCreateProduct = () => {
         errorMessage = 'Datos del producto inválidos. Por favor, revisa la información.';
       } else if (error?.statusCode === 401) {
         errorMessage = 'No tienes permisos para crear productos. Por favor, inicia sesión.';
-      } else if (error?.statusCode === 409) {
-        errorMessage = 'Ya existe un producto con ese slug. Por favor, elige otro nombre.';
       } else if (error?.statusCode === 413) {
         errorMessage = 'Las imágenes son demasiado grandes. Por favor, reduce su tamaño.';
       }
@@ -43,15 +41,6 @@ export const useCreateProduct = () => {
         description: errorMessage,
         variant: "destructive",
       });
-    },
-  });
-};
-
-export const useCheckSlugAvailability = () => {
-  return useMutation({
-    mutationFn: (slug: string) => productService.checkSlugAvailability(slug),
-    onError: (error: any) => {
-      console.error('Error al verificar disponibilidad del slug:', error);
     },
   });
 };

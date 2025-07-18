@@ -21,6 +21,7 @@ import Chats from "@/pages/Chats";
 import Menu from "@/pages/Menu";
 import Settings from "@/pages/Settings";
 import Cart from "@/pages/Cart";
+import Orders from "@/pages/Orders";
 import Profile from "@/pages/Profile";
 import MyProducts from "@/pages/MyProducts";
 import Favorites from "@/pages/Favorites";
@@ -108,6 +109,11 @@ const AppRoutes = () => {
       <Route path="/cart" element={
         <ProtectedRoute>
           <Cart />
+        </ProtectedRoute>
+      } />
+      <Route path="/orders" element={
+        <ProtectedRoute>
+          <Orders />
         </ProtectedRoute>
       } />
       <Route path="/chats" element={

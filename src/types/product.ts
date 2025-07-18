@@ -22,7 +22,6 @@ export interface ProductMetadata {
 export interface CreateProductDto {
   name: string;
   description: string;
-  slug: string;
   category: string;
   condition: 'new' | 'used' | 'refurbished';
   price: number;
@@ -63,7 +62,6 @@ export interface CreateProductDto {
 export interface ProductValidationErrors {
   name?: string;
   description?: string;
-  slug?: string;
   category?: string;
   condition?: string;
   location?: string;

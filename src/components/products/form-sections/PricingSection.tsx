@@ -47,38 +47,36 @@ const PricingSection: React.FC<PricingSectionProps> = ({
           <Label htmlFor="barter">Disponible para intercambio/trueque</Label>
         </div>
 
-        {!forBarter && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="price">Precio (S/)</Label>
-              <Input
-                id="price"
-                type="number"
-                min="0"
-                step="0.01"
-                placeholder="0.00"
-                value={price || ''}
-                onChange={(e) => onInputChange('price', parseFloat(e.target.value) || 0)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="currency">Moneda</Label>
-              <Select 
-                value={currency} 
-                onValueChange={(value) => onInputChange('currency', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="PEN">Soles (PEN)</SelectItem>
-                  <SelectItem value="USD">Dólares (USD)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="price">Precio (S/)</Label>
+            <Input
+              id="price"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+              value={price || ''}
+              onChange={(e) => onInputChange('price', parseFloat(e.target.value) || 0)}
+            />
           </div>
-        )}
+
+          <div className="space-y-2">
+            <Label htmlFor="currency">Moneda</Label>
+            <Select 
+              value={currency} 
+              onValueChange={(value) => onInputChange('currency', value)}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="PEN">Soles (PEN)</SelectItem>
+                <SelectItem value="USD">Dólares (USD)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
 
         {forBarter && (
           <div className="space-y-2">

@@ -41,7 +41,7 @@ interface Product {
   _id?: string;
   name: string;
   description: string;
-  category: string | { _id: string; name: string; slug: string };
+  category: string | { _id: string; name: string };
   stock: number;
   price: number;
   forBarter: boolean;
@@ -112,14 +112,13 @@ const MyProductCard: React.FC<MyProductCardProps> = ({ product, onUpdate, onDele
   const convertToProductResponse = (): ProductResponse => {
     const image = product.image || (product.images && product.images[0]) || '';
     const category = typeof product.category === 'string' 
-      ? { _id: '', name: product.category, slug: '' }
+      ? { _id: '', name: product.category }
       : product.category;
     
     return {
       _id: getProductId(),
       name: product.name,
       description: product.description,
-      slug: '',
       images: product.images || [image],
       category,
       price: product.price,

@@ -1,9 +1,11 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Recycle, Search, Menu, User, LogOut } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Recycle, Search, Menu, User, LogOut, ShoppingCart } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/lib/auth-context";
+import { useCart } from "@/contexts/CartContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +20,7 @@ const Navbar = () => {
   const isMobile = useIsMobile();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const { user, isAuthenticated, logout } = useAuth();
+  const { getTotalItems } = useCart();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -63,6 +66,21 @@ const Navbar = () => {
               <Button variant="ghost" size="icon">
                 <Search className="h-5 w-5" />
               </Button>
+              
+              {/* Cart Button */}
+              <Link to="/cart">
+                <Button variant="ghost" size="icon" className="relative">
+                  <ShoppingCart className="h-5 w-5" />
+                  {getTotalItems() > 0 && (
+                    <Badge 
+                      variant="destructive" 
+                      className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                    >
+                      {getTotalItems() > 9 ? '9+' : getTotalItems()}
+                    </Badge>
+                  )}
+                </Button>
+              </Link>
               
               {isAuthenticated ? (
                 <DropdownMenu>
@@ -111,6 +129,22 @@ const Navbar = () => {
             <Button variant="ghost" size="icon">
               <Search className="h-5 w-5" />
             </Button>
+            
+            {/* Cart Button for mobile */}
+            <Link to="/cart">
+              <Button variant="ghost" size="icon" className="relative">
+                <ShoppingCart className="h-5 w-5" />
+                {getTotalItems() > 0 && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                  >
+                    {getTotalItems() > 9 ? '9+' : getTotalItems()}
+                  </Badge>
+                )}
+              </Button>
+            </Link>
+            
             <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(!isMenuOpen)}>
               <Menu className="h-5 w-5" />
             </Button>

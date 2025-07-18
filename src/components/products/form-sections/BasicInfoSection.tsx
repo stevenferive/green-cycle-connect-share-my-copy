@@ -9,7 +9,7 @@ import { ProductValidationErrors } from '@/types/product';
 
 interface BasicInfoSectionProps {
   name: string;
-  slug: string;
+  // slug: string;
   description: string;
   category: string;
   condition: string;
@@ -33,7 +33,7 @@ const ecoCategories = [
 
 const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
   name,
-  slug,
+  // slug,
   description,
   category,
   condition,
@@ -62,13 +62,13 @@ const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="slug">Slug (URL amigable)</Label>
+            {/* <Label htmlFor="slug">Slug (URL amigable)</Label>
             <Input
               id="slug"
-              value={slug}
-              onChange={(e) => onInputChange('slug', e.target.value)}
+              value={slug} */}
+            {/* onChange={(e) => onInputChange('slug', e.target.value)}
               placeholder="se-genera-automaticamente"
-            />
+            /> */}
           </div>
         </div>
 

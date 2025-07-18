@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { CreateProductDto, ProductValidationErrors } from '@/types/product';
-import { validateProduct, validateProductWithFiles, generateSlug, hasValidationErrors } from '@/utils/productValidation';
+import { validateProduct, validateProductWithFiles, hasValidationErrors } from '@/utils/productValidation';
 import { useCreateProduct } from '@/hooks/useCreateProduct';
 import BasicInfoSection from './form-sections/BasicInfoSection';
 import ImageUploadSection from './form-sections/ImageUploadSection';
@@ -22,7 +22,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ loadProducts, onSuccess, onCa
   const [formData, setFormData] = useState<Partial<CreateProductDto>>({
     name: '',
     description: '',
-    slug: '',
     category: '',
     condition: 'new',
     location: {
@@ -62,11 +61,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ loadProducts, onSuccess, onCa
   const handleInputChange = useCallback((field: string, value: any) => {
     setFormData(prev => {
       const newData = { ...prev, [field]: value };
-      
-      if (field === 'name' && typeof value === 'string') {
-        newData.slug = generateSlug(value);
-      }
-      
       return newData;
     });
 
@@ -199,7 +193,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ loadProducts, onSuccess, onCa
         ...formData,
         name: formData.name!,
         description: formData.description!,
-        slug: formData.slug!,
         category: formData.category!,
         condition: formData.condition!,
         price: formData.price!,
@@ -228,7 +221,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ loadProducts, onSuccess, onCa
     <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl mx-auto">
       <BasicInfoSection
         name={formData.name || ''}
-        slug={formData.slug || ''}
         description={formData.description || ''}
         category={formData.category || ''}
         condition={formData.condition || 'new'}

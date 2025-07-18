@@ -1,19 +1,48 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ShoppingCart, Plus, Minus, Trash2, ArrowLeft } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Trash2, ArrowLeft, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import CheckoutForm from '@/components/cart/CheckoutForm';
 
 const Cart = () => {
   const navigate = useNavigate();
-  const { items, updateQuantity, removeItem, getTotalPrice, getTotalItems } = useCart();
+  const { items, updateQuantity, removeItem, getTotalPrice, getTotalItems, isLoading, refreshCart } = useCart();
   const [showCheckout, setShowCheckout] = useState(false);
+  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
+
+  // Recargar carrito al montar el componente
+  useEffect(() => {
+    refreshCart();
+  }, []);
+
+  const handleQuantityUpdate = async (itemId: string, newQuantity: number) => {
+    setLoadingStates(prev => ({ ...prev, [itemId]: true }));
+    await updateQuantity(itemId, newQuantity);
+    setLoadingStates(prev => ({ ...prev, [itemId]: false }));
+  };
+
+  const handleRemoveItem = async (itemId: string) => {
+    setLoadingStates(prev => ({ ...prev, [`remove-${itemId}`]: true }));
+    await removeItem(itemId);
+    setLoadingStates(prev => ({ ...prev, [`remove-${itemId}`]: false }));
+  };
+
+  if (isLoading && items.length === 0) {
+    return (
+      <div className="min-h-screen bg-background p-4 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Cargando carrito...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -58,9 +87,17 @@ const Cart = () => {
             {items.map((item) => (
               <Card key={item.id} className="p-4">
                 <div className="flex items-start gap-4">
-                  {/* Imagen del producto (placeholder) */}
-                  <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
-                    <ShoppingCart className="h-6 w-6 text-muted-foreground" />
+                  {/* Imagen del producto */}
+                  <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    {item.image ? (
+                      <img 
+                        src={item.image} 
+                        alt={item.title} 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <ShoppingCart className="h-6 w-6 text-muted-foreground" />
+                    )}
                   </div>
                   
                   {/* Información del producto */}
@@ -79,9 +116,14 @@ const Cart = () => {
                           variant="outline"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          onClick={() => handleQuantityUpdate(item.id, item.quantity - 1)}
+                          disabled={loadingStates[item.id] || isLoading}
                         >
-                          <Minus className="h-3 w-3" />
+                          {loadingStates[item.id] ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <Minus className="h-3 w-3" />
+                          )}
                         </Button>
                         
                         <span className="mx-2 min-w-[2rem] text-center font-medium">
@@ -92,18 +134,28 @@ const Cart = () => {
                           variant="outline"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          onClick={() => handleQuantityUpdate(item.id, item.quantity + 1)}
+                          disabled={loadingStates[item.id] || isLoading}
                         >
-                          <Plus className="h-3 w-3" />
+                          {loadingStates[item.id] ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <Plus className="h-3 w-3" />
+                          )}
                         </Button>
                         
                         <Button
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8 text-destructive hover:text-destructive ml-2"
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => handleRemoveItem(item.id)}
+                          disabled={loadingStates[`remove-${item.id}`] || isLoading}
                         >
-                          <Trash2 className="h-3 w-3" />
+                          {loadingStates[`remove-${item.id}`] ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <Trash2 className="h-3 w-3" />
+                          )}
                         </Button>
                       </div>
                     </div>
@@ -140,6 +192,7 @@ const Cart = () => {
                 className="w-full mt-4 bg-green hover:bg-green-dark" 
                 size="lg"
                 onClick={() => setShowCheckout(true)}
+                disabled={isLoading}
               >
                 Proceder al Pago
               </Button>

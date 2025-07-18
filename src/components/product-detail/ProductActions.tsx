@@ -3,7 +3,6 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, MessageCircle } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
-import { useToast } from "@/hooks/use-toast";
 
 interface ProductActionsProps {
   product: {
@@ -12,6 +11,8 @@ interface ProductActionsProps {
     price: number;
     image: string;
     category: string;
+    sellerId?: string;
+    sellerName?: string;
   };
   onContactSeller: () => void;
 }
@@ -20,8 +21,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({
   product,
   onContactSeller
 }) => {
-  const { addItem } = useCart();
-  const { toast } = useToast();
+  const { addItem, isLoading } = useCart();
 
   const handleAddToCart = () => {
     addItem({
@@ -30,13 +30,8 @@ const ProductActions: React.FC<ProductActionsProps> = ({
       price: product.price,
       image: product.image,
       category: product.category,
-      sellerId: 'seller-' + product.id, // Mock seller ID
-      sellerName: 'Vendedor EcoFriendly' // Mock seller name
-    });
-    
-    toast({
-      title: "Producto agregado",
-      description: `${product.title} añadido al carrito`,
+      sellerId: product.sellerId || 'seller-' + product.id, // Mock seller ID si no existe
+      sellerName: product.sellerName || 'Vendedor EcoFriendly' // Mock seller name si no existe
     });
   };
 
@@ -45,9 +40,10 @@ const ProductActions: React.FC<ProductActionsProps> = ({
       <Button 
         className="flex-1 bg-green hover:bg-green-dark"
         onClick={handleAddToCart}
+        disabled={isLoading}
       >
         <ShoppingCart className="mr-2 h-4 w-4" />
-        Agregar al carrito
+        {isLoading ? 'Agregando...' : 'Agregar al carrito'}
       </Button>
       
       <Button 

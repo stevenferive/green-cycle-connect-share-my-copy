@@ -5,17 +5,14 @@ export interface ProductResponse {
   _id: string;
   name: string;
   description: string;
-  slug: string;
   images: string[];
   category: {
     _id: string;
     name: string;
-    slug: string;
   };
   subcategory?: {
     _id: string;
     name: string;
-    slug: string;
   };
   price: number;
   currency: string;
@@ -206,10 +203,6 @@ export const productService = {
         throw new Error('La descripción debe tener al menos 10 caracteres');
       }
       
-      if (!productData.slug) {
-        throw new Error('El slug es obligatorio');
-      }
-      
       if (!productData.category) {
         throw new Error('La categoría es obligatoria');
       }
@@ -259,9 +252,6 @@ export const productService = {
       
       // Manejar errores específicos del servidor
       if (error.statusCode === 400) {
-        if (error.message?.includes('slug')) {
-          throw new Error('Ya existe un producto con ese slug. Por favor, elige otro nombre.');
-        }
         if (error.message?.includes('validation')) {
           throw new Error('Datos del producto inválidos. Por favor, revisa la información.');
         }
@@ -307,19 +297,7 @@ export const productService = {
     }
   },
 
-  async checkSlugAvailability(slug: string): Promise<boolean> {
-    try {
-      await api.get(`/products/check-slug/${slug}`);
-      return true; // Si no hay error, el slug está disponible
-    } catch (error: any) {
-      if (error.statusCode === 409) {
-        return false; // Slug ya existe
-      }
-      throw error;
-    }
-  },
-
-  async getCategories(): Promise<Array<{ _id: string; name: string; slug: string }>> {
+  async getCategories(): Promise<Array<{ _id: string; name: string }>> {
     try {
       const response = await api.get('/categories');
       return response || [];
@@ -329,7 +307,7 @@ export const productService = {
     }
   },
 
-  async getSubcategories(categoryId: string): Promise<Array<{ _id: string; name: string; slug: string }>> {
+  async getSubcategories(categoryId: string): Promise<Array<{ _id: string; name: string }>> {
     try {
       const response = await api.get(`/categories/${categoryId}/subcategories`);
       return response || [];

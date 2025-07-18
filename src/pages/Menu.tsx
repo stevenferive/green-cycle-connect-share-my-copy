@@ -12,6 +12,7 @@ import {
   Settings, 
   Heart, 
   Package, 
+  ShoppingBag,
   HelpCircle, 
   LogOut,
   Bell,
@@ -46,6 +47,12 @@ const Menu = () => {
       label: 'Mis Productos', 
       description: 'Gestionar mis publicaciones',
       href: '/my-products'
+    },
+    { 
+      icon: ShoppingBag, 
+      label: 'Mis Órdenes', 
+      description: 'Ver historial de compras realizadas',
+      href: '/orders'
     },
     { 
       icon: Heart, 

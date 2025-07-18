@@ -1,6 +1,22 @@
 
 import React from "react";
-import ProductCard, { Product } from "@/components/products/ProductCard";
+import ProductCard from "@/components/products/ProductCard";
+
+interface Product {
+  id: string;
+  title: string;
+  seller: string;
+  sellerId?: string;
+  price: number;
+  originalPrice?: number;
+  location: string;
+  image: string;
+  category: string;
+  ecoBadges?: string[];
+  isFavorite?: boolean;
+  isNew?: boolean;
+  forBarter?: boolean;
+}
 
 interface ProductGridProps {
   products: Product[];
@@ -19,7 +35,22 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {products.map(product => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard 
+          key={product.id}
+          id={product.id}
+          title={product.title}
+          seller={product.seller}
+          sellerId={product.sellerId}
+          price={product.price}
+          originalPrice={product.originalPrice}
+          location={product.location}
+          image={product.image}
+          category={product.category}
+          ecoBadges={product.ecoBadges}
+          isFavorite={product.isFavorite}
+          isNew={product.isNew}
+          forBarter={product.forBarter}
+        />
       ))}
     </div>
   );

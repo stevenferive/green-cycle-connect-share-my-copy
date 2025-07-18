@@ -1,53 +1,70 @@
-# GreenCycle
+# 🌱 GreenCycle Connect & Share
 
-## Arquitectura Limpia (Clean Architecture)
+## 📋 Resumen del Proyecto
 
-Este proyecto implementa los principios de Arquitectura Limpia (Clean Architecture) para mantener un código organizado, testeable y mantenible. La estructura está diseñada para separar las preocupaciones y hacer que el código sea independiente de frameworks y detalles de implementación.
+**GreenCycle Connect & Share** es una plataforma de comercio sostenible que conecta a personas interesadas en el reciclaje, la reutilización y el consumo responsable. La aplicación permite a los usuarios comprar, vender e intercambiar productos de segunda mano, promoviendo la economía circular y la sostenibilidad ambiental.
 
-### Estructura del Proyecto
+### 🎯 Características Principales
+
+- **🛍️ Marketplace Sostenible**: Compra y venta de productos de segunda mano
+- **♻️ Intercambio de Productos**: Sistema de trueque integrado
+- **📍 Geolocalización**: Encuentra productos cerca de ti
+- **💬 Chat en Tiempo Real**: Comunicación directa entre compradores y vendedores
+- **🌿 Eco-Badges**: Sistema de certificaciones ambientales
+- **📱 Diseño Responsivo**: Optimizado para móviles y desktop
+- **🔐 Autenticación Segura**: Sistema de login/registro con JWT
+
+## 🏗️ Arquitectura Limpia (Clean Architecture)
+
+Este proyecto implementa los principios de **Arquitectura Limpia** para mantener un código organizado, testeable y mantenible. La estructura está diseñada para separar las preocupaciones y hacer que el código sea independiente de frameworks y detalles de implementación.
+
+### 📁 Estructura del Proyecto
 
 ```
 src/
-├── core/                    # Capa central (Domain)
+├── core/                    # 🎯 Capa central (Domain)
 │   ├── domain/
 │   │   ├── entities/        # Entidades de negocio
 │   │   ├── repositories/    # Interfaces de repositorios
 │   │   ├── usecases/        # Casos de uso del negocio
 │   │   └── value-objects/   # Objetos de valor
 │
-├── data/                    # Capa de datos (Data Layer)
+├── data/                    # 📊 Capa de datos (Data Layer)
 │   ├── repositories/        # Implementaciones de repositorios
 │   ├── datasources/         # Fuentes de datos (API, DB, etc.)
 │   ├── models/              # Modelos de datos
 │   └── mappers/             # Convertidores entre modelos y entidades
 │
-├── presentation/            # Capa de presentación
+├── presentation/            # 🎨 Capa de presentación
 │   ├── pages/               # Páginas de la aplicación
 │   ├── components/          # Componentes UI reutilizables
 │   ├── hooks/               # Hooks personalizados
 │   ├── providers/           # Proveedores de contexto
 │   ├── navigation/          # Configuración de rutas
-│   └── store/               # Estado global (si usas Redux/Zustand)
+│   └── store/               # Estado global
 │
-├── infrastructure/          # Capa de infraestructura
+├── infrastructure/          # 🔧 Capa de infraestructura
 │   ├── http/                # Cliente HTTP (axios, fetch)
 │   ├── storage/             # Almacenamiento local
 │   ├── services/            # Servicios externos
 │   └── config/              # Configuraciones
 │
-└── di/                      # Inyección de dependencias
+├── components/              # 🧩 Componentes UI
+│   ├── ui/                  # Componentes base (shadcn/ui)
+│   ├── layout/              # Componentes de layout
+│   ├── products/            # Componentes de productos
+│   ├── chat/                # Componentes de chat
+│   └── ...                  # Otros componentes
+│
+├── hooks/                   # 🎣 Hooks personalizados
+├── services/                # 🔌 Servicios de API
+├── types/                   # 📝 Tipos TypeScript
+├── utils/                   # 🛠️ Utilidades
+└── di/                      # 💉 Inyección de dependencias
     └── container.ts         # Configuración del contenedor DI
 ```
 
-### Principios de la Arquitectura Limpia
-
-1. **Independencia de Frameworks**: El núcleo de la aplicación no depende de ningún framework externo.
-2. **Testabilidad**: Las capas están diseñadas para ser fácilmente testeables de forma aislada.
-3. **Independencia de la UI**: La lógica de negocio funciona sin importar la interfaz de usuario.
-4. **Independencia de la Base de Datos**: La lógica central no depende de ninguna base de datos específica.
-5. **Independencia de cualquier agente externo**: El núcleo de negocio no conoce nada del mundo exterior.
-
-### Flujo de Dependencias
+### 🔄 Flujo de Dependencias
 
 Las dependencias fluyen desde las capas externas hacia las internas:
 
@@ -57,343 +74,171 @@ Infrastructure/Data → Domain ← Presentation
 
 La capa de dominio no depende de ninguna otra capa, mientras que las capas externas dependen de las internas.
 
-### Implementación Detallada
+## 🚀 Cómo Clonar e Iniciar el Proyecto
 
-#### 1. Capa de Dominio (Core)
+### 1. Clonar el Repositorio
 
-La capa de dominio contiene toda la lógica de negocio y es completamente independiente de frameworks externos.
-
-##### Entidades
-
-Las entidades representan los objetos centrales del negocio:
-
-```typescript
-// User.ts
-export class User {
-  constructor(
-    private readonly id: string,
-    private readonly name: string,
-    private readonly email: string,
-    private readonly createdAt: Date
-  ) {}
-
-  getId(): string {
-    return this.id;
-  }
-
-  // Métodos adicionales...
-}
+```bash
+git clone https://github.com/SZARES/green-cycle-connect-share.git
+cd green-cycle-connect-share
 ```
 
-##### Value Objects
+### 2. Instalar Dependencias
 
-Objetos inmutables que encapsulan lógica de validación:
-
-```typescript
-// Email.ts
-export class Email {
-  private readonly value: string;
-
-  private constructor(value: string) {
-    this.value = value;
-  }
-
-  static create(value: string): Email | Error {
-    if (!Email.isValid(value)) {
-      return new Error('Email no válido');
-    }
-    
-    return new Email(value);
-  }
-
-  // Métodos adicionales...
-}
+```bash
+npm install
+# o
+yarn install
+# o
+bun install
 ```
 
-##### Repositories (Interfaces)
+### 3. Configurar Variables de Entorno
 
-Definen contratos para acceder a los datos:
+Crea un archivo `.env` en la raíz del proyecto:
 
-```typescript
-// UserRepository.ts
-export interface UserRepository {
-  getUser(id: string): Promise<User | null>;
-  getUsers(): Promise<User[]>;
-  saveUser(user: User): Promise<void>;
-  deleteUser(id: string): Promise<void>;
-}
+```env
+VITE_API_URL=http://localhost:3000
+VITE_DEBUG=false
+VITE_APP_VERSION=1.0.0
 ```
 
-##### Casos de Uso
+### 4. Ejecutar el Proyecto
 
-Implementan la lógica específica del negocio:
+```bash
+# Desarrollo
+npm run dev
 
-```typescript
-// GetUserUseCase.ts
-export class GetUserUseCase {
-  constructor(private readonly userRepository: UserRepository) {}
+# Construcción para producción
+npm run build
 
-  async execute(userId: string): Promise<User | null> {
-    if (!userId || userId.trim().length === 0) {
-      throw new Error('El ID de usuario no puede estar vacío');
-    }
-    
-    return this.userRepository.getUser(userId);
-  }
-}
-
-// CreateUserUseCase.ts
-export class CreateUserUseCase {
-  constructor(private readonly userRepository: UserRepository) {}
-
-  async execute({ name, email }: CreateUserDTO): Promise<User> {
-    // Validaciones de reglas de negocio
-    // ...
-    
-    const newUser = new User(id, name, email, createdAt);
-    await this.userRepository.saveUser(newUser);
-    
-    return newUser;
-  }
-}
+# Vista previa de producción
+npm run preview
 ```
 
-#### 2. Capa de Datos
+### 5. Acceder a la Aplicación
 
-Implementa las interfaces definidas en el dominio.
+Abre tu navegador y ve a: `http://localhost:5173`
 
-##### Modelos de Datos
+## 🔌 Endpoints de la API
 
-```typescript
-// UserModel.ts
-export interface UserModel {
-  id: string;
-  name: string;
-  email: string;
-  created_at: string; // Formato diferente al de la entidad
-  avatar_url?: string; // Campo adicional
-}
+### Base URL
+```
+http://localhost:3000
 ```
 
-##### Mappers
+### 🔐 Autenticación
 
-Convierten entre modelos de datos y entidades de dominio:
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `POST` | `/auth/login` | Iniciar sesión |
+| `POST` | `/auth/register` | Registrar usuario |
+| `POST` | `/auth/logout` | Cerrar sesión |
 
-```typescript
-// UserMapper.ts
-export class UserMapper {
-  static toDomain(userModel: UserModel): User {
-    return new User(
-      userModel.id,
-      userModel.name,
-      userModel.email,
-      new Date(userModel.created_at)
-    );
-  }
+### 📦 Productos
 
-  static toData(user: User): UserModel {
-    return {
-      id: user.getId(),
-      name: user.getName(),
-      email: user.getEmail(),
-      created_at: user.getCreatedAt().toISOString(),
-    };
-  }
-}
-```
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/products` | Obtener todos los productos |
+| `GET` | `/products/:id` | Obtener producto específico |
+| `POST` | `/products` | Crear nuevo producto |
+| `PUT` | `/products/:id` | Actualizar producto |
+| `DELETE` | `/products/:id` | Eliminar producto |
+| `POST` | `/products/with-images` | Crear producto con imágenes |
+| `GET` | `/products/check-slug/:slug` | Verificar slug único |
 
-##### Implementaciones de Repositorios
+### 🛒 Carrito de Compras
 
-```typescript
-// UserRepositoryImpl.ts
-export class UserRepositoryImpl implements UserRepository {
-  constructor(private readonly userApi: UserApi) {}
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/cart` | Obtener carrito del usuario |
+| `POST` | `/cart/add` | Agregar producto al carrito |
+| `PATCH` | `/cart/item/:productId` | Actualizar cantidad |
+| `DELETE` | `/cart/item/:productId` | Eliminar item del carrito |
+| `POST` | `/cart/checkout` | Procesar compra |
 
-  async getUser(id: string): Promise<User | null> {
-    const userModel = await this.userApi.fetchUser(id);
-    if (!userModel) return null;
-    return UserMapper.toDomain(userModel);
-  }
+### 📋 Órdenes
 
-  // Otros métodos...
-}
-```
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/orders/seller/pending` | Órdenes pendientes del vendedor |
+| `GET` | `/orders/buyer/all` | Todas las órdenes del comprador |
+| `GET` | `/orders/:id` | Obtener orden específica |
+| `PATCH` | `/orders/:id/approve` | Aprobar orden |
+| `PATCH` | `/orders/:id/reject` | Rechazar orden |
+| `PATCH` | `/orders/:id/delivered` | Confirmar entrega |
 
-#### 3. Capa de Infraestructura
+### 👥 Usuarios
 
-Implementa detalles técnicos como la comunicación con APIs o el almacenamiento.
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/user` | Obtener todos los usuarios |
+| `GET` | `/user/:id` | Obtener usuario específico |
+| `PUT` | `/user/:id` | Actualizar perfil de usuario |
+| `DELETE` | `/user/:id` | Eliminar usuario |
 
-##### Implementación de HTTP
+### 💬 Chat
 
-```typescript
-// UserApiImpl.ts
-export class UserApiImpl implements UserApi {
-  constructor(private readonly apiUrl: string) {}
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/chats` | Obtener chats del usuario |
+| `POST` | `/chats` | Crear nuevo chat |
+| `GET` | `/chats/:id/messages` | Obtener mensajes del chat |
+| `POST` | `/chats/:id/messages` | Enviar mensaje |
 
-  async fetchUser(id: string): Promise<UserModel | null> {
-    try {
-      const response = await axios.get(`${this.apiUrl}/users/${id}`);
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 404) {
-        return null;
-      }
-      throw error;
-    }
-  }
+### 🏷️ Categorías
 
-  // Otros métodos...
-}
-```
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/categories` | Obtener todas las categorías |
+| `GET` | `/categories/:id/subcategories` | Obtener subcategorías |
 
-##### Servicio de Almacenamiento Local
+## 🛠️ Tecnologías Utilizadas
 
-```typescript
-// LocalStorageService.ts
-export class LocalStorageService {
-  static save<T>(key: string, value: T): void {
-    try {
-      const serializedValue = JSON.stringify(value);
-      localStorage.setItem(key, serializedValue);
-    } catch (error) {
-      console.error('Error al guardar en localStorage:', error);
-    }
-  }
+### Frontend
+- **React 18** - Biblioteca de UI
+- **TypeScript** - Tipado estático
+- **Vite** - Build tool y dev server
+- **React Router** - Enrutamiento
+- **TanStack Query** - Gestión de estado del servidor
+- **Zustand** - Gestión de estado global
+- **React Hook Form** - Formularios
+- **Zod** - Validación de esquemas
 
-  // Otros métodos...
-}
-```
+### UI/UX
+- **Tailwind CSS** - Framework de CSS
+- **shadcn/ui** - Componentes UI
+- **Radix UI** - Componentes primitivos
+- **Lucide React** - Iconos
+- **Sonner** - Notificaciones toast
 
-##### Servicio de Notificaciones
+### Comunicación
+- **Axios** - Cliente HTTP
+- **Socket.io** - WebSockets para chat en tiempo real
 
-```typescript
-// NotificationService.ts
-export class NotificationService {
-  static success(message: string, title?: string): void {
-    this.show({
-      title,
-      message,
-      type: NotificationType.SUCCESS
-    });
-  }
+### Desarrollo
+- **ESLint** - Linting
+- **Prettier** - Formateo de código
+- **TypeScript** - Compilador y tipado
 
-  // Otros métodos...
-}
-```
+## 🎯 Principios de la Arquitectura Limpia
 
-#### 4. Capa de Presentación
+### 1. **Independencia de Frameworks**
+El núcleo de la aplicación no depende de ningún framework externo.
 
-Implementa la interfaz de usuario utilizando los casos de uso.
+### 2. **Testabilidad**
+Las capas están diseñadas para ser fácilmente testeables de forma aislada.
 
-##### Hooks personalizados
+### 3. **Independencia de la UI**
+La lógica de negocio funciona sin importar la interfaz de usuario.
 
-```typescript
-// useUser.ts
-export const useUser = (userId: string) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
+### 4. **Independencia de la Base de Datos**
+La lógica central no depende de ninguna base de datos específica.
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        // Utilizamos el caso de uso del dominio
-        const userResult = await getUserUseCase.execute(userId);
-        setUser(userResult);
-      } catch (err) {
-        setError(err instanceof Error ? err : new Error('Error desconocido'));
-      } finally {
-        setLoading(false);
-      }
-    };
+### 5. **Independencia de cualquier agente externo**
+El núcleo de negocio no conoce nada del mundo exterior.
 
-    if (userId) {
-      fetchUser();
-    }
-  }, [userId]);
-
-  return { user, loading, error };
-};
-```
-
-##### Proveedores de contexto
-
-```typescript
-// AuthProvider.tsx
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  
-  // Métodos para login/logout usando casos de uso...
-  
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
-```
-
-##### Gestión de estado global
-
-```typescript
-// userStore.ts
-export const useUserStore = create<UserState>((set) => ({
-  user: null,
-  loading: false,
-  error: null,
-  
-  fetchUser: async (userId: string) => {
-    try {
-      set({ loading: true, error: null });
-      
-      // Utilizamos el caso de uso del dominio
-      const user = await getUserUseCase.execute(userId);
-      
-      set({ user, loading: false });
-    } catch (error) {
-      set({ 
-        error: error instanceof Error ? error : new Error('Error desconocido'), 
-        loading: false 
-      });
-    }
-  },
-  
-  // Otras acciones...
-}));
-```
-
-#### 5. Inyección de Dependencias
-
-Configura las dependencias respetando el principio de inversión de dependencias:
-
-```typescript
-// container.ts
-// Configuración de la API
-const API_URL = appConfig.apiUrl;
-
-// Creación de instancias
-const userApiInstance: UserApi = new UserApiImpl(API_URL);
-const userRepositoryInstance: UserRepository = new UserRepositoryImpl(userApiInstance);
-
-// Exportación de casos de uso ya configurados
-export const getUserUseCase = new GetUserUseCase(userRepositoryInstance);
-export const createUserUseCase = new CreateUserUseCase(userRepositoryInstance);
-```
-
-### Inyección de Dependencias
-
-Para conectar las diferentes capas respetando las reglas de dependencia, utilizamos un contenedor de inyección de dependencias (en `src/di/container.ts`).
-
-## Ventajas
-
-- **Mantenibilidad**: Cambios en una capa no afectan a otras capas.
-- **Escalabilidad**: Fácil de extender con nuevas funcionalidades.
-- **Testabilidad**: Cada componente se puede probar de manera aislada.
-- **Independencia tecnológica**: Fácil cambiar frameworks o bibliotecas externas.
-
-## Cómo Empezar
-
-1. Clona el repositorio
-2. Instala las dependencias: `npm install`
-3. Ejecuta el proyecto: `npm run dev`
-
-## Flujo de Desarrollo con Arquitectura Limpia
+## 🔄 Flujo de Desarrollo con Arquitectura Limpia
 
 Para desarrollar una nueva funcionalidad siguiendo la arquitectura limpia:
 
@@ -421,29 +266,55 @@ Para desarrollar una nueva funcionalidad siguiendo la arquitectura limpia:
    - Registra todas las implementaciones en el contenedor
    - Asegura que las dependencias fluyan correctamente
 
-## Variables de Entorno
+## 🚀 Scripts Disponibles
 
-Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
-
+```bash
+# Desarrollo
+npm run dev          # Iniciar servidor de desarrollo
+npm run build        # Construir para producción
+npm run build:dev    # Construir en modo desarrollo
+npm run preview      # Vista previa de producción
+npm run lint         # Ejecutar ESLint
 ```
-VITE_API_URL=https://tu-api.com
-VITE_DEBUG=false
-VITE_APP_VERSION=1.0.0
-```
 
-## Tecnologías
+## 📱 Características de la Aplicación
 
-- React
-- TypeScript
-- Axios
-- React Router
-- Zustand (para gestión de estado)
-- Vite
+### 🏠 Páginas Principales
+- **Inicio**: Landing page con productos destacados
+- **Explorar**: Catálogo de productos con filtros
+- **Categorías**: Navegación por categorías
+- **Chats**: Mensajería en tiempo real
+- **Perfil**: Gestión de perfil de usuario
+- **Mis Productos**: Gestión de productos del vendedor
+- **Carrito**: Gestión de compras
+- **Órdenes**: Historial de transacciones
 
-## Hecho con:
+### 🔧 Funcionalidades Técnicas
+- **Autenticación JWT**: Sistema seguro de login
+- **WebSockets**: Chat en tiempo real
+- **Upload de Imágenes**: Carga múltiple de archivos
+- **Geolocalización**: Búsqueda por proximidad
+- **Filtros Avanzados**: Búsqueda y filtrado de productos
+- **Responsive Design**: Optimizado para todos los dispositivos
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🤝 Contribuir
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
+## 📞 Contacto
+
+- **Desarrollador**: Ares
+- **Email**: prueba02@gmail.com
+- **Proyecto**: [GreenCycle Connect & Share](https://github.com/SZARES/green-cycle-connect-share)
+
+---
+
+**¡Únete a la revolución verde! 🌱♻️**
