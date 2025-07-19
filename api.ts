@@ -202,14 +202,17 @@ export const cartApi = {
   },
 
   // Procesar checkout
-  checkout: async (shippingAddress: {
-    address: string;
-    city: string;
-    postalCode: string;
-    phone: string;
-    notes?: string;
+  checkout: async (checkoutData: {
+    shippingAddress: {
+      street: string;
+      city: string;
+      state: string;
+      zipCode: string;
+      country: string;
+    };
+    notes: string;
   }) => {
-    return api.post('/cart/checkout', { shippingAddress });
+    return api.post('/cart/checkout', checkoutData);
   }
 };
 

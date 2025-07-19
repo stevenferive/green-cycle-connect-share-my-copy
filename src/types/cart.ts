@@ -17,11 +17,11 @@ export interface CartBackend {
 }
 
 export interface ShippingAddress {
-  address: string;
+  street: string;
   city: string;
-  postalCode: string;
-  phone: string;
-  notes?: string;
+  state: string;
+  zipCode: string;
+  country: string;
 }
 
 export interface OrderItem extends CartItemBackend {

@@ -53,6 +53,11 @@ const MapView = () => {
     }
   ]);
 
+
+
+  // ALGUN DIAAA: USAREMOS leaflet libreria para mapas :V
+  // pero x ahora todavia nadota Dx
+
   return (
     <div className="h-[600px] relative">
       {/* Map placeholder - En una implementación real usarías Google Maps o Mapbox */}

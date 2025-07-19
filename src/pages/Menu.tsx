@@ -30,12 +30,12 @@ const Menu = () => {
   const { unreadCount, requestPermission, permission } = useNotifications();
 
   const menuItems = [
-    { 
-      icon: BarChart3, 
-      label: 'Dashboard', 
-      description: 'Estadísticas y resumen de actividad',
-      href: '/dashboard'
-    },
+    // { 
+    //   icon: BarChart3, 
+    //   label: 'Dashboard', 
+    //   description: 'Estadísticas y resumen de actividad',
+    //   href: '/dashboard'
+    // },
     { 
       icon: User, 
       label: 'Mi Perfil', 
@@ -48,61 +48,61 @@ const Menu = () => {
       description: 'Gestionar mis publicaciones',
       href: '/my-products'
     },
-    { 
-      icon: ShoppingBag, 
-      label: 'Mis Órdenes', 
-      description: 'Ver historial de compras realizadas',
-      href: '/orders'
-    },
-    { 
-      icon: Heart, 
-      label: 'Favoritos', 
-      description: 'Productos que me gustan',
-      href: '/favorites'
-    },
-    { 
-      icon: History, 
-      label: 'Historial de Transacciones', 
-      description: 'Ver compras y ventas realizadas',
-      href: '/transaction-history'
-    },
-    { 
-      icon: Star, 
-      label: 'Reseñas y Calificaciones', 
-      description: 'Gestionar reseñas recibidas y dadas',
-      href: '/reviews'
-    },
-    { 
-      icon: Bell, 
-      label: 'Notificaciones', 
-      description: 'Configurar alertas y ver notificaciones',
-      href: '/notifications',
-      badge: unreadCount > 0 ? unreadCount : undefined
-    },
-    { 
-      icon: MapPin, 
-      label: 'Ubicaciones', 
-      description: 'Gestionar direcciones guardadas',
-      href: '/locations'
-    },
-    { 
-      icon: CreditCard, 
-      label: 'Métodos de Pago', 
-      description: 'Gestionar pagos y cobros',
-      href: '/payment-methods'
-    },
-    { 
-      icon: Settings, 
-      label: 'Configuración', 
-      description: 'Ajustes de la aplicación y preferencias',
-      href: '/settings'
-    },
-    { 
-      icon: Shield, 
-      label: 'Privacidad y Seguridad', 
-      description: 'Proteger cuenta y datos personales',
-      href: '/privacy-security'
-    },
+    // { 
+    //   icon: ShoppingBag, 
+    //   label: 'Mis Órdenes', 
+    //   description: 'Ver historial de compras realizadas',
+    //   href: '/orders'
+    // },
+    // { 
+    //   icon: Heart, 
+    //   label: 'Favoritos', 
+    //   description: 'Productos que me gustan',
+    //   href: '/favorites'
+    // },
+    // { 
+    //   icon: History, 
+    //   label: 'Historial de Transacciones', 
+    //   description: 'Ver compras y ventas realizadas',
+    //   href: '/transaction-history'
+    // },
+    // { 
+    //   icon: Star, 
+    //   label: 'Reseñas y Calificaciones', 
+    //   description: 'Gestionar reseñas recibidas y dadas',
+    //   href: '/reviews'
+    // },
+    // { 
+    //   icon: Bell, 
+    //   label: 'Notificaciones', 
+    //   description: 'Configurar alertas y ver notificaciones',
+    //   href: '/notifications',
+    //   badge: unreadCount > 0 ? unreadCount : undefined
+    // },
+    // { 
+    //   icon: MapPin, 
+    //   label: 'Ubicaciones', 
+    //   description: 'Gestionar direcciones guardadas',
+    //   href: '/locations'
+    // },
+    // { 
+    //   icon: CreditCard, 
+    //   label: 'Métodos de Pago', 
+    //   description: 'Gestionar pagos y cobros',
+    //   href: '/payment-methods'
+    // },
+    // { 
+    //   icon: Settings, 
+    //   label: 'Configuración', 
+    //   description: 'Ajustes de la aplicación y preferencias',
+    //   href: '/settings'
+    // },
+    // { 
+    //   icon: Shield, 
+    //   label: 'Privacidad y Seguridad', 
+    //   description: 'Proteger cuenta y datos personales',
+    //   href: '/privacy-security'
+    // },
     { 
       icon: HelpCircle, 
       label: 'Ayuda y Soporte', 
@@ -182,11 +182,11 @@ const Menu = () => {
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <h3 className="font-medium">{item.label}</h3>
-                            {item.badge && (
+                            {/* {item.badge && (
                               <Badge variant="destructive" className="text-xs">
                                 {item.badge}
                               </Badge>
-                            )}
+                            )} */}
                           </div>
                           <p className="text-sm text-muted-foreground">{item.description}</p>
                         </div>

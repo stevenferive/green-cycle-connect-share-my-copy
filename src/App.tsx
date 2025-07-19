@@ -13,26 +13,26 @@ import About from "@/pages/About";
 import EcoTips from "@/pages/EcoTips";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
-import NotFound from "@/pages/NotFound";
+// import NotFound from "@/pages/NotFound";
 import ProductDetail from "@/pages/ProductDetail";
-import Feed from "@/pages/Feed";
+// import Feed from "@/pages/Feed";
 import Search from "@/pages/Search";
 import Chats from "@/pages/Chats";
 import Menu from "@/pages/Menu";
-import Settings from "@/pages/Settings";
+// import Settings from "@/pages/Settings";
 import Cart from "@/pages/Cart";
-import Orders from "@/pages/Orders";
+// import Orders from "@/pages/Orders";
 import Profile from "@/pages/Profile";
 import MyProducts from "@/pages/MyProducts";
-import Favorites from "@/pages/Favorites";
-import Notifications from "@/pages/Notifications";
-import PaymentMethods from "@/pages/PaymentMethods";
-import PrivacySecurity from "@/pages/PrivacySecurity";
+// import Favorites from "@/pages/Favorites";
+// import Notifications from "@/pages/Notifications";
+// import PaymentMethods from "@/pages/PaymentMethods";
+// import PrivacySecurity from "@/pages/PrivacySecurity";
 import HelpSupport from "@/pages/HelpSupport";
-import Locations from "@/pages/Locations";
-import Dashboard from "@/pages/Dashboard";
-import TransactionHistory from "@/pages/TransactionHistory";
-import Reviews from "@/pages/Reviews";
+// import Locations from "@/pages/Locations";
+// import Dashboard from "@/pages/Dashboard";
+// import TransactionHistory from "@/pages/TransactionHistory";
+// import Reviews from "@/pages/Reviews";
 
 const queryClient = new QueryClient();
 
@@ -96,11 +96,11 @@ const AppRoutes = () => {
           <Explore />
         </ProtectedRoute>
       } />
-      <Route path="/dashboard" element={
+      {/* <Route path="/dashboard" element={
         <ProtectedRoute>
           <Dashboard />
         </ProtectedRoute>
-      } />
+      } /> */}
       <Route path="/search" element={
         <ProtectedRoute>
           <Search />
@@ -111,11 +111,11 @@ const AppRoutes = () => {
           <Cart />
         </ProtectedRoute>
       } />
-      <Route path="/orders" element={
+      {/* <Route path="/orders" element={
         <ProtectedRoute>
           <Orders />
         </ProtectedRoute>
-      } />
+      } /> */}
       <Route path="/chats" element={
         <ProtectedRoute>
           <Chats />
@@ -126,16 +126,16 @@ const AppRoutes = () => {
           <Menu />
         </ProtectedRoute>
       } />
-      <Route path="/settings" element={
+      {/* <Route path="/settings" element={
         <ProtectedRoute>
           <Settings />
         </ProtectedRoute>
-      } />
-      <Route path="/notifications" element={
+      } /> */}
+      {/* <Route path="/notifications" element={
         <ProtectedRoute>
           <Notifications />
         </ProtectedRoute>
-      } />
+      } /> */}
       <Route path="/profile" element={
         <ProtectedRoute>
           <Profile />
@@ -146,36 +146,36 @@ const AppRoutes = () => {
           <MyProducts />
         </ProtectedRoute>
       } />
-      <Route path="/favorites" element={
+      {/* <Route path="/favorites" element={
         <ProtectedRoute>
           <Favorites />
         </ProtectedRoute>
-      } />
-      <Route path="/locations" element={
+      } /> */}
+      {/* <Route path="/locations" element={
         <ProtectedRoute>
           <Locations />
         </ProtectedRoute>
-      } />
-      <Route path="/transaction-history" element={
+      } /> */}
+      {/* <Route path="/transaction-history" element={
         <ProtectedRoute>
           <TransactionHistory />
         </ProtectedRoute>
-      } />
-      <Route path="/reviews" element={
+      } /> */}
+      {/* <Route path="/reviews" element={
         <ProtectedRoute>
           <Reviews />
         </ProtectedRoute>
-      } />
-      <Route path="/payment-methods" element={
+      } /> */}
+      {/* <Route path="/payment-methods" element={
         <ProtectedRoute>
           <PaymentMethods />
         </ProtectedRoute>
-      } />
-      <Route path="/privacy-security" element={
+      } /> */}
+      {/* <Route path="/privacy-security" element={
         <ProtectedRoute>
           <PrivacySecurity />
         </ProtectedRoute>
-      } />
+      } /> */}
       <Route path="/help-support" element={
         <ProtectedRoute>
           <HelpSupport />

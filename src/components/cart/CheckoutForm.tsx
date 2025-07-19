@@ -24,13 +24,12 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  const [formData, setFormData] = useState<ShippingAddress & { email: string; paymentMethod: string }>({
-    email: '',
-    phone: '',
-    address: '',
+  const [formData, setFormData] = useState<ShippingAddress & { notes: string }>({
+    street: '',
     city: '',
-    postalCode: '',
-    paymentMethod: 'card',
+    state: '',
+    zipCode: '',
+    country: 'Perú',
     notes: ''
   });
 
@@ -44,7 +43,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
     e.preventDefault();
     
     // Validaciones básicas
-    if (!formData.address || !formData.city || !formData.postalCode || !formData.phone) {
+    if (!formData.street || !formData.city || !formData.state || !formData.zipCode) {
       toast({
         variant: "destructive",
         title: "Datos incompletos",
@@ -56,17 +55,20 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
     setIsProcessing(true);
 
     try {
-      // Preparar datos de envío
+      // Preparar datos de envío con la estructura correcta
       const shippingAddress: ShippingAddress = {
-        address: formData.address,
+        street: formData.street,
         city: formData.city,
-        postalCode: formData.postalCode,
-        phone: formData.phone,
-        notes: formData.notes,
+        state: formData.state,
+        zipCode: formData.zipCode,
+        country: formData.country,
       };
 
-      // Llamar al API de checkout
-      const response = await cartApi.checkout(shippingAddress);
+      // Llamar al API de checkout con el payload correcto
+      const response = await cartApi.checkout({
+        shippingAddress,
+        notes: formData.notes
+      });
 
       toast({
         title: "¡Compra realizada con éxito!",
@@ -107,38 +109,12 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="email">Email *</Label>
+              <Label htmlFor="street">Calle y Número *</Label>
               <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
-                placeholder="tu@email.com"
-                required
-                disabled={isProcessing}
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="phone">Teléfono *</Label>
-              <Input
-                id="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => handleInputChange('phone', e.target.value)}
-                placeholder="+51 999 999 999"
-                required
-                disabled={isProcessing}
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="address">Dirección *</Label>
-              <Input
-                id="address"
-                value={formData.address}
-                onChange={(e) => handleInputChange('address', e.target.value)}
-                placeholder="Av. Ejemplo 123, Dpto 4B"
+                id="street"
+                value={formData.street}
+                onChange={(e) => handleInputChange('street', e.target.value)}
+                placeholder="Jr. Ramón Castilla 456"
                 required
                 disabled={isProcessing}
               />
@@ -151,20 +127,45 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onClose }) => {
                   id="city"
                   value={formData.city}
                   onChange={(e) => handleInputChange('city', e.target.value)}
-                  placeholder="Lima"
+                  placeholder="Piura"
                   required
                   disabled={isProcessing}
                 />
               </div>
               
               <div>
-                <Label htmlFor="postalCode">Código Postal *</Label>
+                <Label htmlFor="state">Estado/Provincia *</Label>
                 <Input
-                  id="postalCode"
-                  value={formData.postalCode}
-                  onChange={(e) => handleInputChange('postalCode', e.target.value)}
+                  id="state"
+                  value={formData.state}
+                  onChange={(e) => handleInputChange('state', e.target.value)}
+                  placeholder="Piura"
+                  required
+                  disabled={isProcessing}
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="zipCode">Código Postal *</Label>
+                <Input
+                  id="zipCode"
+                  value={formData.zipCode}
+                  onChange={(e) => handleInputChange('zipCode', e.target.value)}
                   placeholder="15001"
                   required
+                  disabled={isProcessing}
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="country">País</Label>
+                <Input
+                  id="country"
+                  value={formData.country}
+                  onChange={(e) => handleInputChange('country', e.target.value)}
+                  placeholder="Perú"
                   disabled={isProcessing}
                 />
               </div>

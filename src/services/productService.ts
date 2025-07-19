@@ -75,7 +75,7 @@ export const productService = {
   async getAllProducts(): Promise<ProductResponse[]> {
     try {
       // console.log('Obteniendo productos...');
-      const response = await api.get('/products?limit=200');
+      const response = await api.get('/products/active?limit=24');
       // console.log('Respuesta de la API:', response);
       
       if (!response) {
