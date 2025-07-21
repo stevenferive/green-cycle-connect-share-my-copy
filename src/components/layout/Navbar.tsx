@@ -1,212 +1,51 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Recycle, Search, Menu, User, LogOut, ShoppingCart } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useAuth } from "@/lib/auth-context";
-import { useCart } from "@/contexts/CartContext";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const Navbar = () => {
   const isMobile = useIsMobile();
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const { user, isAuthenticated, logout } = useAuth();
-  const { getTotalItems } = useCart();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate("/");
-  };
-
-  const getInitials = (firstName?: string, lastName?: string) => {
-    if (!firstName && !lastName) return "U";
-    return `${firstName?.charAt(0) || ""}${lastName?.charAt(0) || ""}`;
-  };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2">
-            <Recycle className="h-6 w-6 text-green animate-float" />
-            <span className="font-heading text-xl font-bold text-green">
+            <img 
+              src="/logo-green-cicle.svg" 
+              alt="GreenCycle Logo" 
+              className="h-14 w-14"
+            />
+            <span className="font-heading text-xl font-bold text-[#32834B]">
               GreenCycle
             </span>
           </Link>
         </div>
 
         {!isMobile ? (
-          <>
-            <div className="hidden md:flex md:gap-6">
-              <Link to="/explore" className="text-foreground/80 hover:text-foreground">
-                Explorar
-              </Link>
-              <Link to="/categories" className="text-foreground/80 hover:text-foreground">
+          <div className="hidden md:flex md:items-center md:gap-6">
+            <Link to="/categories" className="text-[#32834B] hover:text-gray-600 font-bold transition-colors">
                 Categorías
               </Link>
-              <Link to="/about" className="text-foreground/80 hover:text-foreground">
+            <Link to="/about" className="text-[#32834B] hover:text-gray-600 font-bold transition-colors">
                 Nosotros
               </Link>
-              <Link to="/education" className="text-foreground/80 hover:text-foreground">
-                Ecotips
-              </Link>
-            </div>
-
-            <div className="hidden md:flex md:items-center md:gap-4">
-              <Button variant="ghost" size="icon">
-                <Search className="h-5 w-5" />
+            <Link to="/login">
+              <Button variant="outline" className="ml-4 font-bold">
+                Iniciar Sesión
               </Button>
-              
-              {/* Cart Button */}
-              <Link to="/cart">
-                <Button variant="ghost" size="icon" className="relative">
-                  <ShoppingCart className="h-5 w-5" />
-                  {getTotalItems() > 0 && (
-                    <Badge 
-                      variant="destructive" 
-                      className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
-                    >
-                      {getTotalItems() > 9 ? '9+' : getTotalItems()}
-                    </Badge>
-                  )}
-                </Button>
-              </Link>
-              
-              {isAuthenticated ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback className="bg-green text-white">
-                          {getInitials(user?.firstName, user?.lastName)}
-                        </AvatarFallback>
-                      </Avatar>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="end" forceMount>
-                    <DropdownMenuLabel className="font-normal">
-                      <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{user?.firstName} {user?.lastName}</p>
-                        <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
-                      </div>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Mi perfil</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleLogout}>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Cerrar sesión</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <>
-                  <Link to="/login">
-                    <Button variant="outline">Iniciar Sesión</Button>
                   </Link>
-                  <Link to="/register">
-                    <Button className="bg-green hover:bg-green-dark">Registrarse</Button>
-                  </Link>
-                </>
-              )}
             </div>
-          </>
         ) : (
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon">
-              <Search className="h-5 w-5" />
-            </Button>
-            
-            {/* Cart Button for mobile */}
-            <Link to="/cart">
-              <Button variant="ghost" size="icon" className="relative">
-                <ShoppingCart className="h-5 w-5" />
-                {getTotalItems() > 0 && (
-                  <Badge 
-                    variant="destructive" 
-                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
-                  >
-                    {getTotalItems() > 9 ? '9+' : getTotalItems()}
-                  </Badge>
-                )}
-              </Button>
-            </Link>
-            
-            <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-              <Menu className="h-5 w-5" />
-            </Button>
+            <button className="text-gray-800 hover:text-gray-600 transition-colors">
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
           </div>
         )}
       </div>
-
-      {/* Mobile menu */}
-      {isMobile && isMenuOpen && (
-        <div className="container border-t py-3">
-          <div className="flex flex-col space-y-3">
-            <Link to="/explore" className="py-2 text-foreground/80 hover:text-foreground">
-              Explorar
-            </Link>
-            <Link to="/categories" className="py-2 text-foreground/80 hover:text-foreground">
-              Categorías
-            </Link>
-            <Link to="/about" className="py-2 text-foreground/80 hover:text-foreground">
-              Nosotros
-            </Link>
-            <Link to="/education" className="py-2 text-foreground/80 hover:text-foreground">
-              Ecotips
-            </Link>
-            
-            {isAuthenticated ? (
-              <div className="flex flex-col pt-2">
-                <div className="flex items-center gap-3 py-2">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-green text-white">
-                      {getInitials(user?.firstName, user?.lastName)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="text-sm font-medium">{user?.firstName} {user?.lastName}</p>
-                    <p className="text-xs text-muted-foreground">{user?.email}</p>
-                  </div>
-                </div>
-                <Link to="/profile" className="py-2 text-foreground/80 hover:text-foreground">
-                  Mi perfil
-                </Link>
-                <Button 
-                  variant="outline" 
-                  className="mt-2 w-full justify-start" 
-                  onClick={handleLogout}
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Cerrar sesión
-                </Button>
-              </div>
-            ) : (
-              <div className="flex gap-2 pt-2">
-                <Link to="/login" className="flex-1">
-                  <Button variant="outline" className="w-full">Iniciar Sesión</Button>
-                </Link>
-                <Link to="/register" className="flex-1">
-                  <Button className="w-full bg-green hover:bg-green-dark">Registrarse</Button>
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </nav>
   );
 };

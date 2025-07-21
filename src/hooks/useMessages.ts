@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { ChatService } from '@/services/chatService';
 import { webSocketService } from '@/services/websocketService';
@@ -17,6 +17,7 @@ export const useMessages = (chatId: string): UseMessagesReturn => {
   const queryClient = useQueryClient();
   const currentUser = getCurrentUser();
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
+  const listenersSetRef = useRef<Set<string>>(new Set());
 
   // Query infinita para obtener mensajes con paginación
   const {
@@ -28,17 +29,18 @@ export const useMessages = (chatId: string): UseMessagesReturn => {
     isFetchingNextPage
   } = useInfiniteQuery({
     queryKey: ['messages', chatId],
-    queryFn: ({ pageParam = 1 }) => ChatService.getMessages(chatId, pageParam, 50),
-    getNextPageParam: (lastPage) => {
+    queryFn: ({ pageParam = 1 }) => ChatService.getMessages(chatId, pageParam as number, 50),
+    getNextPageParam: (lastPage: any) => {
       return lastPage.hasNextPage ? lastPage.page + 1 : undefined;
     },
+    initialPageParam: 1,
     enabled: !!chatId && !!currentUser,
     staleTime: 2 * 60 * 1000, // 2 minutos
     refetchOnWindowFocus: false
   });
 
   // Extraer todos los mensajes de las páginas
-  const messages = data?.pages.flatMap(page => page.messages) || [];
+  const messages = data?.pages.flatMap((page: any) => page.messages) || [];
 
   // Mutación para enviar mensaje
   const sendMessageMutation = useMutation({
@@ -50,16 +52,20 @@ export const useMessages = (chatId: string): UseMessagesReturn => {
       return ChatService.sendMessage(messageData);
     },
     onSuccess: (newMessage) => {
-      // Actualizar el cache local agregando el mensaje
+      // Actualizar el cache local agregando el mensaje optimísticamente
       queryClient.setQueryData(['messages', chatId], (oldData: any) => {
         if (!oldData) return { pages: [{ messages: [newMessage] }], pageParams: [1] };
         
         const newPages = [...oldData.pages];
         if (newPages.length > 0) {
-          newPages[0] = {
-            ...newPages[0],
-            messages: [newMessage, ...newPages[0].messages]
-          };
+          // Verificar que el mensaje no existe ya
+          const messageExists = newPages[0].messages.some((msg: Message) => msg._id === newMessage._id);
+          if (!messageExists) {
+            newPages[0] = {
+              ...newPages[0],
+              messages: [newMessage, ...newPages[0].messages]
+            };
+          }
         }
         
         return {
@@ -68,7 +74,7 @@ export const useMessages = (chatId: string): UseMessagesReturn => {
         };
       });
 
-      // Invalidar la query de chats para actualizar el último mensaje
+      // Solo invalidar la query de chats para actualizar el último mensaje
       queryClient.invalidateQueries({ queryKey: ['chats'] });
     },
     onError: (error: any) => {
@@ -84,9 +90,25 @@ export const useMessages = (chatId: string): UseMessagesReturn => {
   // Mutación para marcar mensaje como leído
   const markAsReadMutation = useMutation({
     mutationFn: (messageId: string) => ChatService.markMessageAsRead(messageId),
-    onSuccess: () => {
-      // Invalidar queries para actualizar el estado
-      queryClient.invalidateQueries({ queryKey: ['messages', chatId] });
+    onSuccess: (_, messageId) => {
+      // Actualizar cache optimísticamente
+      queryClient.setQueryData(['messages', chatId], (oldData: any) => {
+        if (!oldData) return oldData;
+        
+        const newPages = oldData.pages.map((page: any) => ({
+          ...page,
+          messages: page.messages.map((msg: Message) => 
+            msg._id === messageId ? { ...msg, isRead: true } : msg
+          )
+        }));
+        
+        return {
+          ...oldData,
+          pages: newPages
+        };
+      });
+
+      // Solo invalidar chats si es necesario
       queryClient.invalidateQueries({ queryKey: ['chats'] });
     },
     onError: (error: any) => {
@@ -98,8 +120,22 @@ export const useMessages = (chatId: string): UseMessagesReturn => {
   const markAllAsReadMutation = useMutation({
     mutationFn: () => ChatService.markAllMessagesAsRead(chatId),
     onSuccess: () => {
-      // Invalidar queries para actualizar el estado
-      queryClient.invalidateQueries({ queryKey: ['messages', chatId] });
+      // Actualizar cache optimísticamente
+      queryClient.setQueryData(['messages', chatId], (oldData: any) => {
+        if (!oldData) return oldData;
+        
+        const newPages = oldData.pages.map((page: any) => ({
+          ...page,
+          messages: page.messages.map((msg: Message) => ({ ...msg, isRead: true }))
+        }));
+        
+        return {
+          ...oldData,
+          pages: newPages
+        };
+      });
+
+      // Solo invalidar chats si es necesario
       queryClient.invalidateQueries({ queryKey: ['chats'] });
     },
     onError: (error: any) => {
@@ -110,6 +146,10 @@ export const useMessages = (chatId: string): UseMessagesReturn => {
   // Configurar WebSocket listeners específicos para este chat
   useEffect(() => {
     if (!chatId || !currentUser) return;
+    
+    // Evitar registrar listeners duplicados
+    const listenerKey = `${chatId}-${currentUser.id}`;
+    if (listenersSetRef.current.has(listenerKey)) return;
 
     // Unirse al chat
     if (webSocketService.isConnected()) {
@@ -119,14 +159,14 @@ export const useMessages = (chatId: string): UseMessagesReturn => {
     // Listener para nuevos mensajes en este chat específico
     const onNewMessage = (data: NewMessageEvent) => {
       if (data.chatId === chatId) {
-        // Actualizar el cache local
+        // Actualizar el cache local optimísticamente
         queryClient.setQueryData(['messages', chatId], (oldData: any) => {
           if (!oldData) return { pages: [{ messages: [data.message] }], pageParams: [1] };
           
           const newPages = [...oldData.pages];
           if (newPages.length > 0) {
             // Verificar que el mensaje no existe ya
-            const messageExists = newPages[0].messages.some(msg => msg._id === data.message._id);
+            const messageExists = newPages[0].messages.some((msg: Message) => msg._id === data.message._id);
             if (!messageExists) {
               newPages[0] = {
                 ...newPages[0],
@@ -141,12 +181,13 @@ export const useMessages = (chatId: string): UseMessagesReturn => {
           };
         });
 
-        // Marcar como leído automáticamente si el usuario está viendo el chat
+        // Marcar como leído automáticamente con debounce
         if (data.message.sender._id !== currentUser.id) {
-          // Delay pequeño para permitir que el usuario vea el mensaje
-          setTimeout(() => {
+          const timeoutId = setTimeout(() => {
             markAsReadMutation.mutate(data.message._id);
           }, 1000);
+          
+          return () => clearTimeout(timeoutId);
         }
       }
     };
@@ -164,9 +205,11 @@ export const useMessages = (chatId: string): UseMessagesReturn => {
 
         // Auto-remover después de 3 segundos
         if (data.isTyping) {
-          setTimeout(() => {
+          const timeoutId = setTimeout(() => {
             setTypingUsers(prev => prev.filter(name => name !== data.userName));
           }, 3000);
+          
+          return () => clearTimeout(timeoutId);
         }
       }
     };
@@ -197,6 +240,9 @@ export const useMessages = (chatId: string): UseMessagesReturn => {
     webSocketService.on('newMessage', onNewMessage);
     webSocketService.on('userTyping', onUserTyping);
     webSocketService.on('messageRead', onMessageRead);
+    
+    // Marcar que este listener está registrado
+    listenersSetRef.current.add(listenerKey);
 
     // Cleanup
     return () => {
@@ -204,8 +250,9 @@ export const useMessages = (chatId: string): UseMessagesReturn => {
       webSocketService.off('userTyping', onUserTyping);
       webSocketService.off('messageRead', onMessageRead);
       webSocketService.leaveChat(chatId);
+      listenersSetRef.current.delete(listenerKey);
     };
-  }, [chatId, currentUser, queryClient, markAsReadMutation]);
+  }, [chatId, currentUser, queryClient]); // Removido markAsReadMutation de las dependencias
 
   // Función para enviar mensaje
   const sendMessage = async (content: string): Promise<Message> => {

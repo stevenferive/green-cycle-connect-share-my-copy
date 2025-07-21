@@ -17,7 +17,7 @@ import Register from "@/pages/Register";
 import ProductDetail from "@/pages/ProductDetail";
 // import Feed from "@/pages/Feed";
 import Search from "@/pages/Search";
-import Chats from "@/pages/Chats";
+import SimpleChats from "@/pages/SimpleChats";
 import Menu from "@/pages/Menu";
 // import Settings from "@/pages/Settings";
 import Cart from "@/pages/Cart";
@@ -118,7 +118,7 @@ const AppRoutes = () => {
       } /> */}
       <Route path="/chats" element={
         <ProtectedRoute>
-          <Chats />
+          <SimpleChats />
         </ProtectedRoute>
       } />
       <Route path="/menu" element={

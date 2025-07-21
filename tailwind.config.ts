@@ -44,6 +44,11 @@ export default {
           DEFAULT: '#03A9F4',
           dark: '#0288D1',
         },
+        orange: {
+          light: '#FF9800',
+          DEFAULT: '#FF5722',
+          dark: '#E64A19',
+        },
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'

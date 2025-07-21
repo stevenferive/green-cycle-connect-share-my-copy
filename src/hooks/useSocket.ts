@@ -124,9 +124,11 @@ export const useSocket = (): UseSocketReturn => {
     }
   }, []);
 
-  // Configurar listeners y auto-conexión
+  // Configurar listeners y auto-conexión (solo una vez)
   useEffect(() => {
     if (!currentUser) return;
+
+    let hasConnected = false;
 
     // Configurar listeners para eventos de conexión
     const onConnect = () => {
@@ -149,8 +151,9 @@ export const useSocket = (): UseSocketReturn => {
     webSocketService.on('disconnect', onDisconnect);
     webSocketService.on('error', onError);
 
-    // Auto-conectar si no está conectado
-    if (!webSocketService.isConnected()) {
+    // Auto-conectar si no está conectado (solo una vez)
+    if (!webSocketService.isConnected() && !hasConnected) {
+      hasConnected = true;
       connect().catch(error => {
         console.error('Error en auto-conexión:', error);
       });
@@ -165,23 +168,6 @@ export const useSocket = (): UseSocketReturn => {
       webSocketService.off('error', onError);
     };
   }, [currentUser, connect, updateConnectionState]);
-
-  // Cleanup al desmontar
-  useEffect(() => {
-    return () => {
-      // No desconectamos automáticamente ya que otros componentes pueden estar usando la conexión
-      // webSocketService.disconnect();
-    };
-  }, []);
-
-  // Monitorear cambios en el estado de conexión periódicamente
-  useEffect(() => {
-    const interval = setInterval(() => {
-      updateConnectionState();
-    }, 5000); // Cada 5 segundos
-
-    return () => clearInterval(interval);
-  }, [updateConnectionState]);
 
   return {
     isConnected,

@@ -1,9 +1,9 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ChatService } from '@/services/chatService';
 import { webSocketService } from '@/services/websocketService';
-import { Chat, CreateChatDto, NewMessageEvent, UseChatsReturn } from '@/types/chat';
+import { Chat, CreateChatDto, NewMessageEvent, UseChatsReturn, UserStatus } from '@/types/chat';
 import { getCurrentUser } from '@/lib/auth-service';
 import { toast } from '@/hooks/use-toast';
 
@@ -11,6 +11,26 @@ export const useChats = (): UseChatsReturn => {
   const queryClient = useQueryClient();
   const currentUser = getCurrentUser();
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
+  const listenersRegisteredRef = useRef(false);
+  const lastToastRef = useRef<string | null>(null);
+
+  // Helper para obtener unreadCount del usuario actual
+  const getUserUnreadCount = (chat: Chat): number => {
+    const userStatus = chat.userStatus.find(status => status.userId === currentUser?.id);
+    return userStatus?.unreadCount || 0;
+  };
+
+  // Helper para actualizar unreadCount del usuario actual
+  const updateUserUnreadCount = (chat: Chat, newCount: number): Chat => {
+    return {
+      ...chat,
+      userStatus: chat.userStatus.map(status => 
+        status.userId === currentUser?.id 
+          ? { ...status, unreadCount: newCount }
+          : status
+      )
+    };
+  };
 
   // Query para obtener todos los chats
   const {
@@ -23,16 +43,19 @@ export const useChats = (): UseChatsReturn => {
     queryFn: () => currentUser ? ChatService.getChatsByUser(currentUser.id) : Promise.resolve([]),
     enabled: !!currentUser,
     staleTime: 5 * 60 * 1000, // 5 minutos
-    refetchOnWindowFocus: true,
-    refetchInterval: 30 * 1000 // Refetch cada 30 segundos
+    refetchOnWindowFocus: false, // Evitar refetch automático
+    // Removido refetchInterval para evitar polling innecesario
   });
 
   // Mutación para crear un nuevo chat
   const createChatMutation = useMutation({
     mutationFn: (chatData: CreateChatDto) => ChatService.createChat(chatData),
     onSuccess: (newChat) => {
-      // Invalidar la query de chats para refrescar la lista
-      queryClient.invalidateQueries({ queryKey: ['chats'] });
+      // Actualizar cache optimísticamente en lugar de invalidar
+      queryClient.setQueryData(['chats', currentUser?.id], (oldChats: Chat[] = []) => [
+        newChat,
+        ...oldChats
+      ]);
       
       // Unirse al chat vía WebSocket
       if (webSocketService.isConnected()) {
@@ -57,18 +80,24 @@ export const useChats = (): UseChatsReturn => {
   // Mutación para marcar chat como leído
   const markAsReadMutation = useMutation({
     mutationFn: (chatId: string) => ChatService.markChatAsRead(chatId),
-    onSuccess: () => {
-      // Invalidar queries relacionadas
-      queryClient.invalidateQueries({ queryKey: ['chats'] });
+    onSuccess: (_, chatId) => {
+      // Actualizar cache optimísticamente
+      queryClient.setQueryData(['chats', currentUser?.id], (oldChats: Chat[] = []) =>
+        oldChats.map(chat => 
+          chat._id === chatId 
+            ? updateUserUnreadCount(chat, 0)
+            : chat
+        )
+      );
     },
     onError: (error: any) => {
       console.error('Error al marcar chat como leído:', error);
     }
   });
 
-  // Configurar WebSocket y listeners
+  // Configurar WebSocket y listeners (solo una vez)
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser || listenersRegisteredRef.current) return;
 
     const setupWebSocket = async () => {
       try {
@@ -78,12 +107,41 @@ export const useChats = (): UseChatsReturn => {
 
         // Listener para nuevos mensajes
         const onNewMessage = (data: NewMessageEvent) => {
-          // Invalidar queries para actualizar la lista de chats
-          queryClient.invalidateQueries({ queryKey: ['chats'] });
-          queryClient.invalidateQueries({ queryKey: ['messages', data.chatId] });
+          // Actualizar cache optimísticamente en lugar de invalidar
+          queryClient.setQueryData(['chats', currentUser.id], (oldChats: Chat[] = []) => {
+            const updatedChats = oldChats.map(chat => {
+              if (chat._id === data.chatId) {
+                const currentUnreadCount = getUserUnreadCount(chat);
+                const newUnreadCount = data.message.sender._id !== currentUser.id 
+                  ? currentUnreadCount + 1 
+                  : currentUnreadCount;
+
+                return {
+                  ...chat,
+                  lastMessage: {
+                    content: data.message.content,
+                    createdAt: data.message.createdAt,
+                    sender: data.message.sender
+                  },
+                  ...updateUserUnreadCount(chat, newUnreadCount)
+                };
+              }
+              return chat;
+            });
+
+            // Mover el chat actualizado al principio
+            const chatIndex = updatedChats.findIndex(chat => chat._id === data.chatId);
+            if (chatIndex > -1) {
+              const [updatedChat] = updatedChats.splice(chatIndex, 1);
+              return [updatedChat, ...updatedChats];
+            }
+            
+            return updatedChats;
+          });
           
-          // Mostrar notificación si el mensaje no es del usuario actual
-          if (data.message.sender._id !== currentUser.id) {
+          // Mostrar notificación solo si es de otro usuario y no es el mismo mensaje
+          if (data.message.sender._id !== currentUser.id && lastToastRef.current !== data.message._id) {
+            lastToastRef.current = data.message._id;
             toast({
               title: "Nuevo mensaje",
               description: `${data.message.sender.firstName}: ${data.message.content.substring(0, 50)}${data.message.content.length > 50 ? '...' : ''}`,
@@ -107,11 +165,13 @@ export const useChats = (): UseChatsReturn => {
         // Registrar listeners
         webSocketService.on('newMessage', onNewMessage);
         webSocketService.on('userOnline', onUserOnline);
+        listenersRegisteredRef.current = true;
 
         // Cleanup function
         return () => {
           webSocketService.off('newMessage', onNewMessage);
           webSocketService.off('userOnline', onUserOnline);
+          listenersRegisteredRef.current = false;
         };
 
       } catch (error) {
@@ -119,17 +179,26 @@ export const useChats = (): UseChatsReturn => {
       }
     };
 
-    setupWebSocket();
+    const cleanup = setupWebSocket();
+    return () => {
+      if (cleanup) {
+        cleanup.then(cleanupFn => cleanupFn && cleanupFn());
+      }
+    };
   }, [currentUser, queryClient]);
 
-  // Unirse a todos los chats cuando se cargan
+  // Unirse a todos los chats cuando se cargan (con debounce)
   useEffect(() => {
     if (chats.length > 0 && webSocketService.isConnected()) {
-      chats.forEach(chat => {
-        webSocketService.joinChat(chat._id);
-      });
+      const timer = setTimeout(() => {
+        chats.forEach(chat => {
+          webSocketService.joinChat(chat._id);
+        });
+      }, 100); // Pequeño delay para evitar spam
+
+      return () => clearTimeout(timer);
     }
-  }, [chats]);
+  }, [chats.length]); // Solo depender de la longitud, no del array completo
 
   const createChat = async (data: CreateChatDto): Promise<Chat> => {
     return createChatMutation.mutateAsync(data);

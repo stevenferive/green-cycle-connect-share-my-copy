@@ -37,19 +37,21 @@ export class WebSocketService {
         transports: ['websocket', 'polling'],
         timeout: 20000,
         forceNew: true
-      });
+      }).connect();
 
       this.setupEventListeners();
 
       this.socket.on('connect', () => {
-        console.log('WebSocket connected');
+        console.log('🟢 WebSocket conectado exitosamente');
+        console.log('🔗 Socket ID:', this.socket?.id);
         this.connected = true;
         this.reconnectAttempts = 0;
         resolve();
       });
 
       this.socket.on('connect_error', (error) => {
-        console.error('WebSocket connection error:', error);
+        console.error('🔴 Error de conexión WebSocket:', error);
+        console.error('🔄 Intento de reconexión:', this.reconnectAttempts + 1, '/', this.maxReconnectAttempts);
         this.connected = false;
         
         if (this.reconnectAttempts < this.maxReconnectAttempts) {
@@ -82,9 +84,25 @@ export class WebSocketService {
     if (!this.socket) return;
 
     // Evento de nuevo mensaje
-    this.socket.on('newMessage', (data: NewMessageEvent) => {
-      console.log('Nuevo mensaje recibido:', data);
-      this.triggerCallback('newMessage', data);
+    this.socket.on('newMessage', (data: any) => {
+      console.log('📨 Nuevo mensaje recibido:', data);
+      
+      // Convertir el formato del backend al formato esperado por el frontend
+      const formattedData: NewMessageEvent = {
+        chatId: data.chatId,
+        message: {
+          _id: data.messageId,
+          content: data.content,
+          sender: data.sender,
+          createdAt: data.createdAt,
+          isRead: data.isRead || false,
+          chat: data.chatId,
+          updatedAt: data.createdAt
+        } as Message
+      };
+      
+      console.log('🔄 Mensaje formateado para frontend:', formattedData);
+      this.triggerCallback('newMessage', formattedData);
     });
 
     // Evento de usuario escribiendo
@@ -107,14 +125,23 @@ export class WebSocketService {
 
     // Evento de unión a chat
     this.socket.on('joinedChat', (data: { chatId: string }) => {
-      console.log('Unido al chat:', data.chatId);
+      console.log('✅ Unido al chat:', data.chatId);
       this.triggerCallback('joinedChat', data);
     });
 
     // Evento de salida de chat
     this.socket.on('leftChat', (data: { chatId: string }) => {
-      console.log('Salido del chat:', data.chatId);
+      console.log('❌ Salido del chat:', data.chatId);
       this.triggerCallback('leftChat', data);
+    });
+
+    // Eventos de respuesta directa
+    this.socket.on('joinChat', (response: any) => {
+      console.log('🏠 Respuesta joinChat:', response);
+    });
+
+    this.socket.on('leaveChat', (response: any) => {
+      console.log('🚪 Respuesta leaveChat:', response);
     });
 
     // Eventos de error
@@ -143,18 +170,18 @@ export class WebSocketService {
   // Unirse a un chat
   joinChat(chatId: string): void {
     if (this.socket && this.connected) {
-      console.log('Uniéndose al chat:', chatId);
-      this.socket.emit('joinChat', { chatId });
+      console.log('🔗 Uniéndose al chat:', chatId);
+      this.socket.emit('joinChat', chatId);
     } else {
-      console.warn('WebSocket no conectado. No se puede unir al chat:', chatId);
+      console.warn('⚠️ WebSocket no conectado. No se puede unir al chat:', chatId);
     }
   }
 
   // Salir de un chat
   leaveChat(chatId: string): void {
     if (this.socket && this.connected) {
-      console.log('Saliendo del chat:', chatId);
-      this.socket.emit('leaveChat', { chatId });
+      console.log('🚪 Saliendo del chat:', chatId);
+      this.socket.emit('leaveChat', chatId);
     }
   }
 
