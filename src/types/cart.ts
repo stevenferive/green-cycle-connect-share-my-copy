@@ -22,10 +22,21 @@ export interface ShippingAddress {
   state: string;
   zipCode: string;
   country: string;
+  _id: string;
 }
 
-export interface OrderItem extends CartItemBackend {
-  subtotal: number;
+export interface OrderItemProduct {
+  _id: string;
+  images: string[];
+  name: string;
+}
+
+export interface OrderItem {
+  productId: OrderItemProduct;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  _id: string;
 }
 
 export interface Order {
@@ -33,16 +44,21 @@ export interface Order {
   orderNumber: string;
   buyerId: {
     _id: string;
-    name: string;
     email: string;
   };
+  sellerId: string;
   items: OrderItem[];
-  status: 'pending' | 'confirmed' | 'cancelled' | 'delivered';
+  subtotal: number;
   totalAmount: number;
+  status: 'pending' | 'confirmed' | 'cancelled' | 'delivered';
+  paymentStatus: 'pending' | 'paid' | 'failed';
+  orderType: 'purchase';
   shippingAddress: ShippingAddress;
-  paymentMethod?: string;
+  paymentMethod: string;
+  notes: string;
   createdAt: string;
   updatedAt: string;
+  __v: number;
 }
 
 export interface PendingOrder extends Order {

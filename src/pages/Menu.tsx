@@ -48,12 +48,12 @@ const Menu = () => {
       description: 'Gestionar mis publicaciones',
       href: '/my-products'
     },
-    // { 
-    //   icon: ShoppingBag, 
-    //   label: 'Mis Órdenes', 
-    //   description: 'Ver historial de compras realizadas',
-    //   href: '/orders'
-    // },
+    { 
+      icon: ShoppingBag, 
+      label: 'Mis Órdenes', 
+      description: 'Ver historial de compras realizadas',
+      href: '/orders'
+    },
     // { 
     //   icon: Heart, 
     //   label: 'Favoritos', 

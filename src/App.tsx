@@ -21,7 +21,7 @@ import SimpleChats from "@/pages/SimpleChats";
 import Menu from "@/pages/Menu";
 // import Settings from "@/pages/Settings";
 import Cart from "@/pages/Cart";
-// import Orders from "@/pages/Orders";
+import Orders from "@/pages/Orders";
 import Profile from "@/pages/Profile";
 import MyProducts from "@/pages/MyProducts";
 // import Favorites from "@/pages/Favorites";
@@ -111,11 +111,11 @@ const AppRoutes = () => {
           <Cart />
         </ProtectedRoute>
       } />
-      {/* <Route path="/orders" element={
+      <Route path="/orders" element={
         <ProtectedRoute>
           <Orders />
         </ProtectedRoute>
-      } /> */}
+      } />
       <Route path="/chats" element={
         <ProtectedRoute>
           <SimpleChats />

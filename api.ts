@@ -246,4 +246,74 @@ export const orderApi = {
   confirmDelivery: async (orderId: string) => {
     return api.patch(`/orders/${orderId}/delivered`);
   }
+};
+
+export const chatApi = {
+  // Verificar si existe un chat directo entre dos usuarios
+  getDirectChat: async (user1Id: string, user2Id: string) => {
+    return api.get(`/chats/direct?user1Id=${user1Id}&user2Id=${user2Id}`);
+  },
+
+  // Crear un nuevo chat
+  createChat: async (chatData: {
+    type: 'direct' | 'group';
+    participants: string[];
+    relatedProduct?: string;
+    title?: string;
+  }) => {
+    return api.post('/chats', chatData);
+  },
+
+  // Obtener todos los chats del usuario
+  getUserChats: async (userId: string) => {
+    return api.get(`/chats/user/${userId}`);
+  },
+
+  // Crear o obtener chat directo (flujo combinado)
+  createOrGetDirectChat: async (otherUserId: string, relatedProduct?: string, orderNumber?: string) => {
+    // Función helper para obtener el ID del usuario actual
+    const getCurrentUserId = (): string | null => {
+      try {
+        const currentUserJson = localStorage.getItem('current_user');
+        if (!currentUserJson) return null;
+        const user = JSON.parse(currentUserJson);
+        return user.id || null;
+      } catch (error) {
+        console.error('Error al obtener ID de usuario actual:', error);
+        return null;
+      }
+    };
+
+    try {
+      // Intentar obtener chat existente primero
+      const currentUserId = getCurrentUserId();
+      if (!currentUserId) {
+        throw new Error('Usuario no autenticado');
+      }
+
+      const existingChat = await chatApi.getDirectChat(currentUserId, otherUserId);
+      
+      if (existingChat && existingChat._id) {
+        return existingChat;
+      }
+    } catch (error) {
+      // Si no existe el chat o hay error, crear uno nuevo
+      console.log('Chat no existe, creando uno nuevo...');
+    }
+
+    // Crear nuevo chat
+    const currentUserId = getCurrentUserId();
+    if (!currentUserId) {
+      throw new Error('Usuario no autenticado');
+    }
+
+    const chatData = {
+      type: 'direct' as const,
+      participants: [currentUserId, otherUserId],
+      ...(relatedProduct && { relatedProduct }),
+      ...(orderNumber && { title: `Chat sobre orden ${orderNumber}` })
+    };
+
+    return chatApi.createChat(chatData);
+  }
 }; 
