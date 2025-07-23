@@ -248,7 +248,7 @@ const MyProductCard: React.FC<MyProductCardProps> = ({ product, onUpdate, onDele
                   <Edit className="mr-2 h-4 w-4" />
                   Editar
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleToggleStatus}>
+                {/* <DropdownMenuItem onClick={handleToggleStatus}>
                   {product.status === 'active' ? (
                     <>
                       <Pause className="mr-2 h-4 w-4" />
@@ -260,7 +260,7 @@ const MyProductCard: React.FC<MyProductCardProps> = ({ product, onUpdate, onDele
                       Activar
                     </>
                   )}
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 {product.status === 'out_of_stock' && (
                   <DropdownMenuItem onClick={handleUpdateStock}>
                     <Package className="mr-2 h-4 w-4" />

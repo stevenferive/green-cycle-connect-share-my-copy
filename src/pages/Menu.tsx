@@ -147,7 +147,7 @@ const Menu = () => {
 
             {/* Notificaciones push */}
             {/* {permission !== 'granted' && ( */}
-              <Card className="mb-6 border-none rounded-[30px] bg-yellow-50">
+              {/* <Card className="mb-6 border-none rounded-[30px] bg-yellow-50">
                 <CardContent className="px-4 py-0">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
@@ -168,7 +168,7 @@ const Menu = () => {
                     </Button>
                   </div>
                 </CardContent>
-              </Card>
+              </Card> */}
             {/* )} */}
 
             {/* Opciones del menú */}
