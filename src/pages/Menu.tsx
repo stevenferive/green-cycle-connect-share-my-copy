@@ -119,101 +119,109 @@ const Menu = () => {
   // };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen pb-[100px] bg-gradient-to-r from-[#EEFFCD] to-[#C8F8B1]">
       <main className="container mx-auto px-4 py-6">
-        <div className="max-w-2xl mx-auto">
-          <h1 className="text-2xl font-bold mb-6">Menú</h1>
+        <div className="max-w-2xl mx-auto flex flex-col items-center justify-center">
+          <h1 className="text-3xl text-center font-bold mb-6 text-gray-600">Menú</h1>
           
-          {/* Perfil del usuario */}
-          <Card className="mb-6">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <Avatar className="h-16 w-16">
-                  <AvatarFallback className="bg-green text-white text-lg">
-                    {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <h2 className="text-xl font-semibold">
-                    {user?.firstName} {user?.lastName}
-                  </h2>
-                  <p className="text-muted-foreground">{user?.email}</p>
-                  <p className="text-sm text-green mt-1">Miembro verificado</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Notificaciones push */}
-          {/* {permission !== 'granted' && ( */}
-            {/* <Card className="mb-6 border-yellow-200 bg-yellow-50">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium text-yellow-800">Habilitar Notificaciones</h3>
-                    <p className="text-sm text-yellow-700">
-                      Recibe alertas de nuevos mensajes y actividad en tus productos
-                    </p>
+          <div className="bg-[#FFFFDA] rounded-[30px] p-6 w-[500px] shadow-lg">
+            {/* Perfil del usuario */}
+            <Card className="mb-6 bg-transparent border-0 shadow-none">
+              <CardContent className="p-6">
+                <div className="flex flex-row items-center justify-center gap-4 text-center">
+                  <Avatar className="h-[100px] w-[100px]">
+                    <AvatarFallback className="bg-green text-white text-lg">
+                      {user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col items-start">
+                    <h2 className="text-xl font-semibold">
+                      {user?.firstName} {user?.lastName}
+                    </h2>
+                    <p className="text-muted-foreground">{user?.email}</p>
+                    <p className="text-sm text-green mt-1">Miembro verificado</p>
                   </div>
-                  <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700">
-                    Habilitar
-                  </Button>
                 </div>
               </CardContent>
-            </Card> */}
-          {/* )} */}
+            </Card>
 
-          {/* Opciones del menú */}
-          <div className="space-y-2">
-            {menuItems.map((item, index) => {
-              const MenuCard = item.href ? Link : 'div';
-              return (
-                <MenuCard 
-                  key={index} 
-                  to={item.href} 
-                  className="block"
-                >
-                  <Card className="hover:bg-muted/50 cursor-pointer transition-colors">
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-4">
-                        <div className="p-2 bg-muted rounded-lg">
-                          <item.icon className="h-5 w-5 text-green" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-medium">{item.label}</h3>
-                            {/* {item.badge && (
-                              <Badge variant="destructive" className="text-xs">
-                                {item.badge}
-                              </Badge>
-                            )} */}
-                          </div>
-                          <p className="text-sm text-muted-foreground">{item.description}</p>
-                        </div>
-                        {item.href && (
-                          <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                        )}
+            {/* Notificaciones push */}
+            {/* {permission !== 'granted' && ( */}
+              <Card className="mb-6 border-none rounded-[30px] bg-yellow-50">
+                <CardContent className="px-4 py-0">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1">
+                      <img 
+                        src="/alarm.png" 
+                        alt="Alarma" 
+                        className="h-[120px] w-[120px] object-contain"
+                      />
+                      <div>
+                        <h3 className="font-medium text-yellow-800">Habilitar Notificaciones</h3>
+                        <p className="text-sm text-yellow-700">
+                          Recibe alertas de nuevos mensajes y actividad en tus productos
+                        </p>
                       </div>
-                    </CardContent>
-                  </Card>
-                </MenuCard>
-              );
-            })}
-          </div>
+                    </div>
+                    <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700">
+                      Habilitar
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            {/* )} */}
 
-          {/* Botón de cerrar sesión */}
-          <Card className="mt-6">
-            <CardContent className="p-4">
-              <Button 
-                variant="destructive" 
-                className="w-full justify-start" 
-                onClick={logout}
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Cerrar Sesión
-              </Button>
-            </CardContent>
-          </Card>
+            {/* Opciones del menú */}
+            <div className="space-y-2">
+              {menuItems.map((item, index) => {
+                const MenuCard = item.href ? Link : 'div';
+                return (
+                  <MenuCard 
+                    key={index} 
+                    to={item.href} 
+                    className="block"
+                  >
+                    <Card className="hover:bg-muted/50 cursor-pointer transition-colors border-none rounded-[30px] shadow-none">
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-4">
+                          <div className="p-2 bg-muted rounded-lg">
+                            <item.icon className="h-5 w-5 text-green" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <h3 className="font-medium">{item.label}</h3>
+                              {/* {item.badge && (
+                                <Badge variant="destructive" className="text-xs">
+                                  {item.badge}
+                                </Badge>
+                              )} */}
+                            </div>
+                            <p className="text-sm text-muted-foreground">{item.description}</p>
+                          </div>
+                          {item.href && (
+                            <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </MenuCard>
+                );
+              })}
+            </div>
+
+            {/* Botón de cerrar sesión */}
+            <Card className="mt-6 border-none bg-transparent shadow-none">
+              <CardContent className="p-4">
+                <Button 
+                  className="w-full justify-start bg-[#FF4F47] hover:bg-[#FF4F47]/80" 
+                  onClick={logout}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Cerrar Sesión
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
     </div>

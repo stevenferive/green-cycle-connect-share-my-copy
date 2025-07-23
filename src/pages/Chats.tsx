@@ -31,7 +31,7 @@ const Chats = () => {
     if (chatFromUrl) {
       setSelectedChat(chatFromUrl);
     }
-  }
+      }
 
   const handleChatClick = async (chat: Chat) => {
     setSelectedChat(chat);
@@ -51,16 +51,16 @@ const Chats = () => {
     if (!currentUser?.id) return [];
     return chats.map(chat => 
       ChatService.formatChatForUI(chat, currentUser.id)
-    );
+  );
   }, [chats, currentUser?.id]);
 
   // Memoizar el filtrado de chats
   const filteredChats = useMemo(() => {
     if (!searchTerm) return formattedChats;
     return formattedChats.filter(chat =>
-      chat.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      chat.lastMessage.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    chat.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    chat.lastMessage.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   }, [formattedChats, searchTerm]);
 
   const handleReconnect = async () => {

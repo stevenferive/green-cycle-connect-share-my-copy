@@ -75,7 +75,7 @@ const SimpleChatWindow: React.FC<SimpleChatWindowProps> = ({
   return (
     <div className="flex flex-col h-full bg-green/5">
       {/* Header */}
-      <div className="flex-none p-4 bg-green/10 border-b border-border flex items-center gap-3">
+      <div className="flex-none p-4 bg-[#F5F8E1] flex items-center gap-3">
         <Button 
           variant="ghost" 
           size="icon" 
@@ -135,8 +135,8 @@ const SimpleChatWindow: React.FC<SimpleChatWindowProps> = ({
                 <div 
                   className={`max-w-[70%] rounded-lg p-3 ${
                     formattedMessage.isOwn 
-                      ? 'bg-green text-white rounded-br-sm' 
-                      : 'bg-white text-foreground border rounded-bl-sm'
+                      ? 'bg-[#4CAF50]/80 text-white shadow-md rounded-br-sm' 
+                      : 'bg-white text-foreground shadow-md rounded-bl-sm'
                   }`}
                 >
                   {!formattedMessage.isOwn && chat.type === 'group' && (
@@ -170,14 +170,14 @@ const SimpleChatWindow: React.FC<SimpleChatWindowProps> = ({
       </div>
 
       {/* Message Input */}
-      <div className="flex-none p-4 bg-white border-t">
+      <div className="flex-none p-4  ">
         <div className="flex gap-2">
           <Input 
             value={newMessage} 
             onChange={(e) => setNewMessage(e.target.value)} 
             onKeyPress={handleKeyPress} 
             placeholder="Escribe un mensaje..." 
-            className="flex-1 bg-green/5"
+            className="flex-1 bg-white border-none shadow-md"
             disabled={!isConnected}
           />
           <Button 

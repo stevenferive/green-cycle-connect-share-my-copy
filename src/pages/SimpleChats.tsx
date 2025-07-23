@@ -49,35 +49,14 @@ const SimpleChats = () => {
   }
 
   return (
-    <div className="h-[calc(100vh-5rem)] flex bg-background overflow-hidden">
+    <div className="h-[calc(100vh-6rem)] m-2 overflow-hidden flex bg-[#FEFCE9] rounded-[30px]">
       {/* Panel izquierdo - Lista de chats */}
       <div className={`w-full md:w-96 border-r border-border flex flex-col bg-background ${selectedChat ? 'hidden md:flex' : 'flex'}`}>
         {/* Header */}
-        <div className="flex-none p-4 bg-green/10 border-b border-border">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Avatar className="h-10 w-10">
-                <AvatarFallback className="bg-green text-white">
-                  {currentUser.firstName?.[0]}{currentUser.lastName?.[0]}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex flex-col">
-                <h1 className="text-xl font-semibold text-foreground">Chats</h1>
-                <div className="flex items-center gap-1">
-                  {isConnected ? (
-                    <>
-                      <Wifi className="h-3 w-3 text-green-500" />
-                      <span className="text-xs text-green-500">En línea</span>
-                    </>
-                  ) : (
-                    <>
-                      <WifiOff className="h-3 w-3 text-red-500" />
-                      <span className="text-xs text-red-500">Desconectado</span>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
+        <div className="flex-none p-4 bg-white/80 mt-2 backdrop-blur-sm">
+          <div className="flex items-center gap-1 mb-4 ml-3">
+            <img src="/logo-green-cicle.svg" alt="GreenCycle" className="h-12 w-12" />
+            <h1 className="text-2xl font-semibold text-gray-700 ">GreenCycle</h1>
           </div>
           
           {/* Barra de búsqueda */}
@@ -93,7 +72,7 @@ const SimpleChats = () => {
         </div>
 
         {/* Lista de chats */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto bg-white/80 backdrop-blur-sm">
           {loading ? (
             <div className="p-4 space-y-3">
               {[...Array(5)].map((_, i) => (
@@ -126,12 +105,14 @@ const SimpleChats = () => {
               </p>
             </div>
           ) : (
-            <div>
+            <div className="p-3 space-y-3">
               {formattedChats.map((chat) => (
                 <div
                   key={chat.id}
-                  className={`p-4 hover:bg-green/5 cursor-pointer border-b border-border/50 transition-colors ${
-                    selectedChat?._id === chat.id ? 'bg-green/10' : ''
+                  className={`p-4 cursor-pointer transition-all duration-200 rounded-2xl ${
+                    selectedChat?._id === chat.id 
+                      ? 'bg-[#C8F6B1]/50 shadow-md transform scale-[1.02]' 
+                      : 'bg-white/70 hover:bg-white/90 hover:shadow-sm'
                   }`}
                   onClick={() => handleChatClick(chat.rawChat)}
                 >
@@ -144,10 +125,10 @@ const SimpleChats = () => {
                     
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1">
-                        <h3 className="font-medium truncate text-foreground">{chat.user}</h3>
-                        <span className="text-xs text-muted-foreground">{chat.time}</span>
+                        <h3 className="font-medium truncate text-gray-800">{chat.user}</h3>
+                        <span className="text-xs text-gray-500">{chat.time}</span>
                       </div>
-                      <p className="text-sm text-muted-foreground truncate">
+                      <p className="text-sm text-gray-600 truncate">
                         {chat.lastMessage}
                       </p>
                     </div>
