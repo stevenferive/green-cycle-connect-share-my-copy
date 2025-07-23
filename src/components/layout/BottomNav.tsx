@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, MessageCircle, Menu, ShoppingCart } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/contexts/CartContext';
 
@@ -9,16 +8,16 @@ const BottomNav = React.memo(() => {
   const { getTotalItems } = useCart();
   
   const navItems = [
-    { icon: Home, label: 'Inicio', path: '/explore' },
-    { icon: Search, label: 'Búsqueda', path: '/search' },
-    { icon: ShoppingCart, label: 'Carrito', path: '/cart', showBadge: true },
-    { icon: MessageCircle, label: 'Chats', path: '/chats' },
-    { icon: Menu, label: 'Menú', path: '/menu' },
+    { icon: 'house2', label: 'Inicio', path: '/explore' },
+    { icon: 'search', label: 'Búsqueda', path: '/search' },
+    { icon: 'cart', label: 'Carrito', path: '/cart', showBadge: true },
+    { icon: 'chat', label: 'Chats', path: '/chats' },
+    { icon: 'menu', label: 'Menú', path: '/menu' },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-background border-t z-50 h-20">
-      <div className="container mx-auto px-4 h-full">
+    <nav className="fixed bottom-0 left-0 right-0 bg-transparent border-t-0 z-50 h-20 mb-1">
+      <div className="mx-4 h-full rounded-2xl shadow-lg bg-[#FEFCE9]">
         <div className="flex justify-around items-center h-full py-2">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
@@ -35,7 +34,11 @@ const BottomNav = React.memo(() => {
                 }`}
               >
                 <div className="relative">
-                  <item.icon className="h-6 w-6 mb-1" />
+                  <img 
+                    src={`/${item.icon}.png`} 
+                    alt={item.label}
+                    className="h-12 w-12 mb-1 object-contain"
+                  />
                   {item.showBadge && cartCount > 0 && (
                     <Badge 
                       variant="destructive" 

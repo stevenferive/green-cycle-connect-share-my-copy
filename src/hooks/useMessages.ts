@@ -61,10 +61,10 @@ export const useMessages = (chatId: string): UseMessagesReturn => {
           // Verificar que el mensaje no existe ya
           const messageExists = newPages[0].messages.some((msg: Message) => msg._id === newMessage._id);
           if (!messageExists) {
-            newPages[0] = {
-              ...newPages[0],
-              messages: [newMessage, ...newPages[0].messages]
-            };
+          newPages[0] = {
+            ...newPages[0],
+            messages: [newMessage, ...newPages[0].messages]
+          };
           }
         }
         
