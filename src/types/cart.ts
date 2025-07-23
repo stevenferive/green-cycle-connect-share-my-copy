@@ -22,13 +22,13 @@ export interface ShippingAddress {
   state: string;
   zipCode: string;
   country: string;
-  _id: string;
+  _id?: string;
 }
 
 export interface OrderItemProduct {
   _id: string;
-  images: string[];
   name: string;
+  images: string[];
 }
 
 export interface OrderItem {
@@ -36,29 +36,37 @@ export interface OrderItem {
   quantity: number;
   unitPrice: number;
   totalPrice: number;
+}
+
+export interface OrderSeller {
   _id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 export interface Order {
   _id: string;
   orderNumber: string;
-  buyerId: {
-    _id: string;
-    email: string;
-  };
-  sellerId: string;
+  buyerId: string;
+  status: 'pending' | 'confirmed' | 'preparing' | 'shipped' | 'delivered' | 'cancelled';
+  sellerId: OrderSeller;
   items: OrderItem[];
   subtotal: number;
   totalAmount: number;
-  status: 'pending' | 'confirmed' | 'cancelled' | 'delivered';
   paymentStatus: 'pending' | 'paid' | 'failed';
-  orderType: 'purchase';
+  orderType: string;
   shippingAddress: ShippingAddress;
   paymentMethod: string;
-  notes: string;
+  confirmedAt?: string;
+  shippedAt?: string;
+  deliveredAt?: string;
+  cancelReason?: string;
+  trackingNumber?: string;
+  notes?: string;
   createdAt: string;
   updatedAt: string;
-  __v: number;
+  __v?: number;
 }
 
 export interface PendingOrder extends Order {

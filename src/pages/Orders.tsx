@@ -1,16 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Package, Clock, CheckCircle, XCircle, MessageCircle, Truck, Eye } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ArrowLeft, Package, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { orderApi } from '../../api';
 import { Order } from '@/types/cart';
+import OrderCardCompact from '@/components/products/myorders/OrderCardCompact';
+import OrderDetailsModal from '@/components/products/myorders/OrderDetailsModal';
+
+type OrderStatus = 'all' | 'pending' | 'confirmed' | 'cancelled' | 'delivered';
 
 const Orders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [activeTab, setActiveTab] = useState<OrderStatus>('all');
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -18,10 +25,34 @@ const Orders = () => {
     loadOrders();
   }, []);
 
-  const loadOrders = async () => {
+  const loadOrders = async (status?: string) => {
     try {
-      const response = await orderApi.getBuyerOrders();
-      setOrders(response.orders || []);
+      setLoading(true);
+      const response = await orderApi.getBuyerOrders(status);
+      
+      // Debug: Ver qué está devolviendo la API
+      console.log('Respuesta completa de getBuyerOrders:', response);
+      console.log('Tipo de respuesta:', typeof response);
+      console.log('Es array?', Array.isArray(response));
+      
+      // Manejar diferentes estructuras de respuesta
+      let ordersData: Order[] = [];
+      
+      if (Array.isArray(response)) {
+        // Si la respuesta es directamente un array
+        ordersData = response;
+      } else if (response && Array.isArray(response.orders)) {
+        // Si la respuesta tiene una propiedad orders
+        ordersData = response.orders;
+      } else if (response && Array.isArray(response.data)) {
+        // Si la respuesta tiene una propiedad data
+        ordersData = response.data;
+      }
+      
+      console.log('Órdenes procesadas:', ordersData);
+      console.log('Cantidad de órdenes:', ordersData.length);
+      
+      setOrders(ordersData);
     } catch (error: any) {
       console.error('Error loading orders:', error);
       toast({
@@ -34,53 +65,72 @@ const Orders = () => {
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return <Clock className="h-4 w-4" />;
-      case 'confirmed':
-        return <CheckCircle className="h-4 w-4" />;
-      case 'cancelled':
-        return <XCircle className="h-4 w-4" />;
-      case 'delivered':
-        return <Package className="h-4 w-4" />;
-      default:
-        return <Clock className="h-4 w-4" />;
-    }
+  const handleTabChange = (value: string) => {
+    const tabValue = value as OrderStatus;
+    setActiveTab(tabValue);
+    const statusParam = tabValue === 'all' ? undefined : tabValue;
+    loadOrders(statusParam);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'confirmed':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'cancelled':
-        return 'bg-red-100 text-red-800 border-red-200';
-      case 'delivered':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    const statusParam = activeTab === 'all' ? undefined : activeTab;
+    await loadOrders(statusParam);
+    setRefreshing(false);
   };
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return 'Pendiente';
-      case 'confirmed':
-        return 'Confirmado';
-      case 'cancelled':
-        return 'Cancelado';
-      case 'delivered':
-        return 'Entregado';
-      default:
-        return status;
-    }
+  const handleOrderUpdate = () => {
+    handleRefresh();
   };
 
-  const handleContactSeller = (sellerId: string) => {
-    navigate(`/chats?userId=${sellerId}`);
+  const handleViewDetails = (order: Order) => {
+    setSelectedOrder(order);
+    setShowDetailsModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowDetailsModal(false);
+    setSelectedOrder(null);
+  };
+
+  const getOrderCountByStatus = (status: OrderStatus) => {
+    if (status === 'all') return orders.length;
+    return orders.filter(order => order.status === status).length;
+  };
+
+  const getFilteredOrders = () => {
+    if (activeTab === 'all') return orders;
+    return orders.filter(order => order.status === activeTab);
+  };
+
+  const getEmptyStateMessage = (status: OrderStatus) => {
+    switch (status) {
+      case 'pending':
+        return {
+          title: 'No tienes órdenes pendientes',
+          description: 'Tus órdenes pendientes de confirmación aparecerán aquí.',
+        };
+      case 'confirmed':
+        return {
+          title: 'No tienes órdenes confirmadas',
+          description: 'Las órdenes confirmadas por los vendedores aparecerán aquí.',
+        };
+      case 'cancelled':
+        return {
+          title: 'No tienes órdenes canceladas',
+          description: 'Las órdenes que hayas cancelado aparecerán aquí.',
+        };
+      case 'delivered':
+        return {
+          title: 'No tienes órdenes entregadas',
+          description: 'Las órdenes que hayas recibido aparecerán aquí.',
+        };
+      default:
+        return {
+          title: 'No tienes órdenes aún',
+          description: 'Explora nuestros productos eco-friendly y realiza tu primera compra.',
+        };
+    }
   };
 
   if (loading) {
@@ -109,135 +159,123 @@ const Orders = () => {
   return (
     <div className="min-h-screen bg-background p-4">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <Button 
-          variant="ghost" 
-          size="icon"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <div>
-          <h1 className="text-2xl font-semibold">Mis Órdenes</h1>
-          <p className="text-sm text-muted-foreground">
-            Historial de tus compras en GreenCycle
-          </p>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div>
+            <h1 className="text-2xl font-semibold">Mis Órdenes</h1>
+            <p className="text-sm text-muted-foreground">
+              Historial de tus compras en GreenCycle
+            </p>
+          </div>
         </div>
+        
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleRefresh}
+          disabled={refreshing}
+        >
+          <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+          Actualizar
+        </Button>
       </div>
 
-      {orders.length === 0 ? (
-        <div className="text-center py-12">
-          <Package className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-          <h2 className="text-xl font-semibold mb-2">No tienes órdenes aún</h2>
-          <p className="text-muted-foreground mb-6">
-            Explora nuestros productos eco-friendly y realiza tu primera compra.
-          </p>
-          <Button onClick={() => navigate('/explore')} className="bg-green hover:bg-green-dark">
-            Explorar Productos
-          </Button>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {orders.map((order) => (
-            <Card key={order._id} className="overflow-hidden">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-lg">Orden #{order.orderNumber}</CardTitle>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(order.createdAt).toLocaleDateString('es-ES', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </p>
-                  </div>
-                  <Badge className={`flex items-center gap-1 ${getStatusColor(order.status)}`}>
-                    {getStatusIcon(order.status)}
-                    {getStatusText(order.status)}
-                  </Badge>
-                </div>
-              </CardHeader>
-              
-              <CardContent className="space-y-4">
-                {/* Items */}
-                <div className="space-y-2">
-                  {order.items.map((item, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
-                      <div className="w-12 h-12 bg-muted rounded flex items-center justify-center flex-shrink-0">
-                        <Package className="h-5 w-5 text-muted-foreground" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm">{item.productName}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {item.quantity} x S/ {item.unitPrice.toFixed(2)}
-                        </p>
-                      </div>
-                      <p className="font-medium text-sm">
-                        S/ {item.subtotal.toFixed(2)}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+      {/* Filtros por pestañas */}
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="all" className="text-xs">
+            Todas
+            {orders.length > 0 && (
+              <span className="ml-1 bg-muted text-muted-foreground rounded-full px-1.5 py-0.5 text-xs">
+                {orders.length}
+              </span>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="pending" className="text-xs">
+            Pendientes
+            {getOrderCountByStatus('pending') > 0 && (
+              <span className="ml-1 bg-yellow-100 text-yellow-700 rounded-full px-1.5 py-0.5 text-xs">
+                {getOrderCountByStatus('pending')}
+              </span>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="confirmed" className="text-xs">
+            Aprobadas
+            {getOrderCountByStatus('confirmed') > 0 && (
+              <span className="ml-1 bg-green-100 text-green-700 rounded-full px-1.5 py-0.5 text-xs">
+                {getOrderCountByStatus('confirmed')}
+              </span>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="delivered" className="text-xs">
+            Entregadas
+            {getOrderCountByStatus('delivered') > 0 && (
+              <span className="ml-1 bg-gray-100 text-gray-700 rounded-full px-1.5 py-0.5 text-xs">
+                {getOrderCountByStatus('delivered')}
+              </span>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="cancelled" className="text-xs">
+            Canceladas
+            {getOrderCountByStatus('cancelled') > 0 && (
+              <span className="ml-1 bg-red-100 text-red-700 rounded-full px-1.5 py-0.5 text-xs">
+                {getOrderCountByStatus('cancelled')}
+              </span>
+            )}
+          </TabsTrigger>
+        </TabsList>
 
-                {/* Total */}
-                <div className="flex justify-between items-center pt-3 border-t">
-                  <span className="font-medium">Total</span>
-                  <span className="text-lg font-bold text-primary">
-                    S/ {order.totalAmount.toFixed(2)}
-                  </span>
-                </div>
-
-                {/* Shipping Address */}
-                <div className="p-3 bg-muted/50 rounded-lg">
-                  <p className="text-xs font-medium text-muted-foreground mb-1">
-                    Dirección de envío:
-                  </p>
-                  <p className="text-sm">{order.shippingAddress.address}</p>
-                  <p className="text-sm">
-                    {order.shippingAddress.city}, {order.shippingAddress.postalCode}
-                  </p>
-                  <p className="text-sm">Tel: {order.shippingAddress.phone}</p>
-                </div>
-
-                {/* Actions */}
-                <div className="flex gap-2 pt-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleContactSeller(order.buyerId._id)}
-                    className="flex-1"
+        {/* Contenido de las pestañas */}
+        {['all', 'pending', 'confirmed', 'delivered', 'cancelled'].map((status) => (
+          <TabsContent key={status} value={status} className="space-y-4">
+            {getFilteredOrders().length === 0 ? (
+              <div className="text-center py-12">
+                <Package className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                <h2 className="text-xl font-semibold mb-2">
+                  {getEmptyStateMessage(status as OrderStatus).title}
+                </h2>
+                <p className="text-muted-foreground mb-6">
+                  {getEmptyStateMessage(status as OrderStatus).description}
+                </p>
+                {status === 'all' && (
+                  <Button 
+                    onClick={() => navigate('/explore')} 
+                    className="bg-green-600 hover:bg-green-700"
                   >
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    Contactar Vendedor
+                    Explorar Productos
                   </Button>
-                  
-                  {order.status === 'confirmed' && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                    >
-                      <Truck className="h-4 w-4 mr-2" />
-                      Rastrear Envío
-                    </Button>
-                  )}
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate(`/order/${order._id}`)}
-                  >
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {getFilteredOrders().map((order) => (
+                  <OrderCardCompact
+                    key={order._id}
+                    order={order}
+                    onViewDetails={handleViewDetails}
+                    onOrderUpdate={handleOrderUpdate}
+                  />
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        ))}
+      </Tabs>
+
+      {/* Modal de detalles */}
+      <OrderDetailsModal
+        order={selectedOrder}
+        isOpen={showDetailsModal}
+        onClose={handleCloseModal}
+        onOrderUpdate={handleOrderUpdate}
+      />
     </div>
   );
 };

@@ -233,8 +233,11 @@ export const orderApi = {
   },
 
   // Obtener todas las órdenes del comprador
-  getBuyerOrders: async () => {
-    return api.get('/orders/buyer/all');
+  getBuyerOrders: async (status?: string) => {
+    const url = status ? `/orders/buyer/all?status=${status}` : '/orders/buyer/all';
+    console.log('🔍 Llamando a:', url);
+    console.log('🔑 Token disponible:', !!localStorage.getItem('auth_token'));
+    return api.get(url);
   },
 
   // Obtener una orden específica
@@ -242,9 +245,14 @@ export const orderApi = {
     return api.get(`/orders/${orderId}`);
   },
 
-  // Confirmar recepción de la orden
+  // Confirmar recepción de la orden (marcar como entregado)
   confirmDelivery: async (orderId: string) => {
     return api.patch(`/orders/${orderId}/delivered`);
+  },
+
+  // Cancelar orden
+  cancelOrder: async (orderId: string, reason?: string) => {
+    return api.patch(`/orders/${orderId}/cancel`, { reason });
   }
 };
 
