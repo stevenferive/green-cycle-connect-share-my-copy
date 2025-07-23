@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Search, Leaf } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   const isMobile = useIsMobile();
@@ -24,12 +25,16 @@ const Hero = () => {
             </div>
 
             <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-              <Button className="bg-orange hover:bg-orange-dark text-white" size="lg">
-                <Search className="mr-2 h-5 w-5" /> Explorar Productos
-              </Button>
-              <Button variant="outline" size="lg" className="border-orange text-orange hover:bg-orange hover:text-white">
-                Vender Producto
-              </Button>
+              <Link to="/login">
+                <Button className="bg-orange hover:bg-orange-dark text-white" size="lg">
+                  <Search className="mr-2 h-5 w-5" /> Explorar Productos
+                </Button>
+              </Link>
+              <Link to="/login">
+                <Button variant="outline" size="lg" className="border-orange text-orange hover:bg-orange hover:text-white">
+                  Vender Producto
+                </Button>
+              </Link>
             </div>
           </div>
 

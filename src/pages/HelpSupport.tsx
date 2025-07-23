@@ -274,7 +274,7 @@ const HelpSupport = () => {
                     <div className="space-y-3">
                       <div>
                         <h4 className="font-medium">Email</h4>
-                        <p className="text-sm text-muted-foreground">soporte@ecoexchange.com</p>
+                        <p className="text-sm text-muted-foreground">brusssilva904@gmail.com</p>
                       </div>
                       <div>
                         <h4 className="font-medium">Horario de atención</h4>

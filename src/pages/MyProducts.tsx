@@ -5,7 +5,6 @@ import MyProductsHeader from '@/components/products/MyProductsHeader';
 import MyProductsStats from '@/components/products/MyProductsStats';
 import MyProductsActions from '@/components/products/MyProductsActions';
 import MyProductsList from '@/components/products/MyProductsList';
-import PendingOrders from '@/components/products/PendingOrders';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/lib/auth-context';
 import { useSellerProducts } from '@/hooks/useSellerProducts';
@@ -216,11 +215,6 @@ const MyProducts = () => {
                     </button>
                   </div>
                 </div>
-              )}
-              
-              {/* Sección de solicitudes pendientes - Solo para usuarios autenticados */}
-              {isAuthenticated && user?.id && (
-                <PendingOrders sellerId={user.id} />
               )}
             </>
           )}

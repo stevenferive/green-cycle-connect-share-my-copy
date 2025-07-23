@@ -157,7 +157,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
             </div>
 
             {/* Slider con valores invertidos para arrastrar de derecha a izquierda */}
-            <div className="px-1">
+            {/* <div className="px-1">
               <Slider
                 value={[1000 - localPriceRange[1], 1000 - localPriceRange[0]]}
                 min={0}
@@ -170,7 +170,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
                 <span>S/ 1000</span>
                 <span>S/ 0</span>
               </div>
-            </div>
+            </div> */}
           </>
         )}
 

@@ -21,9 +21,10 @@ import SimpleChats from "@/pages/SimpleChats";
 import Menu from "@/pages/Menu";
 // import Settings from "@/pages/Settings";
 import Cart from "@/pages/Cart";
-// import Orders from "@/pages/Orders";
+import Orders from "@/pages/Orders";
 import Profile from "@/pages/Profile";
 import MyProducts from "@/pages/MyProducts";
+import PendingOrdersPage from "@/pages/PendingOrdersPage";
 // import Favorites from "@/pages/Favorites";
 // import Notifications from "@/pages/Notifications";
 // import PaymentMethods from "@/pages/PaymentMethods";
@@ -111,11 +112,11 @@ const AppRoutes = () => {
           <Cart />
         </ProtectedRoute>
       } />
-      {/* <Route path="/orders" element={
+      <Route path="/orders" element={
         <ProtectedRoute>
           <Orders />
         </ProtectedRoute>
-      } /> */}
+      } />
       <Route path="/chats" element={
         <ProtectedRoute>
           <SimpleChats />
@@ -144,6 +145,11 @@ const AppRoutes = () => {
       <Route path="/my-products" element={
         <ProtectedRoute>
           <MyProducts />
+        </ProtectedRoute>
+      } />
+      <Route path="/pending-orders" element={
+        <ProtectedRoute>
+          <PendingOrdersPage />
         </ProtectedRoute>
       } />
       {/* <Route path="/favorites" element={

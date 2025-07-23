@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/lib/auth-context';
-import { useNotifications } from '@/hooks/useNotifications';
+// import { useNotifications } from '@/hooks/useNotifications';
 import { Link } from 'react-router-dom';
 import { 
   User, 
@@ -27,7 +27,7 @@ import {
 
 const Menu = () => {
   const { user, logout } = useAuth();
-  const { unreadCount, requestPermission, permission } = useNotifications();
+  // const { unreadCount, requestPermission, permission } = useNotifications();
 
   const menuItems = [
     // { 
@@ -48,12 +48,12 @@ const Menu = () => {
       description: 'Gestionar mis publicaciones',
       href: '/my-products'
     },
-    // { 
-    //   icon: ShoppingBag, 
-    //   label: 'Mis Órdenes', 
-    //   description: 'Ver historial de compras realizadas',
-    //   href: '/orders'
-    // },
+    { 
+      icon: ShoppingBag, 
+      label: 'Mis Órdenes', 
+      description: 'Ver historial de compras realizadas',
+      href: '/orders'
+    },
     // { 
     //   icon: Heart, 
     //   label: 'Favoritos', 
@@ -111,12 +111,12 @@ const Menu = () => {
     },
   ];
 
-  const handleEnableNotifications = async () => {
-    const granted = await requestPermission();
-    if (granted) {
-      console.log('Notificaciones habilitadas');
-    }
-  };
+  // const handleEnableNotifications = async () => {
+  //   const granted = await requestPermission();
+  //   if (granted) {
+  //     console.log('Notificaciones habilitadas');
+  //   }
+  // };
 
   return (
     <div className="min-h-screen pb-[100px] bg-gradient-to-r from-[#EEFFCD] to-[#C8F8B1]">
@@ -146,7 +146,7 @@ const Menu = () => {
             </Card>
 
             {/* Notificaciones push */}
-            {permission !== 'granted' && (
+            {/* {permission !== 'granted' && ( */}
               <Card className="mb-6 border-none rounded-[30px] bg-yellow-50">
                 <CardContent className="px-4 py-0">
                   <div className="flex items-center justify-between">
@@ -163,13 +163,13 @@ const Menu = () => {
                         </p>
                       </div>
                     </div>
-                    <Button size="sm" onClick={handleEnableNotifications} className="bg-yellow-600 hover:bg-yellow-700">
+                    <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700">
                       Habilitar
                     </Button>
                   </div>
                 </CardContent>
               </Card>
-            )}
+            {/* )} */}
 
             {/* Opciones del menú */}
             <div className="space-y-2">

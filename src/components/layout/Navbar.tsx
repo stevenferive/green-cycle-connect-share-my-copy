@@ -11,9 +11,9 @@ const Navbar = () => {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2">
-            <img 
-              src="/logo-green-cicle.svg" 
-              alt="GreenCycle Logo" 
+            <img
+              src="/logo-green-cicle.svg"
+              alt="GreenCycle Logo"
               className="h-14 w-14"
             />
             <span className="font-heading text-xl font-bold text-[#32834B]">
@@ -24,18 +24,18 @@ const Navbar = () => {
 
         {!isMobile ? (
           <div className="hidden md:flex md:items-center md:gap-6">
-            <Link to="/categories" className="text-[#32834B] hover:text-gray-600 font-bold transition-colors">
-                Categorías
-              </Link>
+            <Link to="/login" className="text-[#32834B] hover:text-gray-600 font-bold transition-colors">
+              Categorías
+            </Link>
             <Link to="/about" className="text-[#32834B] hover:text-gray-600 font-bold transition-colors">
-                Nosotros
-              </Link>
+              Nosotros
+            </Link>
             <Link to="/login">
               <Button variant="outline" className="ml-4 font-bold">
                 Iniciar Sesión
               </Button>
-                  </Link>
-            </div>
+            </Link>
+          </div>
         ) : (
           <div className="flex items-center gap-2">
             <button className="text-gray-800 hover:text-gray-600 transition-colors">
