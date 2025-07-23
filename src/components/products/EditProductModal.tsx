@@ -221,7 +221,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
           </div>
 
           {/* Características ecológicas */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center space-x-2">
               <Switch
                 id="isHandmade"
@@ -238,7 +238,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
               />
               <Label htmlFor="isOrganic">Orgánico</Label>
             </div>
-          </div>
+          </div> */}
 
           <DialogFooter className="gap-2">
             <Button 
