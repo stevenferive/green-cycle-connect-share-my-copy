@@ -222,6 +222,14 @@ export const orderApi = {
     return api.get('/orders/seller/pending');
   },
 
+  // Obtener todas las órdenes del vendedor
+  getSellerOrders: async (status?: string) => {
+    const url = status ? `/orders/seller/all?status=${status}` : '/orders/seller/all';
+    // console.log('🔍 Llamando a:', url);
+    // console.log('🔑 Token disponible:', !!localStorage.getItem('auth_token'));
+    return api.get(url);
+  },
+
   // Aprobar orden
   approveOrder: async (orderId: string) => {
     return api.patch(`/orders/${orderId}/approve`);

@@ -115,14 +115,14 @@ const Explore = () => {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-heading font-bold">Explorar Productos</h1>
           <div className="flex gap-2">
-            <Button 
+            {/* <Button 
               variant={showAdvancedFilters ? "default" : "outline"}
               size="icon"
               onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
               className="flex-shrink-0"
             >
               <Filter className="h-4 w-4" />
-            </Button>
+            </Button> */}
             <Button 
               variant="outline" 
               size="icon"

@@ -29,27 +29,6 @@ const Search = () => {
     clearResults
   } = useUserSearch();
 
-  // Mock data para productos (mantener hasta que se implemente la búsqueda de productos)
-  const products = [
-    {
-      id: 1,
-      name: 'Lámpara Vintage',
-      price: '$45.000',
-      image: '/lovable-uploads/117c21d0-7e1c-4db0-9d91-dafa39c4f63e.png',
-      seller: 'María González',
-      rating: 4.5,
-      reviews: 23
-    },
-    {
-      id: 2,
-      name: 'Juego de Té Clásico',
-      price: '$32.000',
-      image: '/lovable-uploads/2afc4aac-da4d-48b8-8aec-4b8241e62c0c.png',
-      seller: 'Carlos Ruiz',
-      rating: 4.8,
-      reviews: 15
-    }
-  ];
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
@@ -115,44 +94,18 @@ const Search = () => {
 
           {/* Tabs para productos y usuarios */}
           <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="products" className="flex items-center gap-2">
+            <TabsList className="grid w-full grid-cols-1">
+              {/* <TabsTrigger value="products" className="flex items-center gap-2">
                 <Package className="h-4 w-4" />
                 Productos
-              </TabsTrigger>
+              </TabsTrigger> */}
               <TabsTrigger value="users" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
                 Usuarios
               </TabsTrigger>
             </TabsList>
             
-            <TabsContent value="products" className="mt-6">
-              {isLoading ? (
-                <div className="flex justify-center py-8">
-                  <LoadingSpinner text="Buscando productos..." />
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {products.map((product) => (
-                    <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                      <div className="aspect-square overflow-hidden">
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="w-full h-full object-cover hover:scale-105 transition-transform"
-                        />
-                      </div>
-                      <CardContent className="p-4">
-                        <h3 className="font-semibold mb-1">{product.name}</h3>
-                        <p className="text-green font-bold mb-2">{product.price}</p>
-                        <p className="text-sm text-muted-foreground mb-2">Por {product.seller}</p>
-                        <RatingDisplay rating={product.rating} reviews={product.reviews} size="sm" />
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              )}
-            </TabsContent>
+            
             
             <TabsContent value="users" className="mt-6">
               {usersLoading ? (

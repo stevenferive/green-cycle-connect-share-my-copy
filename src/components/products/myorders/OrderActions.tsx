@@ -202,13 +202,13 @@ const OrderActions: React.FC<OrderActionsProps> = ({ order, onOrderUpdate }) => 
       )}
 
       {/* Ver detalles - siempre disponible */}
-      <Button
+      {/* <Button
         variant="outline"
         size="sm"
         onClick={handleViewDetails}
       >
         <Eye className="h-4 w-4" />
-      </Button>
+      </Button> */}
     </div>
   );
 };

@@ -24,6 +24,7 @@ import Cart from "@/pages/Cart";
 import Orders from "@/pages/Orders";
 import Profile from "@/pages/Profile";
 import MyProducts from "@/pages/MyProducts";
+import PendingOrdersPage from "@/pages/PendingOrdersPage";
 // import Favorites from "@/pages/Favorites";
 // import Notifications from "@/pages/Notifications";
 // import PaymentMethods from "@/pages/PaymentMethods";
@@ -144,6 +145,11 @@ const AppRoutes = () => {
       <Route path="/my-products" element={
         <ProtectedRoute>
           <MyProducts />
+        </ProtectedRoute>
+      } />
+      <Route path="/pending-orders" element={
+        <ProtectedRoute>
+          <PendingOrdersPage />
         </ProtectedRoute>
       } />
       {/* <Route path="/favorites" element={

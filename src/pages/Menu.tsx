@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/lib/auth-context';
-import { useNotifications } from '@/hooks/useNotifications';
+// import { useNotifications } from '@/hooks/useNotifications';
 import { Link } from 'react-router-dom';
 import { 
   User, 
@@ -27,7 +27,7 @@ import {
 
 const Menu = () => {
   const { user, logout } = useAuth();
-  const { unreadCount, requestPermission, permission } = useNotifications();
+  // const { unreadCount, requestPermission, permission } = useNotifications();
 
   const menuItems = [
     // { 
@@ -111,12 +111,12 @@ const Menu = () => {
     },
   ];
 
-  const handleEnableNotifications = async () => {
-    const granted = await requestPermission();
-    if (granted) {
-      console.log('Notificaciones habilitadas');
-    }
-  };
+  // const handleEnableNotifications = async () => {
+  //   const granted = await requestPermission();
+  //   if (granted) {
+  //     console.log('Notificaciones habilitadas');
+  //   }
+  // };
 
   return (
     <div className="min-h-screen bg-background">
@@ -145,8 +145,8 @@ const Menu = () => {
           </Card>
 
           {/* Notificaciones push */}
-          {permission !== 'granted' && (
-            <Card className="mb-6 border-yellow-200 bg-yellow-50">
+          {/* {permission !== 'granted' && ( */}
+            {/* <Card className="mb-6 border-yellow-200 bg-yellow-50">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -155,13 +155,13 @@ const Menu = () => {
                       Recibe alertas de nuevos mensajes y actividad en tus productos
                     </p>
                   </div>
-                  <Button size="sm" onClick={handleEnableNotifications} className="bg-yellow-600 hover:bg-yellow-700">
+                  <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700">
                     Habilitar
                   </Button>
                 </div>
               </CardContent>
-            </Card>
-          )}
+            </Card> */}
+          {/* )} */}
 
           {/* Opciones del menú */}
           <div className="space-y-2">

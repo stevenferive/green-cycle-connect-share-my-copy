@@ -45,10 +45,17 @@ export interface OrderSeller {
   lastName?: string;
 }
 
+export interface OrderBuyer {
+  _id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+}
+
 export interface Order {
   _id: string;
   orderNumber: string;
-  buyerId: string;
+  buyerId: OrderBuyer;
   status: 'pending' | 'confirmed' | 'preparing' | 'shipped' | 'delivered' | 'cancelled';
   sellerId: OrderSeller;
   items: OrderItem[];
