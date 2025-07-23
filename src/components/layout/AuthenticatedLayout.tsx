@@ -9,7 +9,7 @@ interface AuthenticatedLayoutProps {
 const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = React.memo(({ children }) => {
   return (
     <div className="h-screen bg-gradient-to-r from-[#EEFFCD] to-[#C8F8B1] flex flex-col">
-      <div className="flex-1">
+      <div className="flex-1 pb-20">
         {children}
       </div>
       <BottomNav />
