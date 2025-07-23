@@ -73,9 +73,9 @@ const SimpleChatWindow: React.FC<SimpleChatWindowProps> = ({
   const chatInfo = ChatService.formatChatForUI(chat, currentUser?.id || '');
 
   return (
-    <div className="flex flex-col h-full bg-green/5">
+    <div className="flex flex-col h-full bg-green/5 animate-in fade-in duration-500">
       {/* Header */}
-      <div className="flex-none p-4 bg-[#F5F8E1] flex items-center gap-3">
+      <div className="flex-none p-4 bg-[#F5F8E1] flex items-center gap-3 animate-in slide-in-from-top duration-300">
         <Button 
           variant="ghost" 
           size="icon" 
@@ -105,7 +105,7 @@ const SimpleChatWindow: React.FC<SimpleChatWindowProps> = ({
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 animate-in fade-in duration-700">
         {loading ? (
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
@@ -130,10 +130,10 @@ const SimpleChatWindow: React.FC<SimpleChatWindowProps> = ({
             return (
               <div 
                 key={message._id} 
-                className={`flex ${formattedMessage.isOwn ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${formattedMessage.isOwn ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom duration-300`}
               >
                 <div 
-                  className={`max-w-[70%] rounded-lg p-3 ${
+                  className={`max-w-[70%] rounded-lg p-3 transition-all duration-200 hover:scale-[1.02] ${
                     formattedMessage.isOwn 
                       ? 'bg-[#4CAF50]/80 text-white shadow-md rounded-br-sm' 
                       : 'bg-white text-foreground shadow-md rounded-bl-sm'
@@ -169,22 +169,22 @@ const SimpleChatWindow: React.FC<SimpleChatWindowProps> = ({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Message Input */}
-      <div className="flex-none p-4  ">
-        <div className="flex gap-2">
-          <Input 
-            value={newMessage} 
-            onChange={(e) => setNewMessage(e.target.value)} 
-            onKeyPress={handleKeyPress} 
-            placeholder="Escribe un mensaje..." 
-            className="flex-1 bg-white border-none shadow-md"
-            disabled={!isConnected}
-          />
+              {/* Message Input */}
+        <div className="flex-none p-4 animate-in slide-in-from-bottom duration-500">
+          <div className="flex gap-2">
+                      <Input 
+              value={newMessage} 
+              onChange={(e) => setNewMessage(e.target.value)} 
+              onKeyPress={handleKeyPress} 
+              placeholder="Escribe un mensaje..." 
+              className="flex-1 bg-white border-none shadow-md transition-all duration-200 focus:scale-[1.02] focus:shadow-lg"
+              disabled={!isConnected}
+            />
           <Button 
             onClick={handleSendMessage} 
             disabled={!newMessage.trim() || !isConnected} 
             size="icon" 
-            className="h-9 w-9 bg-green hover:bg-green/90 text-white"
+            className="h-9 w-9 bg-green hover:bg-green/90 text-white transition-all duration-200 hover:scale-105 active:scale-95"
           >
             <Send className="h-5 w-5" />
           </Button>

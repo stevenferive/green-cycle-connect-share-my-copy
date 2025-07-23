@@ -13,8 +13,9 @@ import SearchBar from "@/components/explore/SearchBar";
 import ProductGrid from "@/components/explore/ProductGrid";
 import { LoadingPage } from "@/components/ui/loading";
 import { Button } from "@/components/ui/button";
-import { SlidersHorizontal, Filter } from "lucide-react";
+import { SlidersHorizontal, Filter, Search } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 const Explore = () => {
   const isMobile = useIsMobile();
@@ -79,21 +80,18 @@ const Explore = () => {
   
   if (isLoading) {
     return (
-      <div className="flex min-h-screen flex-col">
-        {!isAuthenticated && <Navbar />}
-        <main className="flex-1 container py-8">
+      <div className="h-[calc(100vh)]">
+        <main className="container py-8">
           <LoadingPage text="Cargando productos..." />
         </main>
-        {!isAuthenticated && <Footer />}
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex min-h-screen flex-col">
-        {!isAuthenticated && <Navbar />}
-        <main className="flex-1 container py-8">
+      <div className="h-[calc(100vh)]">
+        <main className="container py-8">
           <Card>
             <CardContent className="flex items-center justify-center h-64">
               <div className="text-center">
@@ -103,58 +101,49 @@ const Explore = () => {
             </CardContent>
           </Card>
         </main>
-        {!isAuthenticated && <Footer />}
       </div>
     );
   }
   
   return (
-    <div className="flex min-h-screen flex-col">
-      {!isAuthenticated && <Navbar />}
-      <main className="flex-1 container py-8">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-heading font-bold">Explorar Productos</h1>
-          <div className="flex gap-2">
-            {/* <Button 
-              variant={showAdvancedFilters ? "default" : "outline"}
-              size="icon"
-              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-              className="flex-shrink-0"
-            >
-              <Filter className="h-4 w-4" />
-            </Button> */}
+    <div className="flex-1 min-h-full">
+      <main className="container py-8">
+        {/* Título centrado */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-700 mb-6">Explorar Productos</h1>
+        </div>
+        
+        {/* Barra de búsqueda integrada */}
+        <div className="max-w-2xl mx-auto mb-8">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 z-10" />
+            <Input
+              placeholder="Buscar productos..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 pr-24 py-3 bg-white rounded-lg shadow-sm border-0 focus:ring-2 focus:ring-green-500"
+            />
             <Button 
-              variant="outline" 
-              size="icon"
-              onClick={() => setIsFilterModalOpen(true)}
-              className="flex-shrink-0"
+              onClick={handleSearch}
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-[#FAA220] hover:bg-[#FAA220]/90 text-white px-4 py-1.5 rounded-md shadow-sm text-sm"
             >
-              <SlidersHorizontal className="h-4 w-4" />
+              Buscar
             </Button>
           </div>
         </div>
-        
-        <div className="space-y-6">
-          {/* Barra de búsqueda */}
-          <SearchBar
-            searchTerm={searchTerm}
-            onSearchTermChange={setSearchTerm}
-            onSearch={handleSearch}
-          />
 
-          {/* Filtros avanzados */}
-          {showAdvancedFilters && (
-            <AdvancedFilters
-              filters={advancedFilters}
-              onFiltersChange={setAdvancedFilters}
-              onReset={resetAdvancedFilters}
-              isOpen={showAdvancedFilters}
-            />
-          )}
-          
-          {/* Resultados */}
-          <ProductGrid products={filteredProducts} />
-        </div>
+        {/* Filtros avanzados */}
+        {showAdvancedFilters && (
+          <AdvancedFilters
+            filters={advancedFilters}
+            onFiltersChange={setAdvancedFilters}
+            onReset={resetAdvancedFilters}
+            isOpen={showAdvancedFilters}
+          />
+        )}
+        
+        {/* Resultados */}
+        <ProductGrid products={filteredProducts} />
 
         {/* Modal de filtros básicos */}
         <FilterModal
@@ -169,7 +158,6 @@ const Explore = () => {
           onSearch={handleSearch}
         />
       </main>
-      {!isAuthenticated && <Footer />}
     </div>
   );
 };

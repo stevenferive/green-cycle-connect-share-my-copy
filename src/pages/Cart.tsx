@@ -35,7 +35,7 @@ const Cart = () => {
 
   if (isLoading && items.length === 0) {
     return (
-      <div className="min-h-screen bg-background p-4 flex items-center justify-center">
+      <div className="h-screen bg-background p-4 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
           <p className="text-muted-foreground">Cargando carrito...</p>
@@ -45,7 +45,7 @@ const Cart = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div className="h-screen bg-background p-4">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <Button 

@@ -49,7 +49,9 @@ const SimpleChats = () => {
   }
 
   return (
-    <div className="h-[calc(100vh-6rem)] m-2 overflow-hidden flex bg-[#FEFCE9] rounded-[30px]">
+ 
+
+    <div className="h-[calc(99.3vh-6rem)] m-2 pb-10 overflow-hidden flex bg-[#FEFCE9] rounded-[30px]">
       {/* Panel izquierdo - Lista de chats */}
       <div className={`w-full md:w-96 border-r border-border flex flex-col bg-background ${selectedChat ? 'hidden md:flex' : 'flex'}`}>
         {/* Header */}
@@ -163,6 +165,7 @@ const SimpleChats = () => {
         )}
       </div>
     </div>
+              
   );
 };
 

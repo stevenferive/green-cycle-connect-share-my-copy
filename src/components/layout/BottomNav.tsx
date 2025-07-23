@@ -16,7 +16,7 @@ const BottomNav = React.memo(() => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-transparent border-t-0 z-50 h-20 mb-1">
+    <nav className="sticky bottom-0 left-0 right-0 bg-transparent border-t-0 z-50 h-20 mb-1">
       <div className="mx-4 h-full rounded-2xl shadow-lg bg-[#FEFCE9]">
         <div className="flex justify-around items-center h-full py-2">
           {navItems.map((item) => {

@@ -73,8 +73,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <Link to={`/product/${id}`} className="block">
-      <Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
-        <div className="relative aspect-square overflow-hidden">
+      <Card className="group hover:shadow-lg transition-all duration-300 overflow-hidden bg-white/90 shadow-md">
+        <div className="relative aspect-[4/3] overflow-hidden">
           <img
             src={image || "/placeholder.svg"}
             alt={title}
@@ -133,47 +133,47 @@ const ProductCard: React.FC<ProductCardProps> = ({
           )}
         </div>
 
-        <CardContent className="p-4">
-          <h3 className="font-semibold text-foreground line-clamp-2 mb-1">
+        <CardContent className="p-3">
+          <h3 className="font-semibold text-gray-800 text-sm line-clamp-1 mb-1">
             {title}
           </h3>
           
-          <p className="text-sm text-muted-foreground mb-2">{seller}</p>
-          
           <div className="flex items-baseline gap-2 mb-2">
-            <span className="text-lg font-bold text-primary">
-              {forBarter ? "Intercambio" : `S/ ${(price || 0).toFixed(2)}`}
+            <span className="text-sm font-bold text-green-700">
+              {forBarter ? "Intercambio" : `S/${(price || 0).toFixed(2)}`}
             </span>
             {originalPrice && !forBarter && (
-              <span className="text-sm text-muted-foreground line-through">
+              <span className="text-xs text-gray-500 line-through">
                 S/ {(originalPrice || 0).toFixed(2)}
               </span>
             )}
           </div>
 
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-muted-foreground">{location}</p>
-            <Badge variant="outline" className="text-xs">
-              {category}
-            </Badge>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs text-gray-600">{location}</p>
+            <div className="flex gap-1">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            </div>
           </div>
 
           {/* Botón de agregar al carrito */}
           {!forBarter && (
             <Button
               size="sm"
-              className="w-full mt-3 bg-green hover:bg-green-dark"
+              className="w-full bg-[#FAA220] hover:bg-[#FAA220]/90 text-white text-xs py-1.5"
               onClick={handleAddToCart}
               disabled={isAdding}
             >
               {isAdding ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-1 h-3 w-3 animate-spin" />
                   Agregando...
                 </>
               ) : (
                 <>
-                  <ShoppingCart className="mr-2 h-4 w-4" />
+                  <ShoppingCart className="mr-1 h-3 w-3" />
                   Agregar al carrito
                 </>
               )}
