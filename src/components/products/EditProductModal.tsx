@@ -6,12 +6,14 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Plus, X } from 'lucide-react';
 import { useUpdateProduct } from '@/hooks/useUpdateProduct';
 import { ProductResponse } from '@/services/productService';
 
@@ -35,6 +37,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     description: '',
     price: 0,
     forBarter: false,
+    barterPreferences: [] as string[],
     stock: 0,
     status: 'active' as 'draft' | 'active' | 'paused' | 'out_of_stock' | 'sold' | 'archived',
     condition: 'new' as 'new' | 'like_new' | 'good' | 'fair' | 'poor',
@@ -42,22 +45,27 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     isOrganic: false,
   });
 
+  const [newBarterPreference, setNewBarterPreference] = useState('');
+
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Cargar datos del producto cuando se abre el modal
   useEffect(() => {
     if (product && isOpen) {
+
       setFormData({
         name: product.name || '',
         description: product.description || '',
         price: product.price || 0,
         forBarter: product.forBarter || false,
+        barterPreferences: product.barterPreferences || [],
         stock: product.stock || 0,
         status: product.status || 'active',
-        condition: (product.condition as 'new' | 'like_new' | 'good' | 'fair' | 'poor') || 'new',
+        condition: product.condition || 'new',
         isHandmade: product.isHandmade || false,
         isOrganic: product.isOrganic || false,
       });
+      setNewBarterPreference('');
       setSubmitError(null);
     }
   }, [product, isOpen]);
@@ -74,16 +82,44 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
     }
   };
 
+  const handleAddBarterPreference = () => {
+    if (newBarterPreference.trim() && !formData.barterPreferences.includes(newBarterPreference.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        barterPreferences: [...prev.barterPreferences, newBarterPreference.trim()]
+      }));
+      setNewBarterPreference('');
+    }
+  };
+
+  const handleRemoveBarterPreference = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      barterPreferences: prev.barterPreferences.filter((_, i) => i !== index)
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!product) return;
     
     setSubmitError(null);
     
+
+    
     try {
+      // Preparar datos para envío
+      const productDataToSend = {
+        ...formData,
+        condition: formData.condition || 'new',
+        barterPreferences: formData.barterPreferences || []
+      };
+      
+
+      
       const updatedProduct = await updateProductMutation.mutateAsync({
         productId: product._id,
-        productData: formData
+        productData: productDataToSend
       });
       
       if (onProductUpdated) {
@@ -154,7 +190,6 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                 min="0"
                 value={formData.price}
                 onChange={(e) => handleInputChange('price', parseFloat(e.target.value) || 0)}
-                disabled={formData.forBarter}
               />
             </div>
             <div className="flex items-center space-x-2 pt-6">
@@ -163,9 +198,51 @@ const EditProductModal: React.FC<EditProductModalProps> = ({
                 checked={formData.forBarter}
                 onCheckedChange={(checked) => handleInputChange('forBarter', checked)}
               />
-              <Label htmlFor="forBarter">Intercambio</Label>
+              <Label htmlFor="forBarter">Disponible para intercambio</Label>
             </div>
           </div>
+
+          {/* Preferencias de intercambio */}
+          {formData.forBarter && (
+            <div>
+              <Label htmlFor="barterPreferences">Preferencias de intercambio</Label>
+              <div className="flex gap-2 mt-2">
+                <Input
+                  id="barterPreferences"
+                  placeholder="Ej: Libros, ropa, plantas"
+                  value={newBarterPreference}
+                  onChange={(e) => setNewBarterPreference(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddBarterPreference();
+                    }
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={handleAddBarterPreference}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+              {formData.barterPreferences.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {formData.barterPreferences.map((pref, index) => (
+                    <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                      {pref}
+                      <X 
+                        className="h-3 w-3 cursor-pointer" 
+                        onClick={() => handleRemoveBarterPreference(index)}
+                      />
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Stock */}
           <div>

@@ -22,15 +22,27 @@ const Cart = () => {
   }, []);
 
   const handleQuantityUpdate = async (itemId: string, newQuantity: number) => {
+    if (newQuantity < 0) return;
+    
     setLoadingStates(prev => ({ ...prev, [itemId]: true }));
-    await updateQuantity(itemId, newQuantity);
-    setLoadingStates(prev => ({ ...prev, [itemId]: false }));
+    try {
+      await updateQuantity(itemId, newQuantity);
+    } catch (error) {
+      console.error('Error al actualizar cantidad:', error);
+    } finally {
+      setLoadingStates(prev => ({ ...prev, [itemId]: false }));
+    }
   };
 
   const handleRemoveItem = async (itemId: string) => {
     setLoadingStates(prev => ({ ...prev, [`remove-${itemId}`]: true }));
-    await removeItem(itemId);
-    setLoadingStates(prev => ({ ...prev, [`remove-${itemId}`]: false }));
+    try {
+      await removeItem(itemId);
+    } catch (error) {
+      console.error('Error al eliminar producto:', error);
+    } finally {
+      setLoadingStates(prev => ({ ...prev, [`remove-${itemId}`]: false }));
+    }
   };
 
   if (isLoading && items.length === 0) {

@@ -44,7 +44,7 @@ export interface ProductResponse {
     _id: string;
   };
   status: 'draft' | 'active' | 'paused' | 'out_of_stock' | 'sold' | 'archived';
-  condition: string;
+  condition: 'new' | 'like_new' | 'good' | 'fair' | 'poor';
   publishedAt: string;
   seller: string;
   isVerifiedSeller: boolean;
@@ -120,7 +120,7 @@ export const productService = {
         sort
       });
 
-      console.log(`Obteniendo productos del vendedor ${sellerId}...`);
+      // console.log(`Obteniendo productos del vendedor ${sellerId}...`);
       const response = await api.get(`/products/seller/${sellerId}?${queryParams}`);
       
       if (!response) {
@@ -317,9 +317,9 @@ export const productService = {
     }
   },
 
-  async updateProduct(productId: string, productData: Partial<ProductResponse>): Promise<ProductResponse> {
+  async updateProduct(productId: string, productData: any): Promise<ProductResponse> {
     try {
-      // console.log('Actualizando producto:', productId, productData);
+
       
       // Validaciones básicas
       if (!productId) {
@@ -340,7 +340,7 @@ export const productService = {
       }
       
       const response = await api.patch(`/products/${productId}`, productData);
-      // console.log('Producto actualizado exitosamente:', response);
+
       
       return response;
     } catch (error: any) {

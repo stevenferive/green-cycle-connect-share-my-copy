@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MapPin, CircleDollarSign, Repeat } from "lucide-react";
+import { Heart, MapPin, CircleDollarSign, Repeat, Package } from "lucide-react";
 
 interface ProductInfoProps {
   title: string;
@@ -10,6 +10,10 @@ interface ProductInfoProps {
   exchange: boolean;
   ecoBadges: string[];
   ecoSaving: number;
+  stock: number;
+  stockUnit: string;
+  barterPreferences: string[];
+  currency?: string;
 }
 
 const ProductInfo: React.FC<ProductInfoProps> = ({
@@ -18,17 +22,33 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
   price,
   exchange,
   ecoBadges,
-  ecoSaving
+  ecoSaving,
+  stock,
+  stockUnit,
+  barterPreferences,
+  currency = "PEN"
 }) => {
+  const formatPrice = (price: number, currency: string) => {
+    switch (currency) {
+      case 'USD':
+        return `$${price.toFixed(2)}`;
+      case 'EUR':
+        return `€${price.toFixed(2)}`;
+      case 'PEN':
+      default:
+        return `S/ ${price.toFixed(2)}`;
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div>
-        <div className="flex items-start justify-between">
+        {/* <div className="flex items-start justify-between">
           <h1 className="text-2xl md:text-3xl font-heading font-bold">{title}</h1>
           <button className="rounded-full p-2 text-muted-foreground hover:bg-secondary hover:text-foreground">
             <Heart className="h-6 w-6" />
           </button>
-        </div>
+        </div> */}
         
         <div className="mt-2 flex items-center gap-1 text-muted-foreground">
           <MapPin className="h-4 w-4" />
@@ -39,7 +59,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
       <div className="flex items-center gap-2">
         <div className="flex items-center font-heading text-xl font-semibold text-green">
           <CircleDollarSign className="mr-1 h-5 w-5" />
-          S/ {price.toFixed(2)}
+          {formatPrice(price, currency)}
         </div>
         {exchange && (
           <Badge variant="outline" className="flex items-center gap-1 border-green text-green">
@@ -47,6 +67,29 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
           </Badge>
         )}
       </div>
+
+      {/* Información de stock */}
+      <div className="flex items-center gap-2 text-sm">
+        <Package className="h-4 w-4 text-muted-foreground" />
+        <span className="text-muted-foreground">
+          Stock: <span className="font-medium text-foreground">{stock} {stockUnit}{stock !== 1 ? 's' : ''} disponible{stock !== 1 ? 's' : ''}</span>
+        </span>
+      </div>
+
+      {/* Preferencias de trueque */}
+      {exchange && barterPreferences && barterPreferences.length > 0 && (
+        <div className="space-y-2">
+          <h3 className="text-sm font-medium text-muted-foreground">Preferencias de intercambio:</h3>
+          <ul className="space-y-1">
+            {barterPreferences.map((preference, index) => (
+              <li key={index} className="text-sm text-foreground flex items-center gap-2">
+                <span className="w-1.5 h-1.5 bg-green rounded-full"></span>
+                {preference}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       
       <div className="flex flex-wrap gap-2">
         {ecoBadges.map((badge, index) => (

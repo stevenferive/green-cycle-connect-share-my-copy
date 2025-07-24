@@ -46,16 +46,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { isAuthenticated } = useAuth();
 
   // Función para convertir items del backend al formato del frontend
-  const convertBackendToFrontend = (backendItems: CartItemBackend[]): CartItem[] => {
+  const convertBackendToFrontend = (backendItems: any[]): CartItem[] => {
     return backendItems.map(item => ({
-      id: item.productId,
-      title: item.productName,
-      price: item.unitPrice,
+      id: typeof item.productId === 'string' ? item.productId : item.productId._id,
+      title: item.productName || item.productId?.name || 'Producto sin nombre',
+      price: item.unitPrice || item.productId?.price || 0,
       quantity: item.quantity,
-      image: item.productImage || '/placeholder.svg',
-      category: 'Producto', // El backend no devuelve la categoría, usar placeholder
-      sellerId: item.sellerId,
-      sellerName: item.sellerName
+      image: item.productImage || item.productId?.images?.[0] || '/placeholder.svg',
+      category: item.productId?.category || 'Producto',
+      sellerId: item.sellerId || item.productId?.seller || '',
+      sellerName: item.sellerName || 'Vendedor desconocido'
     }));
   };
 

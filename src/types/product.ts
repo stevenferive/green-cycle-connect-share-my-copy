@@ -23,7 +23,7 @@ export interface CreateProductDto {
   name: string;
   description: string;
   category: string;
-  condition: 'new' | 'used' | 'refurbished';
+  condition: 'new' | 'like_new' | 'good' | 'fair' | 'poor';
   price: number;
   location: {
     city: string;

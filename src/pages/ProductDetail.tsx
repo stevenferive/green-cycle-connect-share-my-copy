@@ -11,7 +11,7 @@ import MessageForm from "@/components/product-detail/MessageForm";
 import { useAuth } from "@/lib/auth-context";
 import AuthenticatedLayout from "@/components/layout/AuthenticatedLayout";
 import { useProduct } from "@/hooks/useProducts";
-import { mapProductResponseToProduct } from "@/utils/productMapper";
+import { mapProductResponseToProductDetail } from "@/utils/productMapper";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,8 +21,8 @@ const ProductDetail = () => {
   // Usar el hook para obtener el producto específico de la API
   const { data: productData, isLoading, error } = useProduct(id || '');
   
-  // Mapear el producto de la API al formato esperado
-  const product = productData ? mapProductResponseToProduct(productData) : null;
+  // Mapear el producto de la API al formato esperado con detalles completos
+  const product = productData ? mapProductResponseToProductDetail(productData) : null;
   
   // Handle adding to cart
   const handleAddToCart = () => {
@@ -32,19 +32,6 @@ const ProductDetail = () => {
         description: `${product.title} añadido al carrito`,
       });
     }
-  };
-  
-  // Handle sending a message
-  const handleSendMessage = () => {
-    toast({
-      title: "Mensaje enviado",
-      description: "Tu mensaje ha sido enviado al vendedor",
-    });
-  };
-
-  // Handle contact seller button click
-  const handleContactSeller = () => {
-    document.getElementById('messageArea')?.focus();
   };
   
   // Loading state
@@ -133,8 +120,8 @@ const ProductDetail = () => {
   const content = (
     <main className="flex-1 container py-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Product Image */}
-        <ProductImage image={product.image} title={product.title} />
+        {/* Product Images Carousel */}
+        <ProductImage images={product.images} title={product.title} />
         
         {/* Product Details */}
         <div className="space-y-6">
@@ -145,6 +132,10 @@ const ProductDetail = () => {
             exchange={product.exchange}
             ecoBadges={product.ecoBadges}
             ecoSaving={product.ecoSaving}
+            stock={product.stock}
+            stockUnit={product.stockUnit}
+            barterPreferences={product.barterPreferences}
+            currency={product.currency}
           />
           
           <ProductDescription />
@@ -157,10 +148,13 @@ const ProductDetail = () => {
               image: product.image,
               category: product.category
             }}
-            onContactSeller={handleContactSeller}
           />
           
-          <MessageForm onSendMessage={handleSendMessage} />
+          <MessageForm 
+            sellerId={product.seller._id}
+            productId={product.id}
+            sellerEmail={product.seller.email}
+          />
         </div>
       </div>
     </main>

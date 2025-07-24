@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, MessageCircle } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 
 interface ProductActionsProps {
@@ -14,7 +14,7 @@ interface ProductActionsProps {
     sellerId?: string;
     sellerName?: string;
   };
-  onContactSeller: () => void;
+  onContactSeller?: () => void; // Hacerlo opcional ya que la funcionalidad ahora está en MessageForm
 }
 
 const ProductActions: React.FC<ProductActionsProps> = ({
@@ -38,21 +38,12 @@ const ProductActions: React.FC<ProductActionsProps> = ({
   return (
     <div className="flex flex-col sm:flex-row gap-4">
       <Button 
-        className="flex-1 bg-green hover:bg-green-dark"
+        className="w-full bg-green hover:bg-green-dark"
         onClick={handleAddToCart}
         disabled={isLoading}
       >
         <ShoppingCart className="mr-2 h-4 w-4" />
         {isLoading ? 'Agregando...' : 'Agregar al carrito'}
-      </Button>
-      
-      <Button 
-        variant="outline" 
-        className="flex-1 border-green text-green hover:bg-green-light/10"
-        onClick={onContactSeller}
-      >
-        <MessageCircle className="mr-2 h-4 w-4" />
-        Contactar vendedor
       </Button>
     </div>
   );

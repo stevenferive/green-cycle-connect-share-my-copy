@@ -25,8 +25,8 @@ export const validateProduct = (product: Partial<CreateProductDto>): ProductVali
   // Validar condición
   if (!product.condition) {
     errors.condition = 'La condición del producto es obligatoria';
-  } else if (!['new', 'used', 'refurbished'].includes(product.condition)) {
-    errors.condition = 'La condición debe ser: new, used o refurbished';
+  } else if (!['new', 'like_new', 'good', 'fair', 'poor'].includes(product.condition)) {
+    errors.condition = 'La condición debe ser: new, like_new, good, fair o poor';
   }
 
   // Validar ubicación
@@ -102,8 +102,8 @@ export const validateProductWithFiles = (
   // Validar condición
   if (!product.condition) {
     errors.condition = 'La condición del producto es obligatoria';
-  } else if (!['new', 'used', 'refurbished'].includes(product.condition)) {
-    errors.condition = 'La condición debe ser: new, used o refurbished';
+  } else if (!['new', 'like_new', 'good', 'fair', 'poor'].includes(product.condition)) {
+    errors.condition = 'La condición debe ser: new, like_new, good, fair o poor';
   }
 
   // Validar ubicación

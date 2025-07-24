@@ -7,7 +7,7 @@ export const useUpdateProduct = () => {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: ({ productId, productData }: { productId: string; productData: Partial<ProductResponse> }) => 
+    mutationFn: ({ productId, productData }: { productId: string; productData: any }) => 
       productService.updateProduct(productId, productData),
     onSuccess: (updatedProduct) => {
       // Invalidar la caché de productos para refrescar las listas

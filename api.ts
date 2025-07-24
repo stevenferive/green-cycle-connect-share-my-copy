@@ -191,12 +191,12 @@ export const cartApi = {
     return api.get('/cart');
   },
 
-  // Actualizar cantidad de un item
+  // Actualizar cantidad de un item - PATCH /cart/item/:productId
   updateCartItem: async (productId: string, quantity: number) => {
     return api.patch(`/cart/item/${productId}`, { quantity });
   },
 
-  // Eliminar item del carrito
+  // Eliminar item del carrito - DELETE /cart/item/:productId
   removeFromCart: async (productId: string) => {
     return api.delete(`/cart/item/${productId}`);
   },
@@ -243,8 +243,8 @@ export const orderApi = {
   // Obtener todas las órdenes del comprador
   getBuyerOrders: async (status?: string) => {
     const url = status ? `/orders/buyer/all?status=${status}` : '/orders/buyer/all';
-    console.log('🔍 Llamando a:', url);
-    console.log('🔑 Token disponible:', !!localStorage.getItem('auth_token'));
+    // console.log('🔍 Llamando a:', url);
+    // console.log('🔑 Token disponible:', !!localStorage.getItem('auth_token'));
     return api.get(url);
   },
 

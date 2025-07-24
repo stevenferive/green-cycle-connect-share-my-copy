@@ -1,19 +1,37 @@
 // Interfaces para el sistema de carrito
 
 export interface CartItemBackend {
-  productId: string;
+    productId: string | {
+    _id: string;
+    name: string;
+    images: string[];
+    price: number;
+    currency: string;
+    category: string;
+    seller: string;
+    [key: string]: any;
+  };
   quantity: number;
   productName: string;
   unitPrice: number;
   sellerId: string;
   sellerName: string;
   productImage?: string;
+  addedAt: string;
+  _id: string;
 }
 
 export interface CartBackend {
+  _id: string;
+  userId: string;
   items: CartItemBackend[];
   totalItems: number;
   totalAmount: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  lastModified: string;
+  __v: number;
 }
 
 export interface ShippingAddress {
