@@ -7,13 +7,14 @@ import { Link } from "react-router-dom";
 
 const Hero = () => {
   const isMobile = useIsMobile();
-
+// tailwind siempre prioriza los estilos de telefono primero
   return (
     <section className="py-10 md:py-20 overflow-hidden">
       <div className="container mx-auto px-4 md:px-8 lg:px-12">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           <div className="flex flex-col justify-center space-y-6">
             <div className="space-y-2">
+              {/* usamos {" "} para dar espacios */}
               <h1 className="font-heading text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">
                 Reutilizar es{" "}
                 <span className="text-green animate-pulse-light">Reconstruir el</span>{" "}

@@ -19,6 +19,7 @@ const Login = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isPageLoaded, setIsPageLoaded] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
 
   useEffect(() => {
     // Simular carga de la página
@@ -28,13 +29,39 @@ const Login = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  const validatePassword = (password: string): string => {
+    if (password.includes("=")) {
+      return "La contraseña no puede contener el símbolo '='";
+    }
+    return "";
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
+    const { id, value } = e.target; // destructuring
+    
+    if (id === "password") {
+      const error = validatePassword(value);
+      setPasswordError(error);
+    }
+    
     setCredentials(prev => ({ ...prev, [id]: value }));
   };
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // Validar contraseña antes de enviar
+    const passwordValidationError = validatePassword(credentials.password);
+    if (passwordValidationError) {
+      setPasswordError(passwordValidationError);
+      toast({
+        title: "Error de validación",
+        description: passwordValidationError,
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsLoading(true);
     
     try {
@@ -123,7 +150,11 @@ const Login = () => {
                 value={credentials.password}
                 onChange={handleChange}
                 required 
+                className={passwordError ? "border-red-500" : ""}
               />
+              {passwordError && (
+                <p className="text-red-500 text-sm mt-1">{passwordError}</p>
+              )}
             </div>
               <div className={`transition-all duration-500 ease-out delay-600 transform ${
                 isPageLoaded ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
@@ -131,7 +162,7 @@ const Login = () => {
             <Button 
               type="submit" 
                   className="w-full bg-[#F7A41C] hover:bg-[#F7A41C]/80"
-              disabled={isLoading}
+              disabled={isLoading || !!passwordError}
             >
               {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
             </Button>

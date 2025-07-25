@@ -24,19 +24,53 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isPageLoaded, setIsPageLoaded] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   useEffect(() => {
     setIsPageLoaded(true);
   }, []);
 
+  const validatePassword = (password: string): string => {
+    if (password.includes("=")) {
+      return "La contraseña no puede contener el símbolo '='";
+    }
+    if (password.length > 0 && (password.length < 6 || password.length > 12)) {
+      return "La contraseña debe tener entre 6 y 12 caracteres";
+    }
+    return "";
+  };
+
+  const validateConfirmPassword = (password: string, confirmPass: string): string => {
+    if (confirmPass.includes("=")) {
+      return "La contraseña no puede contener el símbolo '='";
+    }
+    if (confirmPass && password !== confirmPass) {
+      return "Las contraseñas no coinciden";
+    }
+    return "";
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
+    
     if (id === "confirm-password") {
       setConfirmPassword(value);
+      const error = validateConfirmPassword(formData.password, value);
+      setConfirmPasswordError(error);
     } else if (id === "first-name") {
       setFormData(prev => ({ ...prev, firstName: value }));
     } else if (id === "last-name") {
       setFormData(prev => ({ ...prev, lastName: value }));
+    } else if (id === "password") {
+      setFormData(prev => ({ ...prev, password: value }));
+      const error = validatePassword(value);
+      setPasswordError(error);
+      // También validar confirmPassword si ya tiene valor
+      if (confirmPassword) {
+        const confirmError = validateConfirmPassword(value, confirmPassword);
+        setConfirmPasswordError(confirmError);
+      }
     } else {
       setFormData(prev => ({ ...prev, [id]: value }));
     }
@@ -45,10 +79,25 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    if (formData.password !== confirmPassword) {
+    // Validar contraseña
+    const passwordValidationError = validatePassword(formData.password);
+    if (passwordValidationError) {
+      setPasswordError(passwordValidationError);
       toast({
-        title: "Error",
-        description: "Las contraseñas no coinciden",
+        title: "Error de validación",
+        description: passwordValidationError,
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Validar confirmación de contraseña
+    const confirmValidationError = validateConfirmPassword(formData.password, confirmPassword);
+    if (confirmValidationError) {
+      setConfirmPasswordError(confirmValidationError);
+      toast({
+        title: "Error de validación",
+        description: confirmValidationError,
         variant: "destructive",
       });
       return;
@@ -166,14 +215,18 @@ const Register = () => {
                 isPageLoaded ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
               }`}
             >
-              <Label htmlFor="password">Contraseña</Label>
+              <Label htmlFor="password">Contraseña (6-12 caracteres)</Label>
               <Input 
                 id="password" 
                 type="password" 
                 value={formData.password}
                 onChange={handleChange}
                 required 
+                className={passwordError ? "border-red-500" : ""}
               />
+              {passwordError && (
+                <p className="text-red-500 text-sm mt-1">{passwordError}</p>
+              )}
             </div>
             <div 
               className={`space-y-2 transition-all duration-600 delay-1200 ${
@@ -187,7 +240,11 @@ const Register = () => {
                 value={confirmPassword}
                 onChange={handleChange}
                 required 
+                className={confirmPasswordError ? "border-red-500" : ""}
               />
+              {confirmPasswordError && (
+                <p className="text-red-500 text-sm mt-1">{confirmPasswordError}</p>
+              )}
             </div>
             <div 
               className={`flex items-center space-x-2 transition-all duration-600 delay-1300 ${
@@ -207,7 +264,7 @@ const Register = () => {
               className={`w-full bg-[#F7A41C] hover:bg-[#F7A41C]/80 transition-all duration-600 delay-1400 ${
                 isPageLoaded ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
               }`}
-              disabled={isLoading}
+              disabled={isLoading || !!passwordError || !!confirmPasswordError}
             >
               {isLoading ? "Procesando..." : "Registrarme"}
             </Button>

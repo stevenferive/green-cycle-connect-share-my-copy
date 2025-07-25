@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, ArrowLeft } from 'lucide-react';
+import { Send, ArrowLeft, Loader2 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +19,7 @@ const SimpleChatWindow: React.FC<SimpleChatWindowProps> = ({
   onBack
 }) => {
   const [newMessage, setNewMessage] = useState('');
+  const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const currentUser = getCurrentUser();
   const markAsReadCalledRef = useRef(false);
@@ -52,12 +53,15 @@ const SimpleChatWindow: React.FC<SimpleChatWindowProps> = ({
   }, [messages.length]);
 
   const handleSendMessage = async () => {
-    if (newMessage.trim()) {
+    if (newMessage.trim() && !isSending) {
+      setIsSending(true);
       try {
         await sendMessage(newMessage);
         setNewMessage('');
       } catch (error) {
         console.error('Error al enviar mensaje:', error);
+      } finally {
+        setIsSending(false);
       }
     }
   };
@@ -125,46 +129,60 @@ const SimpleChatWindow: React.FC<SimpleChatWindowProps> = ({
             <p className="text-sm text-muted-foreground">Inicia la conversación enviando un mensaje</p>
           </div>
         ) : (
-          messages.map(message => {
-            const formattedMessage = ChatService.formatMessageForUI(message, currentUser?.id || '');
-            return (
-              <div 
-                key={message._id} 
-                className={`flex ${formattedMessage.isOwn ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom duration-300`}
-              >
+          <>
+            {messages.map(message => {
+              const formattedMessage = ChatService.formatMessageForUI(message, currentUser?.id || '');
+              return (
                 <div 
-                  className={`max-w-[70%] rounded-lg p-3 transition-all duration-200 hover:scale-[1.02] ${
-                    formattedMessage.isOwn 
-                      ? 'bg-[#4CAF50]/80 text-white shadow-md rounded-br-sm' 
-                      : 'bg-white text-foreground shadow-md rounded-bl-sm'
-                  }`}
+                  key={message._id} 
+                  className={`flex ${formattedMessage.isOwn ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom duration-300`}
                 >
-                  {!formattedMessage.isOwn && chat.type === 'group' && (
-                    <p className="text-xs font-medium mb-1 opacity-70">
-                      {message.sender.firstName} {message.sender.lastName}
-                    </p>
-                  )}
-                  <p className="text-sm whitespace-pre-wrap">{formattedMessage.text}</p>
                   <div 
-                    className={`flex items-center gap-1 mt-1 text-xs ${
+                    className={`max-w-[70%] rounded-lg p-3 transition-all duration-200 hover:scale-[1.02] ${
                       formattedMessage.isOwn 
-                        ? 'text-white/70' 
-                        : 'text-muted-foreground'
+                        ? 'bg-[#4CAF50]/80 text-white shadow-md rounded-br-sm' 
+                        : 'bg-white text-foreground shadow-md rounded-bl-sm'
                     }`}
                   >
-                    <span>{formattedMessage.timestamp}</span>
-                    {formattedMessage.isOwn && (
-                      <span className="ml-1">
-                        {formattedMessage.status === 'sent' && '✓'}
-                        {formattedMessage.status === 'delivered' && '✓✓'}
-                        {formattedMessage.status === 'read' && '✓✓'}
-                      </span>
+                    {!formattedMessage.isOwn && chat.type === 'group' && (
+                      <p className="text-xs font-medium mb-1 opacity-70">
+                        {message.sender.firstName} {message.sender.lastName}
+                      </p>
                     )}
+                    <p className="text-sm whitespace-pre-wrap">{formattedMessage.text}</p>
+                    <div 
+                      className={`flex items-center gap-1 mt-1 text-xs ${
+                        formattedMessage.isOwn 
+                          ? 'text-white/70' 
+                          : 'text-muted-foreground'
+                      }`}
+                    >
+                      <span>{formattedMessage.timestamp}</span>
+                      {formattedMessage.isOwn && (
+                        <span className="ml-1">
+                          {formattedMessage.status === 'sent' && '✓'}
+                          {formattedMessage.status === 'delivered' && '✓✓'}
+                          {formattedMessage.status === 'read' && '✓✓'}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            
+            {/* Mensaje temporal "Enviando..." */}
+            {isSending && (
+              <div className="flex justify-end animate-in fade-in slide-in-from-bottom duration-300">
+                <div className="max-w-[70%] rounded-lg p-3 bg-[#4CAF50]/60 text-white shadow-md rounded-br-sm">
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                    <p className="text-sm">Enviando...</p>
                   </div>
                 </div>
               </div>
-            );
-          })
+            )}
+          </>
         )}
         <div ref={messagesEndRef} />
       </div>
@@ -178,15 +196,19 @@ const SimpleChatWindow: React.FC<SimpleChatWindowProps> = ({
               onKeyPress={handleKeyPress} 
               placeholder="Escribe un mensaje..." 
               className="flex-1 bg-white border-none shadow-md transition-all duration-200 focus:scale-[1.02] focus:shadow-lg"
-              disabled={!isConnected}
+              disabled={!isConnected || isSending}
             />
           <Button 
             onClick={handleSendMessage} 
-            disabled={!newMessage.trim() || !isConnected} 
+            disabled={!newMessage.trim() || !isConnected || isSending} 
             size="icon" 
             className="h-9 w-9 bg-green hover:bg-green/90 text-white transition-all duration-200 hover:scale-105 active:scale-95"
           >
-            <Send className="h-5 w-5" />
+            {isSending ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <Send className="h-5 w-5" />
+            )}
           </Button>
         </div>
         {!isConnected && (

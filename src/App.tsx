@@ -37,12 +37,42 @@ import HelpSupport from "@/pages/HelpSupport";
 
 const queryClient = new QueryClient();
 
+// Componente de carga con animación de ola
+const LoadingSpinner = () => {
+  return (
+    <div className="fixed inset-0 bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center z-50">
+      <div className="text-center">
+        {/* Imagen con animación de flotación */}
+        <div className="animate-bounce">
+          <img 
+            src="/leaf.png" 
+            alt="Leaf" 
+            className="w-16 h-16 mx-auto drop-shadow-lg"
+          />
+        </div>
+        
+        {/* Texto de carga */}
+        <p className="text-green-700 font-medium text-lg mb-4">Cargando...</p>
+        
+        {/* Animación de ola */}
+        <div className="flex justify-center space-x-1">
+          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" style={{ animationDelay: '0ms' }}></div>
+          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" style={{ animationDelay: '150ms' }}></div>
+          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" style={{ animationDelay: '300ms' }}></div>
+          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" style={{ animationDelay: '450ms' }}></div>
+          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" style={{ animationDelay: '600ms' }}></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Componente para rutas protegidas
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
   
   if (isLoading) {
-    return <div>Cargando...</div>;
+    return <LoadingSpinner />;
   }
   
   if (!isAuthenticated) {
@@ -57,7 +87,7 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
   
   if (isLoading) {
-    return <div>Cargando...</div>;
+    return <LoadingSpinner />;
   }
   
   if (isAuthenticated) {
