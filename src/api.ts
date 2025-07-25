@@ -1,7 +1,8 @@
 
 import { toast } from 'sonner';
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'https://59da89006547.ngrok-free.app';
+// const BASE_URL = 'http://localhost:3000';
 // const BASE_URL = 'http://localhost:3002/api/v3';
 
 interface RequestOptions extends RequestInit {
