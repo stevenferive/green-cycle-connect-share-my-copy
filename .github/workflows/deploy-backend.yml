@@ -1,32 +1,47 @@
 
-name: Deploy Backend to Azure App Service
+name: Deploy Backend to Azure App Service # Nombre visible de este flujo de trabajo en GitHub Actions
 
 on:
   push:
     branches:
-      - main
+      - main # Este flujo de trabajo se ejecutará cada vez que se suban cambios a la rama 'main'
 
 jobs:
-  build-and-deploy-backend:
-    runs-on: ubuntu-latest
+  build-and-deploy-backend: # Nombre del trabajo para el despliegue del Back-end
+    runs-on: ubuntu-latest # El entorno virtual de GitHub donde se ejecutará este trabajo (Linux)
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository # Paso 1: Descargar tu código del repositorio de GitHub
         uses: actions/checkout@v4
 
-      - name: Set up Node.js environment
+      - name: Set up Node.js environment # Paso 2: Configurar el entorno de Node.js (asumiendo que tu Back-end es Node.js)
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '18' # Versión de tu runtime de Back-end (ej. '3.9' para Python, '11' para Java)
 
-      - name: Install Backend dependencies
-        run: npm install
+      - name: Install Backend dependencies # Paso 3: Instalar las dependencias de tu proyecto Back-end
+        run: |
+          # Si tu código de Back-end está en una subcarpeta (ej. 'src'), descomenta la línea 'cd src'.
+          # Si está en la raíz del repositorio, borra la línea 'cd src'.
+          # cd src # <-- AJUSTA ESTO si es necesario
+          npm install # El comando para instalar dependencias.
 
-      - name: Deploy to Azure Web App
+      - name: Azure Login # Paso 4: Autenticarse en Azure usando el secreto (¡Este paso es crucial!)
+        uses: azure/login@v1 # Acción oficial de Azure para iniciar sesión
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }} # Usa el secreto que configuraste en GitHub
+          enable-AzPSSession: true # Habilita la sesión de PowerShell para Azure (opcional, pero útil)
+
+      - name: Deploy to Azure Web App # Paso 5: Desplegar la aplicación a tu App Service en Azure
         uses: azure/webapps-deploy@v2
         with:
-          app-name: green-cycle-backend-dev
-          slot-name: 'production'
-          publish-profile: ${{ secrets.AZURE_CREDENTIALS }}
-          package: .
-          feat: CI/CD automatic deployment for backend
+          app-name: green-cycle-backend-dev # Nombre EXACTO de tu App Service de Back-end en Azure.
+          slot-name: 'production' # Deja esto así, a menos que uses slots de despliegue específicos en Azure.
+          # ¡IMPORTANTE! Hemos ELIMINADO la línea 'publish-profile: ${{ secrets.AZURE_CREDENTIALS }}'
+          # porque 'azure/login' ya maneja la autenticación.
+          package: . # Ruta de tu código o artefacto.
+
+      - name: Azure Logout # Paso 6 (Opcional): Cerrar sesión en Azure después del despliegue
+        run: |
+          az logout
+          az cache purge
